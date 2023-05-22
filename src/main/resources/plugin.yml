@@ -1,0 +1,4 @@
+name: Polymer
+version: '${project.version}'
+main: io.github.linsminecraftstudio.polymer.Polymer
+api-version: 1.19
