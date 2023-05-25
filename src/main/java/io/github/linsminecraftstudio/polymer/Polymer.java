@@ -9,7 +9,7 @@ public final class Polymer extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
-        serializer = LegacyComponentSerializer.builder()
+        serializer = LegacyComponentSerializer.builder().character('&')
                 .hexColors().useUnusualXRepeatedCharacterHexFormat().build();
     }
 

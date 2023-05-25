@@ -1,4 +1,4 @@
-package io.github.linsminecraftstudio.polymer.file;
+package io.github.linsminecraftstudio.polymer.utils;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -14,7 +14,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-public class FileUtils {
+public final class FileUtils {
     public static void completeFile(Plugin plugin,String resourceFile, boolean justCreate){
         InputStream stream = plugin.getResource(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);

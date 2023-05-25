@@ -13,7 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ItemStackConverter {
+public final class ItemStackConverter {
     public static ItemStack toItemStack(ConfigurationSection section){
         String mat = section.getString("material","STONE");
         Material material = Material.getMaterial(mat);
@@ -32,6 +32,9 @@ public class ItemStackConverter {
         }
         if (section.contains("customModelData")){
             builder.customModelData(section.getInt("customModelData"));
+        }
+        if (section.contains("unbreakable")){
+            builder.unbreakable(section.getBoolean("unbreakable"));
         }
         ConfigurationSection section2 = section.getConfigurationSection("enchants");
         if (section2 != null) {

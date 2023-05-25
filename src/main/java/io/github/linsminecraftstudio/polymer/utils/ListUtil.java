@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class ListUtil {
+public final class ListUtil {
     public static <T> Optional<T> listGetIf(Iterable<T> iterable, Predicate<T> filter){
         for (T item : iterable){
             if (filter.test(item)) return Optional.of(item);
