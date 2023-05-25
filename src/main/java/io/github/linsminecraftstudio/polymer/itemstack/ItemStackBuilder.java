@@ -1,6 +1,8 @@
 package io.github.linsminecraftstudio.polymer.itemstack;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -27,16 +29,16 @@ public class ItemStackBuilder {
         this.itemMeta = itemStack.getItemMeta();
     }
 
-    public void name(String itemName){
-        itemMeta.setDisplayName(itemName);
+    public void name(Component itemName){
+        itemMeta.displayName(itemName);
     }
 
-    public void lore(List<String> lore){
-        itemMeta.setLore(lore);
+    public void lore(List<Component> lore){
+        itemMeta.lore(lore);
     }
 
-    public void lore(String... lore){
-        itemMeta.setLore(Arrays.stream(lore).toList());
+    public void lore(Component... lore){
+        itemMeta.lore(Arrays.stream(lore).toList());
     }
 
     public void unbreakable(boolean unbreakable){
@@ -55,8 +57,13 @@ public class ItemStackBuilder {
         itemMeta.addItemFlags(flags);
     }
 
+    public void customModelData(int customModelData){
+        itemMeta.setCustomModelData(customModelData);
+    }
+
     public void setNameInConfig(Plugin plugin, String node){
-        itemMeta.setDisplayName(plugin.getConfig().getString(node,""));
+        LegacyComponentSerializer serializer = LegacyComponentSerializer.builder().useUnusualXRepeatedCharacterHexFormat().build();
+        itemMeta.displayName(serializer.deserialize(plugin.getConfig().getString(node,"")));
     }
 
     public void nbt(String key, String value){
@@ -77,6 +84,10 @@ public class ItemStackBuilder {
 
     public void nbt(String key, long value){
         nbtItem.setLong(key, value);
+    }
+
+    public void removeNbt(String key){
+        nbtItem.removeKey(key);
     }
 
     public void nbt(String key, ItemStack stack){

@@ -1,6 +1,8 @@
 package io.github.linsminecraftstudio.polymer.itemstack;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import io.github.linsminecraftstudio.polymer.Polymer;
+import io.github.linsminecraftstudio.polymer.utils.ListUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -18,58 +20,51 @@ public class ItemStackConverter {
         if (material == null){
             material = Material.STONE;
         }
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
+        ItemStackBuilder builder = new ItemStackBuilder(material);
         if (section.contains("amount")) {
-            item.setAmount(section.getInt("amount", 1));
+            builder.amount(section.getInt("amount", 1));
         }
-        if (meta != null) {
-            if (section.contains("displayname")) {
-                meta.setDisplayName(section.getString("displayname"));
-            }
-            if (section.contains("lore")) {
-                meta.setLore(section.getStringList("lore"));
-            }
-            if (section.contains("customModelData")){
-                meta.setCustomModelData(section.getInt("customModelData"));
-            }
-            ConfigurationSection section2 = section.getConfigurationSection("enchants");
-            if (section2 != null) {
-                for (String enchant : section2.getKeys(false)){
-                    ConfigurationSection section3 = section2.getConfigurationSection(enchant);
-                    if (section3 == null) {continue;}
-                    Enchantment enchantment = Enchantment.getByKey(
-                            NamespacedKey.fromString(section3.getString("key","")));
-                    if (enchantment != null) {
-                        int level = section3.getInt(enchant);
-                        item.addUnsafeEnchantment(enchantment, level);
-                    }
+        if (section.contains("displayname")) {
+            builder.name(Polymer.serializer.deserialize(section.getString("displayname", "")));
+        }
+        if (section.contains("lore")) {
+            builder.lore(ListUtil.stringListToComponentList(section.getStringList("lore")));
+        }
+        if (section.contains("customModelData")){
+            builder.customModelData(section.getInt("customModelData"));
+        }
+        ConfigurationSection section2 = section.getConfigurationSection("enchants");
+        if (section2 != null) {
+            for (String enchant : section2.getKeys(false)){
+                ConfigurationSection section3 = section2.getConfigurationSection(enchant);
+                if (section3 == null) {continue;}
+                Enchantment enchantment = Enchantment.getByKey(
+                        NamespacedKey.fromString(section3.getString("key","")));
+                if (enchantment != null) {
+                    int level = section3.getInt(enchant);
+                    builder.enchantment(enchantment, level);
                 }
             }
-            ConfigurationSection section4 = section.getConfigurationSection("nbt");
-            if (section4 != null) {
-                item.setItemMeta(meta);
-                NBTItem nbtItem = new NBTItem(item);
-                for (String nbtKey : section4.getKeys(false)){
-                    if (section4.isString(nbtKey)) {
-                        nbtItem.setString(nbtKey, section4.getString(nbtKey));
-                    } else if (section4.isInt(nbtKey)) {
-                        nbtItem.setInteger(nbtKey, section4.getInt(nbtKey));
-                    } else if (section4.isBoolean(nbtKey)) {
-                        nbtItem.setBoolean(nbtKey, section4.getBoolean(nbtKey));
-                    } else if (section4.isDouble(nbtKey)) {
-                        nbtItem.setDouble(nbtKey, section4.getDouble(nbtKey));
-                    } else if (section4.isLong(nbtKey)) {
-                        nbtItem.setLong(nbtKey, section4.getLong(nbtKey));
-                    } else if (section4.isItemStack(nbtKey)) {
-                        nbtItem.setItemStack(nbtKey, section4.getItemStack(nbtKey));
-                    }
-                }
-                return nbtItem.getItem();
-            }
-            item.setItemMeta(meta);
         }
-        return item;
+        ConfigurationSection section4 = section.getConfigurationSection("nbt");
+        if (section4 != null) {
+            for (String nbtKey : section4.getKeys(false)){
+                if (section4.isString(nbtKey)) {
+                    builder.nbt(nbtKey, section4.getString(nbtKey));
+                } else if (section4.isInt(nbtKey)) {
+                    builder.nbt(nbtKey, section4.getInt(nbtKey));
+                } else if (section4.isBoolean(nbtKey)) {
+                    builder.nbt(nbtKey, section4.getBoolean(nbtKey));
+                } else if (section4.isDouble(nbtKey)) {
+                    builder.nbt(nbtKey, section4.getDouble(nbtKey));
+                } else if (section4.isLong(nbtKey)) {
+                    builder.nbt(nbtKey, section4.getLong(nbtKey));
+                } else if (section4.isItemStack(nbtKey)) {
+                    builder.nbt(nbtKey, section4.getItemStack(nbtKey));
+                }
+            }
+        }
+        return builder.build();
     }
 
     public static Map<String,Object> asMap(ItemStack item){
@@ -79,10 +74,10 @@ public class ItemStackConverter {
         map.put("amount", item.getAmount());
         if(meta != null){
             if(meta.hasDisplayName()){
-                map.put("displayname", meta.getDisplayName());
+                map.put("displayname", meta.displayName());
             }
             if(meta.hasLore()){
-                map.put("lore", meta.getLore());
+                map.put("lore", meta.lore());
             }
             if(meta.hasEnchants()){
                 Map<String,Integer> enchantsMap = new HashMap<>();
