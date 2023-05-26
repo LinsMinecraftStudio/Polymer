@@ -1,7 +1,9 @@
 package io.github.linsminecraftstudio.polymer.itemstack;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import io.github.linsminecraftstudio.polymer.Polymer;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -62,8 +64,9 @@ public class ItemStackBuilder {
     }
 
     public void setNameInConfig(Plugin plugin, String node){
-        LegacyComponentSerializer serializer = LegacyComponentSerializer.builder().useUnusualXRepeatedCharacterHexFormat().build();
-        itemMeta.displayName(serializer.deserialize(plugin.getConfig().getString(node,"")));
+        LegacyComponentSerializer serializer = Polymer.serializer;
+        Component component = serializer.deserialize(plugin.getConfig().getString(node,""));
+        itemMeta.displayName(MiniMessage.miniMessage().deserialize(serializer.serialize(component)));
     }
 
     public void nbt(String key, String value){
