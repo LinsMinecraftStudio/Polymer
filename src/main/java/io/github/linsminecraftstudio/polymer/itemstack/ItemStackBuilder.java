@@ -65,8 +65,7 @@ public class ItemStackBuilder {
 
     public void setNameInConfig(Plugin plugin, String node){
         LegacyComponentSerializer serializer = Polymer.serializer;
-        Component component = serializer.deserialize(plugin.getConfig().getString(node,""));
-        itemMeta.displayName(MiniMessage.miniMessage().deserialize(serializer.serialize(component)));
+        itemMeta.displayName(serializer.deserialize(plugin.getConfig().getString(node,"")));
     }
 
     public void nbt(String key, String value){
