@@ -58,6 +58,9 @@ public final class FileUtils {
                 if (!configuration2.contains(key)) {
                     configuration2.set(key, value);
                 }
+                if (!configuration.getComments(key).equals(configuration2.getComments(key))) {
+                    configuration2.setComments(key, configuration.getComments(key));
+                }
             }
             configuration2.save(file);
         } catch (Exception e) {

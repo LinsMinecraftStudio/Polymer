@@ -1,57 +1,47 @@
 package io.github.linsminecraftstudio.polymer.command;
 
+import com.google.common.base.Strings;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
+import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface PolymerCommandExecutor extends CommandExecutor {
-    String name();
-    String requirePlugin();
-    void sendMessage(CommandSender sender, String message, Object... args);
-    default boolean hasPermission(CommandSender cs){
+public abstract class PolymerCommand extends BukkitCommand {
+    protected PolymerCommand(@Nonnull String name) {
+        super(name);
+    }
+
+    abstract String name();
+    abstract String requirePlugin();
+    abstract void sendMessage(CommandSender sender, String message, Object... args);
+    private boolean hasPermission(CommandSender cs){
         return hasCustomPermission(cs,"command."+name());
     }
-    default boolean hasSubPermission(CommandSender cs,String sub){
+    private boolean hasSubPermission(CommandSender cs,String sub){
         return hasCustomPermission(cs,"command."+name()+"."+sub);
     }
-    default boolean hasCustomPermission(CommandSender cs,String perm){
+    private boolean hasCustomPermission(CommandSender cs,String perm){
         boolean b = cs.hasPermission("mixtools."+perm);
         if (!b){
             sendMessage(cs,"Command.NoPermission");
         }
         return b;
     }
-    default void register(JavaPlugin plugin){
-        String require = requirePlugin();
-        if (require==null){
-            require = "";
-        }
-        if (!require.isBlank()){
-            if (Bukkit.getPluginManager().isPluginEnabled(require)){
-                try {
-                    PluginCommand cmd = plugin.getCommand(name());
-                    cmd.setExecutor(this);
-                }catch (Exception e) {
-                    plugin.getLogger().warning("Failed to register command '"+name()+"' : "+e.getMessage());
-                }
+    public void register(){
+        if (!Strings.isNullOrEmpty(requirePlugin().trim())){
+            if (Bukkit.getPluginManager().isPluginEnabled(requirePlugin())){
+                Bukkit.getCommandMap().register(name(), this);
             }
         }else {
-            try {
-                PluginCommand cmd = plugin.getCommand(name());
-                cmd.setExecutor(this);
-            }catch (Exception e) {
-                plugin.getLogger().warning("Failed to register command '"+name()+"' : "+e.getMessage());
-            }
+            Bukkit.getCommandMap().register(name(), this);
         }
     }
-    default Player toPlayer(CommandSender cs){
+    private Player toPlayer(CommandSender cs){
         if (cs instanceof Player){
             return (Player)cs;
         }else {
@@ -60,7 +50,7 @@ public interface PolymerCommandExecutor extends CommandExecutor {
         }
     }
 
-    default Player findPlayer(CommandSender from,String name){
+    private Player findPlayer(CommandSender from,String name){
         Player p = Bukkit.getPlayer(name);
         if (p == null){
             sendMessage(from, "Command.PlayerNotFound");
@@ -68,11 +58,11 @@ public interface PolymerCommandExecutor extends CommandExecutor {
         return p;
     }
 
-    default Player findPlayerNoMessage(String name){
+    private Player findPlayerNoMessage(String name){
         return Bukkit.getPlayer(name);
     }
 
-    default int toInteger(CommandSender cs,String s,int position){
+    private int toInteger(CommandSender cs,String s,int position){
         try {
             int i = Integer.parseInt(s);
             if (i < 1){
@@ -86,7 +76,7 @@ public interface PolymerCommandExecutor extends CommandExecutor {
         }
     }
 
-    default double toDouble(CommandSender cs, String s, int position){
+    private double toDouble(CommandSender cs, String s, int position){
         try {
             double d = Double.parseDouble(s);
             if (d < 0.01){
@@ -100,7 +90,15 @@ public interface PolymerCommandExecutor extends CommandExecutor {
         }
     }
 
-    default List<String> copyPartialMatches(String token, Iterable<String> original){
+    private List<String> copyPartialMatches(String token, Iterable<String> original){
         return StringUtil.copyPartialMatches(token,original,new ArrayList<>());
+    }
+
+    private List<String> getPlayerNames(){
+        List<String> list = new ArrayList<>();
+        for (Player p: Bukkit.getOnlinePlayers()){
+            list.add(p.getName());
+        }
+        return list;
     }
 }

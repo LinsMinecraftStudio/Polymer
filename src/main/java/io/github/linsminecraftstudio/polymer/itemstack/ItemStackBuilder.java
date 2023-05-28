@@ -3,7 +3,6 @@ package io.github.linsminecraftstudio.polymer.itemstack;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.linsminecraftstudio.polymer.Polymer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
