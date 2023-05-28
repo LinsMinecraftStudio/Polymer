@@ -15,15 +15,15 @@ public abstract class PolymerCommand extends BukkitCommand {
     protected PolymerCommand(@Nonnull String name) {
         super(name);
     }
-    abstract String requirePlugin();
-    abstract void sendMessage(CommandSender sender, String message, Object... args);
-    private boolean hasPermission(CommandSender cs){
+    public abstract String requirePlugin();
+    public abstract void sendMessage(CommandSender sender, String message, Object... args);
+    public boolean hasPermission(CommandSender cs){
         return hasCustomPermission(cs,"command."+ this.getName());
     }
-    private boolean hasSubPermission(CommandSender cs,String sub){
+    public boolean hasSubPermission(CommandSender cs,String sub){
         return hasCustomPermission(cs,"command."+getName()+"."+sub);
     }
-    private boolean hasCustomPermission(CommandSender cs,String perm){
+    public boolean hasCustomPermission(CommandSender cs,String perm){
         boolean b = cs.hasPermission("mixtools."+perm);
         if (!b){
             sendMessage(cs,"Command.NoPermission");
@@ -39,7 +39,7 @@ public abstract class PolymerCommand extends BukkitCommand {
             Bukkit.getCommandMap().register(getName(), this);
         }
     }
-    private Player toPlayer(CommandSender cs){
+    public Player toPlayer(CommandSender cs){
         if (cs instanceof Player){
             return (Player)cs;
         }else {
@@ -48,7 +48,7 @@ public abstract class PolymerCommand extends BukkitCommand {
         }
     }
 
-    private Player findPlayer(CommandSender from,String name){
+    public Player findPlayer(CommandSender from,String name){
         Player p = Bukkit.getPlayer(name);
         if (p == null){
             sendMessage(from, "Command.PlayerNotFound");
@@ -56,11 +56,11 @@ public abstract class PolymerCommand extends BukkitCommand {
         return p;
     }
 
-    private Player findPlayerNoMessage(String name){
+    public Player findPlayerNoMessage(String name){
         return Bukkit.getPlayer(name);
     }
 
-    private int toInteger(CommandSender cs,String s,int position){
+    public int toInteger(CommandSender cs,String s,int position){
         try {
             int i = Integer.parseInt(s);
             if (i < 1){
@@ -74,7 +74,7 @@ public abstract class PolymerCommand extends BukkitCommand {
         }
     }
 
-    private double toDouble(CommandSender cs, String s, int position){
+    public double toDouble(CommandSender cs, String s, int position){
         try {
             double d = Double.parseDouble(s);
             if (d < 0.01){
@@ -88,11 +88,11 @@ public abstract class PolymerCommand extends BukkitCommand {
         }
     }
 
-    private List<String> copyPartialMatches(String token, Iterable<String> original){
+    public List<String> copyPartialMatches(String token, Iterable<String> original){
         return StringUtil.copyPartialMatches(token,original,new ArrayList<>());
     }
 
-    private List<String> getPlayerNames(){
+    public List<String> getPlayerNames(){
         List<String> list = new ArrayList<>();
         for (Player p: Bukkit.getOnlinePlayers()){
             list.add(p.getName());
