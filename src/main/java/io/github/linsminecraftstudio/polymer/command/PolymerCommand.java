@@ -15,15 +15,13 @@ public abstract class PolymerCommand extends BukkitCommand {
     protected PolymerCommand(@Nonnull String name) {
         super(name);
     }
-
-    abstract String name();
     abstract String requirePlugin();
     abstract void sendMessage(CommandSender sender, String message, Object... args);
     private boolean hasPermission(CommandSender cs){
-        return hasCustomPermission(cs,"command."+name());
+        return hasCustomPermission(cs,"command."+ this.getName());
     }
     private boolean hasSubPermission(CommandSender cs,String sub){
-        return hasCustomPermission(cs,"command."+name()+"."+sub);
+        return hasCustomPermission(cs,"command."+getName()+"."+sub);
     }
     private boolean hasCustomPermission(CommandSender cs,String perm){
         boolean b = cs.hasPermission("mixtools."+perm);
@@ -35,10 +33,10 @@ public abstract class PolymerCommand extends BukkitCommand {
     public void register(){
         if (!Strings.isNullOrEmpty(requirePlugin().trim())){
             if (Bukkit.getPluginManager().isPluginEnabled(requirePlugin())){
-                Bukkit.getCommandMap().register(name(), this);
+                Bukkit.getCommandMap().register(getName(), this);
             }
         }else {
-            Bukkit.getCommandMap().register(name(), this);
+            Bukkit.getCommandMap().register(getName(), this);
         }
     }
     private Player toPlayer(CommandSender cs){
