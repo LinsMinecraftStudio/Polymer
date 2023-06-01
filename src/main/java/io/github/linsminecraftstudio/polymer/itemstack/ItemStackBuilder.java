@@ -12,12 +12,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ItemStackBuilder {
-    private NBTItem nbtItem;
+    private final NBTItem nbtItem;
     private final ItemStack itemStack;
     private final ItemMeta itemMeta;
+    private final Map<Enchantment, Integer> enchantments = new HashMap<>();
+    private int amount = 1;
 
     public ItemStackBuilder(ItemStack item){
         this.itemStack = item;
@@ -26,8 +30,14 @@ public class ItemStackBuilder {
     }
 
     public ItemStackBuilder(Material material){
+        this(material, 1);
+    }
+
+    public ItemStackBuilder(Material material, int amount){
         this.itemStack = new ItemStack(material);
+        this.amount = amount;
         this.itemMeta = itemStack.getItemMeta();
+        this.nbtItem = new NBTItem(itemStack);
     }
 
     public void name(Component itemName){
@@ -47,11 +57,11 @@ public class ItemStackBuilder {
     }
 
     public void enchantment(Enchantment enchantment, int lvl){
-        itemStack.addUnsafeEnchantment(enchantment, lvl);
+        enchantments.put(enchantment, lvl);
     }
 
     public void amount(int amount){
-        itemStack.setAmount(amount);
+        this.amount = amount;
     }
 
     public void flag(ItemFlag... flags){
@@ -62,7 +72,7 @@ public class ItemStackBuilder {
         itemMeta.setCustomModelData(customModelData);
     }
 
-    public void setNameInConfig(Plugin plugin, String node){
+    public void nameInConfig(Plugin plugin, String node){
         LegacyComponentSerializer serializer = Polymer.serializer;
         itemMeta.displayName(serializer.deserialize(plugin.getConfig().getString(node,"")));
     }
@@ -87,16 +97,18 @@ public class ItemStackBuilder {
         nbtItem.setLong(key, value);
     }
 
-    public void removeNbt(String key){
-        nbtItem.removeKey(key);
-    }
-
     public void nbt(String key, ItemStack stack){
         nbtItem.setItemStack(key, stack);
     }
 
+    public void removeNbt(String key){
+        nbtItem.removeKey(key);
+    }
+
     public ItemStack build() {
-        itemStack.setItemMeta(itemMeta);
-        return itemStack;
+        ItemStack stack = nbtItem.getItem();
+        stack.setAmount(amount);
+        stack.addUnsafeEnchantments(enchantments);
+        return stack;
     }
 }

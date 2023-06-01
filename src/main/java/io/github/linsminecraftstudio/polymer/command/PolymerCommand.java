@@ -2,8 +2,8 @@ package io.github.linsminecraftstudio.polymer.command;
 
 import com.google.common.base.Strings;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
@@ -11,9 +11,16 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PolymerCommand extends BukkitCommand {
-    protected PolymerCommand(@Nonnull String name) {
+public abstract class PolymerCommand extends Command {
+    public PolymerCommand(@Nonnull String name) {
         super(name);
+        if (!Strings.isNullOrEmpty(requirePlugin().trim())){
+            if (Bukkit.getPluginManager().isPluginEnabled(requirePlugin())){
+                register(Bukkit.getCommandMap());
+            }
+        }else {
+            register(Bukkit.getCommandMap());
+        }
     }
     public abstract String requirePlugin();
     public abstract void sendMessage(CommandSender sender, String message, Object... args);
@@ -29,15 +36,6 @@ public abstract class PolymerCommand extends BukkitCommand {
             sendMessage(cs,"Command.NoPermission");
         }
         return b;
-    }
-    public void register(){
-        if (!Strings.isNullOrEmpty(requirePlugin().trim())){
-            if (Bukkit.getPluginManager().isPluginEnabled(requirePlugin())){
-                Bukkit.getCommandMap().register(getName(), this);
-            }
-        }else {
-            Bukkit.getCommandMap().register(getName(), this);
-        }
     }
     public Player toPlayer(CommandSender cs){
         if (cs instanceof Player){
