@@ -39,7 +39,7 @@ public class PolymerMessageHandler {
     }
 
     public String get(String node){
-        return message.getString(node,"§4Get message '"+node+"' failed, maybe it's not exists.");
+        return message.getString(node,"&4Get message '"+node+"' failed, maybe it's not exists.");
     }
 
     public Component getColored(String node, Object... args){
@@ -99,7 +99,7 @@ public class PolymerMessageHandler {
     }
 
     public Component colorize(String string) {
-        return Polymer.serializer.deserialize(string);
+        return Polymer.toComponent(string);
     }
 
     public Component colorize(Component component){

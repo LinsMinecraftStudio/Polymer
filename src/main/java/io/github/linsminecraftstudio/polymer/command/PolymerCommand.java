@@ -9,6 +9,7 @@ import org.bukkit.util.StringUtil;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class PolymerCommand extends Command {
@@ -25,10 +26,17 @@ public abstract class PolymerCommand extends Command {
     public abstract String requirePlugin();
     public abstract void sendMessage(CommandSender sender, String message, Object... args);
     public boolean hasPermission(CommandSender cs){
-        return hasCustomPermission(cs,"command."+ this.getName());
+        return hasCustomPermission(cs,"command." + this.getName());
     }
-    public boolean hasSubPermission(CommandSender cs,String sub){
-        return hasCustomPermission(cs,"command."+getName()+"."+sub);
+    public boolean hasSubPermission(CommandSender cs,String... subs){
+        String perm = "mixtools.command." + this.getName();
+        List<String> subList = Arrays.stream(subs).toList();
+        for (String sub : subList){
+            if (!(subList.size() - 1 == subList.indexOf(sub))){
+                perm = perm.concat(sub);
+            }
+        }
+        return hasCustomPermission(cs, perm);
     }
     public boolean hasCustomPermission(CommandSender cs,String perm){
         boolean b = cs.hasPermission("mixtools."+perm);
