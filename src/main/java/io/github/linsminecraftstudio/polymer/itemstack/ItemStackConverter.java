@@ -62,8 +62,6 @@ public final class ItemStackConverter {
                     builder.nbt(nbtKey, section4.getDouble(nbtKey));
                 } else if (section4.isLong(nbtKey)) {
                     builder.nbt(nbtKey, section4.getLong(nbtKey));
-                } else if (section4.isItemStack(nbtKey)) {
-                    builder.nbt(nbtKey, section4.getItemStack(nbtKey));
                 }
             }
         }

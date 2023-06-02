@@ -97,10 +97,6 @@ public class ItemStackBuilder {
         nbtItem.setLong(key, value);
     }
 
-    public void nbt(String key, ItemStack stack){
-        nbtItem.setItemStack(key, stack);
-    }
-
     public void removeNbt(String key){
         nbtItem.removeKey(key);
     }
@@ -109,6 +105,7 @@ public class ItemStackBuilder {
         ItemStack stack = nbtItem.getItem();
         stack.setAmount(amount);
         stack.addUnsafeEnchantments(enchantments);
+        stack.setItemMeta(itemMeta);
         return stack;
     }
 }

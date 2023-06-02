@@ -13,8 +13,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class PolymerCommand extends Command {
-    public PolymerCommand(@Nonnull String name) {
+    public PolymerCommand(@Nonnull String name){
+        this(name, new ArrayList<>());
+    }
+    public PolymerCommand(@Nonnull String name, List<String> aliases) {
         super(name);
+        this.setAliases(aliases);
         if (!Strings.isNullOrEmpty(requirePlugin().trim())){
             if (Bukkit.getPluginManager().isPluginEnabled(requirePlugin())){
                 register(Bukkit.getCommandMap());
