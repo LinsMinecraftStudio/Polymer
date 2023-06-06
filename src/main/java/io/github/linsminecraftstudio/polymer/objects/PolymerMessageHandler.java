@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A message handler that handles messages from language files
+ */
 public class PolymerMessageHandler {
     private final YamlConfiguration message;
 

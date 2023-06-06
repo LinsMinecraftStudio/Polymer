@@ -99,6 +99,10 @@ public class ItemStackBuilder {
         nbtItem.removeKey(key);
     }
 
+    /**
+     * Returns the item stack
+     * @return an item stack
+     */
     public ItemStack build() {
         ItemStack stack = nbtItem.getItem();
         stack.setAmount(amount);

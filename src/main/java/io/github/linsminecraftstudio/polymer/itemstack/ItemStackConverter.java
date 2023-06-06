@@ -14,6 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class ItemStackConverter {
+    /**
+     * Serialize an item stack from the given configuration section
+     * @param section the configuration section
+     * @return an item stack
+     */
     public static ItemStack toItemStack(ConfigurationSection section){
         String mat = section.getString("material","STONE");
         Material material = Material.getMaterial(mat);
@@ -41,8 +46,7 @@ public final class ItemStackConverter {
             for (String enchant : section2.getKeys(false)){
                 ConfigurationSection section3 = section2.getConfigurationSection(enchant);
                 if (section3 == null) {continue;}
-                Enchantment enchantment = Enchantment.getByKey(
-                        NamespacedKey.fromString(section3.getString("key","")));
+                Enchantment enchantment = Enchantment.getByKey(NamespacedKey.fromString(enchant));
                 if (enchantment != null) {
                     int level = section3.getInt(enchant);
                     builder.enchantment(enchantment, level);
@@ -68,6 +72,11 @@ public final class ItemStackConverter {
         return builder.build();
     }
 
+    /**
+     * Make an item stack to a map
+     * @param item the item stack
+     * @return a map
+     */
     public static Map<String,Object> asMap(ItemStack item){
         ItemMeta meta = item.getItemMeta();
         Map<String,Object> map = new HashMap<>();

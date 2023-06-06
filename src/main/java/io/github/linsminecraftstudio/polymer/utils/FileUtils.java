@@ -15,6 +15,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 public final class FileUtils {
+    /**
+     * Complete configuration(key and value, comments, etc)
+     * @param plugin plugin instance
+     * @param resourceFile the resource file you want to complete
+     */
     public static void completeFile(Plugin plugin,String resourceFile){
         InputStream stream = plugin.getResource(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);
@@ -59,7 +64,11 @@ public final class FileUtils {
         }
     }
 
-
+    /**
+     * Complete language file(keys and values, comments, etc)
+     * @param plugin plugin instance
+     * @param resourceFile the language file you want to complete
+     */
     public static void completeLangFile(Plugin plugin, String resourceFile){
         InputStream stream = plugin.getResource(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);
@@ -93,6 +102,9 @@ public final class FileUtils {
                 if (!configuration2.contains(key)) {
                     configuration2.set(key, value);
                 }
+                if (!configuration.getComments(key).equals(configuration2.getComments(key))) {
+                    configuration2.setComments(key, configuration.getComments(key));
+                }
             }
             for (String key : configuration2.getKeys(true)) {
                 if (configuration2.contains(key) & !configuration.contains(key)) {
@@ -106,6 +118,11 @@ public final class FileUtils {
         }
     }
 
+    /**
+     * Delete a directory
+     * @param dirFile the directory
+     * @return result
+     */
     public static boolean deleteDir(File dirFile) {
         Callable<Boolean> callable = () -> {
             if (!dirFile.exists() || !dirFile.isDirectory() || dirFile.listFiles() == null) {
@@ -136,6 +153,11 @@ public final class FileUtils {
         }
     }
 
+    /**
+     * Delete a file
+     * @param file the file
+     * @return result
+     */
     public static boolean deleteFile(File file) {
         boolean flag = false;
 

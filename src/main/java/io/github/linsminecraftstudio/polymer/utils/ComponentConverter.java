@@ -7,9 +7,12 @@ import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class ComponentConverter {
+    /**
+     * The simple text MiniMessage parser
+     */
     private static final MiniMessage simpleTextMiniMessage = MiniMessage.builder().tags(TagResolver.builder().resolvers(
             StandardTags.color(), StandardTags.reset(), StandardTags.newline(), StandardTags.gradient(),
-            StandardTags.decorations(), StandardTags.rainbow(), StandardTags.font()).build()).build();;
+            StandardTags.decorations(), StandardTags.rainbow(), StandardTags.font()).build()).build();
     public static String replaceLegacyColorsToMiniMessageFormat(String text){
         MiniMessage miniMessage = MiniMessage.miniMessage();
         LegacyComponentSerializer legacyComponentSerializer = LegacyComponentSerializer.legacySection();
