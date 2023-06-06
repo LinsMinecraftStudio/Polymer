@@ -15,19 +15,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 public final class FileUtils {
-    public static void completeFile(Plugin plugin,String resourceFile, boolean justCreate){
+    public static void completeFile(Plugin plugin,String resourceFile){
         InputStream stream = plugin.getResource(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);
-        if (justCreate){
-            if (!file.exists()){
-                if (stream!=null) {
-                    plugin.saveResource(resourceFile,false);
-                    return;
-                }
-                return;
-            }
-            return;
-        }
         if (!file.exists()){
             if (stream!=null) {
                 plugin.saveResource(resourceFile,false);

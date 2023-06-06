@@ -1,7 +1,7 @@
 package io.github.linsminecraftstudio.polymer.itemstack;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import io.github.linsminecraftstudio.polymer.Polymer;
+import io.github.linsminecraftstudio.polymer.utils.ComponentConverter;
 import io.github.linsminecraftstudio.polymer.utils.ListUtil;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -25,7 +25,7 @@ public final class ItemStackConverter {
             builder.amount(section.getInt("amount", 1));
         }
         if (section.contains("displayname")) {
-            builder.name(Polymer.serializer.deserialize(section.getString("displayname", "")));
+            builder.name(ComponentConverter.toSimpleTextComponent(section.getString("displayname", "")));
         }
         if (section.contains("lore")) {
             builder.lore(ListUtil.stringListToComponentList(section.getStringList("lore")));
@@ -75,10 +75,10 @@ public final class ItemStackConverter {
         map.put("amount", item.getAmount());
         if(meta != null){
             if(meta.hasDisplayName()){
-                map.put("displayname", meta.displayName());
+                map.put("displayname", ComponentConverter.toSimpleText(meta.displayName()));
             }
             if(meta.hasLore()){
-                map.put("lore", meta.lore());
+                map.put("lore", ListUtil.componentListToStringList(meta.lore()));
             }
             if(meta.hasEnchants()){
                 Map<String,Integer> enchantsMap = new HashMap<>();

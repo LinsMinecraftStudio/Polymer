@@ -24,7 +24,9 @@ Polymer is a library for LMS plugins, also you can use it.
 ### Gradle
 ```
 repositories {
-    mavenCentral()
+    maven {
+      url 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+    }
 }
 
 dependencies {

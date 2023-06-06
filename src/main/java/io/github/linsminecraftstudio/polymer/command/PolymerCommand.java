@@ -17,14 +17,13 @@ public abstract class PolymerCommand extends Command {
         this(name, new ArrayList<>());
     }
     public PolymerCommand(@Nonnull String name, List<String> aliases) {
-        super(name);
-        this.setAliases(aliases);
-        if (!Strings.isNullOrEmpty(requirePlugin().trim())){
+        super(name, "", "", aliases);
+        if (!Strings.isNullOrEmpty(requirePlugin())){
             if (Bukkit.getPluginManager().isPluginEnabled(requirePlugin())){
-                register(Bukkit.getCommandMap());
+                Bukkit.getCommandMap().register(name, this);
             }
         }else {
-            register(Bukkit.getCommandMap());
+            Bukkit.getCommandMap().register(name, this);
         }
     }
     public abstract String requirePlugin();
@@ -43,15 +42,15 @@ public abstract class PolymerCommand extends Command {
         return hasCustomPermission(cs, perm);
     }
     public boolean hasCustomPermission(CommandSender cs,String perm){
-        boolean b = cs.hasPermission("mixtools."+perm);
-        if (!b){
+        if (!cs.hasPermission("mixtools."+perm)){
             sendMessage(cs,"Command.NoPermission");
+            return false;
         }
-        return b;
+        return true;
     }
     public Player toPlayer(CommandSender cs){
-        if (cs instanceof Player){
-            return (Player)cs;
+        if (cs instanceof Player p){
+            return p;
         }else {
             sendMessage(cs,"Command.RunAsConsole");
             return null;
@@ -64,10 +63,6 @@ public abstract class PolymerCommand extends Command {
             sendMessage(from, "Command.PlayerNotFound");
         }
         return p;
-    }
-
-    public Player findPlayerNoMessage(String name){
-        return Bukkit.getPlayer(name);
     }
 
     public int toInteger(CommandSender cs,String s,int position){

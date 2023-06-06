@@ -1,6 +1,6 @@
 package io.github.linsminecraftstudio.polymer.objects;
 
-import io.github.linsminecraftstudio.polymer.Polymer;
+import io.github.linsminecraftstudio.polymer.utils.ComponentConverter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -99,7 +99,7 @@ public class PolymerMessageHandler {
     }
 
     public Component colorize(String string) {
-        return Polymer.toComponent(string);
+        return ComponentConverter.toComponent(string);
     }
 
     public Component colorize(Component component){

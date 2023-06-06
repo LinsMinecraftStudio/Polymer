@@ -2,6 +2,8 @@ package io.github.linsminecraftstudio.polymer;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,15 +20,5 @@ public final class Polymer extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-    }
-
-    public static String replaceLegacyColorsToMiniMessageFormat(String text){
-        MiniMessage miniMessage = MiniMessage.miniMessage();
-        LegacyComponentSerializer legacyComponentSerializer = LegacyComponentSerializer.legacyAmpersand();
-        return miniMessage.serialize(legacyComponentSerializer.deserialize(text));
-    }
-
-    public static Component toComponent(String text){
-        return MiniMessage.miniMessage().deserialize(replaceLegacyColorsToMiniMessageFormat(text));
     }
 }
