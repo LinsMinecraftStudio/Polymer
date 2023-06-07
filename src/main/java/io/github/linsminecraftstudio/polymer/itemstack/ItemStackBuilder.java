@@ -15,6 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Used for creating item stacks
+ * @author lijinhong11
+ */
 public class ItemStackBuilder {
     private final NBTItem nbtItem;
     private final ItemStack itemStack;

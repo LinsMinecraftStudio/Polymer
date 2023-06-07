@@ -36,8 +36,9 @@ public abstract class PolymerCommand extends Command {
         List<String> subList = Arrays.stream(subs).toList();
         for (String sub : subList){
             if (!(subList.size() - 1 == subList.indexOf(sub))){
-                perm = perm.concat(sub);
+                perm = perm.concat(".");
             }
+            perm = perm.concat(sub);
         }
         return hasCustomPermission(cs, perm);
     }

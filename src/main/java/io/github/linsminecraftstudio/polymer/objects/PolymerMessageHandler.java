@@ -22,6 +22,10 @@ import java.util.regex.Pattern;
 public class PolymerMessageHandler {
     private final YamlConfiguration message;
 
+    /**
+     * Creates a new message handler
+     * @param plugin need the plugin to read language files from plugin data folder
+     */
     public PolymerMessageHandler(Plugin plugin){
         String language = plugin.getConfig().getString("language","en-us");
         String fileName = "lang/"+language.toLowerCase()+".yml";
@@ -37,10 +41,6 @@ public class PolymerMessageHandler {
         message = YamlConfiguration.loadConfiguration(file);
     }
 
-    public YamlConfiguration getMessageConfiguration(){
-        return message;
-    }
-
     public String get(String node){
         return message.getString(node,"&4Get message '"+node+"' failed, maybe it's not exists.");
     }
@@ -50,18 +50,15 @@ public class PolymerMessageHandler {
         } catch (IllegalFormatException e) {return colorize(get(node));}
     }
 
-    public Component getColoredReplaceToOtherMessages(String node, boolean color, String... keys){
-        try {return colorize(String.format(get(node), getStrMessagesObj(color,keys)));
+    public Component getColoredReplaceToOtherMessages(String node, String... keys){
+        try {return colorize(String.format(get(node), getStrMessagesObj(keys)));
         } catch (IllegalFormatException e) {return colorize(get(node));}
     }
 
-    public Object[] getStrMessagesObj(boolean color, String... keys){
+    public Object[] getStrMessagesObj(String... keys){
         Object[] s = new Object[keys.length];
-        int i = 0;
-        for (String key:keys) {
-            if (color) {s[i] = getColored(key);}
-            else {s[i] = get(key);}
-            i++;
+        for (int i = 0; i < keys.length; i++) {
+            s[i] = getColored(keys[i]);
         }
         return s;
     }
@@ -109,6 +106,12 @@ public class PolymerMessageHandler {
         return colorize(MiniMessage.miniMessage().serialize(component));
     }
 
+    /**
+     * For color legacy colors to color
+     * @param string The string to color
+     * @return colored string
+     */
+    @Deprecated
     public String legacyColorize(String string) {
         Pattern pattern = Pattern.compile("&#[a-fA-F0-9]{6}");
         for (Matcher matcher = pattern.matcher(string); matcher.find(); matcher = pattern.matcher(string)) {
