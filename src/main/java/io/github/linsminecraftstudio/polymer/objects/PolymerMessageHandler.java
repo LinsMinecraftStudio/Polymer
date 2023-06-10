@@ -11,7 +11,6 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,12 +46,12 @@ public class PolymerMessageHandler {
 
     public Component getColored(String node, Object... args){
         try {return colorize(String.format(get(node),args));
-        } catch (IllegalFormatException e) {return colorize(get(node));}
+        } catch (Exception e) {return colorize(get(node));}
     }
 
     public Component getColoredReplaceToOtherMessages(String node, String... keys){
         try {return colorize(String.format(get(node), getStrMessagesObj(keys)));
-        } catch (IllegalFormatException e) {return colorize(get(node));}
+        } catch (Exception e) {return colorize(get(node));}
     }
 
     public Object[] getStrMessagesObj(String... keys){

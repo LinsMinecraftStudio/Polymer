@@ -1,8 +1,10 @@
 package io.github.linsminecraftstudio.polymer.command;
 
-import com.google.common.base.Strings;
+import io.github.linsminecraftstudio.polymer.objects.PolymerPlugin;
+import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
@@ -17,13 +19,31 @@ public abstract class PolymerCommand extends Command {
         this(name, new ArrayList<>());
     }
     public PolymerCommand(@Nonnull String name, List<String> aliases) {
-        super(name, "", "", aliases);
-        if (!Strings.isNullOrEmpty(requirePlugin())){
-            if (Bukkit.getPluginManager().isPluginEnabled(requirePlugin())){
-                Bukkit.getCommandMap().register(name, this);
-            }
+        super(name);
+        if (requirePlugin() != null && !requirePlugin().isBlank()){
+            if (Bukkit.getPluginManager().isPluginEnabled(requirePlugin())) putCommands(name, aliases);
         }else {
-            Bukkit.getCommandMap().register(name, this);
+            putCommands(name, aliases);
+        }
+    }
+    private void putCommands(String name, List<String> aliases) {
+        CommandMap cmdMap = Bukkit.getCommandMap();
+        cmdMap.getKnownCommands().put(name, this);
+        List<String> strings = new ArrayList<>(aliases);
+        strings.add(name);
+        PolymerPlugin plugin = OtherUtils.findPolymerPlugin();
+        if (plugin != null) {
+            this.description = plugin.getDescription().getCommands().get(name).get("description").toString();
+            String pluginName = plugin.getPluginMeta().getName().toLowerCase();
+            for (String string : strings){
+                cmdMap.getKnownCommands().put(pluginName+":"+string, this);
+            }
+        }
+        for (String string : strings) {
+            //check conflicts
+            if (cmdMap.getCommand(string) == null) {
+                cmdMap.getKnownCommands().put(string, this);
+            }
         }
     }
     public abstract String requirePlugin();

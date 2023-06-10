@@ -17,7 +17,6 @@ import java.util.Map;
 
 /**
  * Used for creating item stacks
- * @author lijinhong11
  */
 public class ItemStackBuilder {
     private final NBTItem nbtItem;
