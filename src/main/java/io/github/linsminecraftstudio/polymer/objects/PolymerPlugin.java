@@ -10,6 +10,9 @@ import java.util.logging.Level;
  * Created for tag polymer plugin and make useful methods
  */
 public abstract class PolymerPlugin extends JavaPlugin {
+    public PolymerPlugin() {
+        super();
+    }
     @Override
     public void onEnable() {
         if (requireVersion() > OtherUtils.getPolymerVersionWorth()){
@@ -20,7 +23,6 @@ public abstract class PolymerPlugin extends JavaPlugin {
                     """.formatted(getPluginMeta().getName(), requireVersion(), OtherUtils.getPolymerVersionWorth()));
         }
     }
-
     public abstract int requireVersion();
     protected void completeDefaultConfig(){
         FileUtils.completeFile(this, "config.yml");

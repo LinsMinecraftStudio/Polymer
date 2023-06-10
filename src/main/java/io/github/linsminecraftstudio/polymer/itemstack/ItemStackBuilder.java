@@ -75,7 +75,7 @@ public class ItemStackBuilder {
     }
 
     public void nameInConfig(Plugin plugin, String node){
-        itemMeta.displayName(ComponentConverter.toSimpleTextComponent(plugin.getConfig().getString(node,"")));
+        itemMeta.displayName(ComponentConverter.toComponent(plugin.getConfig().getString(node,"")));
     }
 
     public void nbt(String key, String value){

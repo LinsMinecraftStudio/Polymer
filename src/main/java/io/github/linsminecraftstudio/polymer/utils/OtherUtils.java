@@ -1,8 +1,8 @@
 package io.github.linsminecraftstudio.polymer.utils;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
-import io.github.linsminecraftstudio.polymer.objects.PolymerPlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,14 +43,15 @@ public class OtherUtils {
         return "";
     }
 
-    public static PolymerPlugin findPolymerPlugin(){
+    public static JavaPlugin findPlugin(){
         try {
             StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
             for (StackTraceElement stackTraceElement : stackTraceElements){
                 String className = stackTraceElement.getClassName();
                 Class<?> clazz = Class.forName(className);
-                if (clazz.isAssignableFrom(PolymerPlugin.class)) {
-                    return clazz.asSubclass(PolymerPlugin.class).getDeclaredConstructor().newInstance();
+                if (JavaPlugin.class.isAssignableFrom(clazz)) {
+                    Class<? extends JavaPlugin> clazz2 = (Class<? extends JavaPlugin>) clazz;
+                    return JavaPlugin.getPlugin(clazz2);
                 }
             }
         } catch (Exception e) {
