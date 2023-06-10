@@ -15,11 +15,16 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class PolymerCommand extends Command {
+    private final boolean forceReplace;
     public PolymerCommand(@Nonnull String name){
         this(name, new ArrayList<>());
     }
     public PolymerCommand(@Nonnull String name, List<String> aliases) {
+        this(name, aliases, false);
+    }
+    public PolymerCommand(@Nonnull String name, List<String> aliases, boolean forceReplace) {
         super(name);
+        this.forceReplace = forceReplace;
         if (requirePlugin() != null && !requirePlugin().isBlank()){
             if (Bukkit.getPluginManager().isPluginEnabled(requirePlugin())) putCommands(name, aliases);
         }else {
@@ -43,6 +48,11 @@ public abstract class PolymerCommand extends Command {
             //check conflicts
             if (cmdMap.getCommand(string) == null) {
                 cmdMap.getKnownCommands().put(string, this);
+            }else {
+                if (forceReplace) {
+                    cmdMap.getKnownCommands().remove(string);
+                    cmdMap.getKnownCommands().put(string, this);
+                }
             }
         }
     }
@@ -52,15 +62,9 @@ public abstract class PolymerCommand extends Command {
         return hasCustomPermission(cs,"command." + this.getName());
     }
     public boolean hasSubPermission(CommandSender cs,String... subs){
-        String perm = "mixtools.command." + this.getName();
-        List<String> subList = Arrays.stream(subs).toList();
-        for (String sub : subList){
-            if (!(subList.size() - 1 == subList.indexOf(sub))){
-                perm = perm.concat(".");
-            }
-            perm = perm.concat(sub);
-        }
-        return hasCustomPermission(cs, perm);
+        List<String> subList = Arrays.asList(subs);
+        subList.add("command");
+        return hasCustomPermission(cs, String.join(".", subList));
     }
     public boolean hasCustomPermission(CommandSender cs,String perm){
         if (!cs.hasPermission("mixtools."+perm)){

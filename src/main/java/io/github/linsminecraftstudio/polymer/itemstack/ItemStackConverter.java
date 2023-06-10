@@ -3,6 +3,8 @@ package io.github.linsminecraftstudio.polymer.itemstack;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.github.linsminecraftstudio.polymer.utils.ComponentConverter;
 import io.github.linsminecraftstudio.polymer.utils.ListUtil;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -30,7 +32,7 @@ public final class ItemStackConverter {
             builder.amount(section.getInt("amount", 1));
         }
         if (section.contains("displayname")) {
-            builder.name(ComponentConverter.toSimpleTextComponent(section.getString("displayname", "")));
+            builder.name(ComponentConverter.toComponent(section.getString("displayname", "")));
         }
         if (section.contains("lore")) {
             builder.lore(ListUtil.stringListToComponentList(section.getStringList("lore")));
@@ -83,8 +85,9 @@ public final class ItemStackConverter {
         map.put("material", item.getType().toString());
         map.put("amount", item.getAmount());
         if(meta != null){
-            if(meta.hasDisplayName()){
-                map.put("displayname", ComponentConverter.toSimpleText(meta.displayName()));
+            Component displayName = meta.displayName();
+            if(displayName != null){
+                map.put("displayname", MiniMessage.miniMessage().serialize(displayName));
             }
             if(meta.hasLore()){
                 map.put("lore", ListUtil.componentListToStringList(meta.lore()));
@@ -114,6 +117,11 @@ public final class ItemStackConverter {
         return map;
     }
 
+    /**
+     * Check the given stack has nbt or not
+     * @param stack the stack to check
+     * @return true if the stack has nbt or not
+     */
     public static boolean hasNBT(ItemStack stack){
         return new NBTItem(stack).hasNBTData();
     }

@@ -2,7 +2,6 @@ package io.github.linsminecraftstudio.polymer.objects;
 
 import io.github.linsminecraftstudio.polymer.utils.ComponentConverter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -40,8 +39,13 @@ public class PolymerMessageHandler {
         message = YamlConfiguration.loadConfiguration(file);
     }
 
+    /**
+     * Get message
+     * @param node the node
+     * @return the message
+     */
     public String get(String node){
-        return message.getString(node,"&4Get message '"+node+"' failed, maybe it's not exists.");
+        return message.getString(node,"§4Get message '"+node+"' failed, maybe it's not exists.");
     }
 
     public Component getColored(String node, Object... args){
@@ -49,12 +53,24 @@ public class PolymerMessageHandler {
         } catch (Exception e) {return colorize(get(node));}
     }
 
+    /**
+     * Obtain color messages and format them with messages.
+     * You can see {@link #getMessageObjects(String...)} for how to get message objects.
+     * @param node the node
+     * @param keys message nodes
+     * @return the message
+     */
     public Component getColoredReplaceToOtherMessages(String node, String... keys){
-        try {return colorize(String.format(get(node), getStrMessagesObj(keys)));
+        try {return colorize(String.format(get(node), getMessageObjects(keys)));
         } catch (Exception e) {return colorize(get(node));}
     }
 
-    public Object[] getStrMessagesObj(String... keys){
+    /**
+     * Get messages and convert them to {@link Object} array.
+     * @param keys message nodes
+     * @return the message objects
+     */
+    public Object[] getMessageObjects(String... keys){
         Object[] s = new Object[keys.length];
         for (int i = 0; i < keys.length; i++) {
             s[i] = getColored(keys[i]);
@@ -101,16 +117,12 @@ public class PolymerMessageHandler {
         return ComponentConverter.toComponent(string);
     }
 
-    public Component colorize(Component component){
-        return colorize(MiniMessage.miniMessage().serialize(component));
-    }
-
     /**
-     * For color legacy colors to color
-     * @param string The string to color
-     * @return colored string
+     * For replace legacy color chars to color
+     * @param string The string to colorize
+     * @return colorized string
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public String legacyColorize(String string) {
         Pattern pattern = Pattern.compile("&#[a-fA-F0-9]{6}");
         for (Matcher matcher = pattern.matcher(string); matcher.find(); matcher = pattern.matcher(string)) {
