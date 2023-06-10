@@ -18,7 +18,7 @@ public final class Polymer extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    public static void debug(String debugInfo) {
-        INSTANCE.getLogger().warning(debugInfo);
+    public static boolean isDebug() {
+        return INSTANCE.getConfig().getBoolean("debug", false);
     }
 }
