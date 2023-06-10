@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Used for creating item stacks
+ * Use to create and edit item stacks
  */
 public class ItemStackBuilder {
     private final NBTItem nbtItem;

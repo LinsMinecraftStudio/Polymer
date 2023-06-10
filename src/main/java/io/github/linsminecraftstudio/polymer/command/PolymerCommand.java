@@ -4,7 +4,6 @@ import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,16 +13,11 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 public abstract class PolymerCommand extends Command {
-    private final boolean forceReplace;
     public PolymerCommand(@Nonnull String name){
         this(name, new ArrayList<>());
     }
     public PolymerCommand(@Nonnull String name, List<String> aliases) {
-        this(name, aliases, false);
-    }
-    public PolymerCommand(@Nonnull String name, List<String> aliases, boolean forceReplace) {
         super(name);
-        this.forceReplace = forceReplace;
         try {
             if (requirePlugin() != null && !requirePlugin().isBlank()) {
                 if (Bukkit.getPluginManager().isPluginEnabled(requirePlugin())) putCommand(name, aliases);
@@ -34,12 +28,7 @@ public abstract class PolymerCommand extends Command {
             e.printStackTrace();
         }
     }
-
-    /**
-     * These fuck command exceptions make me fidgety
-     */
     private void putCommand(String name, List<String> aliases) {
-        CommandMap cmdMap = Bukkit.getCommandMap();
         JavaPlugin plugin = OtherUtils.findPlugin();
         List<String> editableAliases = new ArrayList<>(aliases);
         if (plugin != null) {
@@ -56,14 +45,6 @@ public abstract class PolymerCommand extends Command {
             }
         }
         this.setAliases(editableAliases);
-        if (cmdMap.getCommand(name) != null) {
-            if (forceReplace){
-                cmdMap.getKnownCommands().remove(name);
-                cmdMap.register(name, this);
-            }
-        }else {
-            cmdMap.register(name, this);
-        }
     }
     public abstract String requirePlugin();
     public abstract void sendMessage(CommandSender sender, String message, Object... args);
