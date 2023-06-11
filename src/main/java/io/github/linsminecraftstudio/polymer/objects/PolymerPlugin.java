@@ -1,5 +1,6 @@
 package io.github.linsminecraftstudio.polymer.objects;
 
+import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
 import io.github.linsminecraftstudio.polymer.utils.FileUtils;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
@@ -25,10 +26,20 @@ public abstract class PolymerPlugin extends JavaPlugin {
         }
         onPluginEnable();
         for (PolymerCommand command : registerCommands()) {
-            if (Bukkit.getCommandMap().getCommand(command.getLabel()) != null) {
-                Bukkit.getCommandMap().getKnownCommands().remove(command.getLabel());
+            if (command.requirePlugin() != null && !command.requirePlugin().isBlank()) {
+                if (Bukkit.getPluginManager().isPluginEnabled(command.requirePlugin())){
+                    if (Polymer.isDebug()) Polymer.INSTANCE.getLogger().warning("Registering command: "+command.getLabel()+
+                            ", plugin: " + getPluginMeta().getName());
+                    Bukkit.getCommandMap().register(getPluginMeta().getName(), command);
+                }
+            }else {
+                if (Polymer.isDebug()) Polymer.INSTANCE.getLogger().warning("Registering command: "+command.getLabel()+
+                        ", plugin: " + getPluginMeta().getName());
+                if (Bukkit.getCommandMap().getCommand(command.getLabel()) != null) {
+                    Bukkit.getCommandMap().getKnownCommands().remove(command.getLabel());
+                }
+                Bukkit.getCommandMap().register(getPluginMeta().getName(), command);
             }
-            Bukkit.getCommandMap().register(getPluginMeta().getName(), command);
         }
     }
 

@@ -1,6 +1,5 @@
 package io.github.linsminecraftstudio.polymer.command;
 
-import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -10,41 +9,33 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public abstract class PolymerCommand extends Command {
     public PolymerCommand(@Nonnull String name){
         this(name, new ArrayList<>());
     }
     public PolymerCommand(@Nonnull String name, List<String> aliases) {
-        super(name);
+        super(name, null, null, new ArrayList<>(aliases));
         try {
-            if (requirePlugin() != null && !requirePlugin().isBlank()) {
-                if (Bukkit.getPluginManager().isPluginEnabled(requirePlugin())) putCommand(name, aliases);
-            } else {
-                putCommand(name, aliases);
-            }
+            setCMDDescription();
         }catch (Exception e) {
             e.printStackTrace();
         }
     }
-    private void putCommand(String name, List<String> aliases) {
+
+    /**
+     * Gets description for this command
+     */
+    private void setCMDDescription() {
         JavaPlugin plugin = OtherUtils.findPlugin();
-        List<String> editableAliases = new ArrayList<>(aliases);
         if (plugin != null) {
-            if (Polymer.isDebug()) {
-                Polymer.INSTANCE.getLogger().warning("Registering command: "+name+
-                        " , plugin: " + plugin.getPluginMeta().getName());
-            }
-            Map<String,Object> descriptionObject = plugin.getDescription().getCommands().get(name);
+            Map<String,Object> descriptionObject = plugin.getDescription().getCommands().get(this.getName());
             Object descriptionObject2 = descriptionObject != null ? descriptionObject.get("description") : null;
             this.description = descriptionObject2 != null ? descriptionObject.toString() : "No descriptions available";
-            String pluginName = plugin.getPluginMeta().getName().toLowerCase(Locale.ENGLISH);
-            for (String string : aliases){
-                editableAliases.add(pluginName+":"+string);
-            }
         }
-        this.setAliases(editableAliases);
     }
     public abstract String requirePlugin();
     public abstract void sendMessage(CommandSender sender, String message, Object... args);
@@ -52,12 +43,13 @@ public abstract class PolymerCommand extends Command {
         return hasCustomPermission(cs,"command." + this.getName());
     }
     public boolean hasSubPermission(CommandSender cs,String... subs){
-        List<String> subList = Arrays.asList(subs);
+        List<String> subList = new ArrayList<>(List.of(subs));
         subList.add(0, "command");
         subList.add(1, this.getName());
         return hasCustomPermission(cs, String.join(".", subList));
     }
     public boolean hasCustomPermission(CommandSender cs,String perm){
+        if (cs == null) return true;
         if (!cs.hasPermission("mixtools."+perm)){
             sendMessage(cs,"Command.NoPermission");
             return false;

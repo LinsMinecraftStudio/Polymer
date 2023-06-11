@@ -73,7 +73,7 @@ public class PolymerMessageHandler {
     public Object[] getMessageObjects(String... keys){
         Object[] s = new Object[keys.length];
         for (int i = 0; i < keys.length; i++) {
-            s[i] = getColored(keys[i]);
+            s[i] = get(keys[i]);
         }
         return s;
     }
