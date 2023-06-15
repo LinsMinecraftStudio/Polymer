@@ -1,5 +1,6 @@
 package io.github.linsminecraftstudio.polymer.utils;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -7,9 +8,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -21,6 +20,16 @@ public final class FileUtils {
      * @param resourceFile the resource file you want to complete
      */
     public static void completeFile(Plugin plugin,String resourceFile){
+        completeFile(plugin,resourceFile,new ArrayList<>());
+    }
+
+    /**
+     * Complete configuration(key and value, comments, etc)
+     * @param plugin plugin instance
+     * @param resourceFile the resource file you want to complete
+     * @param notNeedToComplete the keys that are not needed to complete
+     */
+    public static void completeFile(Plugin plugin,String resourceFile,List<String> notNeedToComplete){
         InputStream stream = plugin.getResource(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);
         if (!file.exists()){
@@ -41,6 +50,7 @@ public final class FileUtils {
             YamlConfiguration configuration2 = new YamlConfiguration();
             configuration2.load(file);
             Set<String> keys = configuration.getKeys(true);
+            KeyCheck:
             for (String key : keys) {
                 Object value = configuration.get(key);
                 if (value instanceof List<?>) {
@@ -48,6 +58,26 @@ public final class FileUtils {
                     if (list2 == null) {
                         configuration2.set(key, value);
                         continue;
+                    }
+                }
+                NotNeedToComplete:
+                for (String str : notNeedToComplete) {
+                    List<String> strings = Arrays.stream(key.split("\\.")).toList();
+                    for (String s : strings) {
+                        if (s.equals(str)) {
+                            // check subs
+                            int index = strings.indexOf(str);
+                            if (index != -1) {
+                                ConfigurationSection section = configuration2.createSection(key);
+                                if (section.getKeys(false).size()==0){
+                                    ConfigurationSection section1 = configuration.getConfigurationSection(key);
+                                    if (section1 == null) continue KeyCheck;
+                                    String str1 = section1.getKeys(false).stream().toList().get(0);
+                                    if (str1 == null) continue NotNeedToComplete;
+                                    section.set(key, str1);
+                                }
+                            }
+                        }
                     }
                 }
                 if (!configuration2.contains(key)) {

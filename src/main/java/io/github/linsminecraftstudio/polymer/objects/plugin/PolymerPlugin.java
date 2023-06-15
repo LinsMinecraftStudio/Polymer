@@ -1,4 +1,4 @@
-package io.github.linsminecraftstudio.polymer.objects;
+package io.github.linsminecraftstudio.polymer.objects.plugin;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
@@ -42,7 +42,6 @@ public abstract class PolymerPlugin extends JavaPlugin {
             }
         }
     }
-
     @Override
     public void onDisable() {
         onPluginDisable();

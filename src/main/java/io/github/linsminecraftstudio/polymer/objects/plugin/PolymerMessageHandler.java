@@ -1,5 +1,6 @@
-package io.github.linsminecraftstudio.polymer.objects;
+package io.github.linsminecraftstudio.polymer.objects.plugin;
 
+import io.github.linsminecraftstudio.polymer.objects.ArgumentReplacement;
 import io.github.linsminecraftstudio.polymer.utils.ComponentConverter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -123,7 +124,7 @@ public class PolymerMessageHandler {
      * @return colorized string
      */
     @Deprecated(forRemoval = true)
-    public String legacyColorize(String string) {
+    public static String legacyColorize(String string) {
         Pattern pattern = Pattern.compile("&#[a-fA-F0-9]{6}");
         for (Matcher matcher = pattern.matcher(string); matcher.find(); matcher = pattern.matcher(string)) {
             String str = string.substring(matcher.start(), matcher.end());
