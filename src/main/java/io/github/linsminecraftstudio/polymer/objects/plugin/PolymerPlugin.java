@@ -16,12 +16,12 @@ import java.util.logging.Level;
 public abstract class PolymerPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
-        if (requireVersion() > OtherUtils.getPolymerVersionWorth()) {
+        if (OtherUtils.isPolymerVersionAtLeast(requireVersion())) {
             getLogger().log(Level.SEVERE, """
-                    Plugin %1$s requires Polymer version %2$d.
-                    But the version is %3$d instead.
+                    Plugin %1$s requires Polymer version %2$s.
+                    But the version is %3$s instead.
                     It will disable automatically.
-                    """.formatted(getPluginMeta().getName(), requireVersion(), OtherUtils.getPolymerVersionWorth()));
+                    """.formatted(getPluginMeta().getName(), requireVersion(), Polymer.INSTANCE.getPluginMeta().getVersion()));
             Bukkit.getPluginManager().disablePlugin(this);
         }
         onPluginEnable();
@@ -50,7 +50,7 @@ public abstract class PolymerPlugin extends JavaPlugin {
     public abstract void onPluginEnable();
     public void onPluginDisable(){}
     public abstract List<PolymerCommand> registerCommands();
-    public abstract int requireVersion();
+    public abstract String requireVersion();
     protected void completeDefaultConfig(){
         FileUtils.completeFile(this, "config.yml");
     }

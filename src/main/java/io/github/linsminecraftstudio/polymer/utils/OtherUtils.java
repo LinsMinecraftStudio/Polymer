@@ -11,10 +11,12 @@ import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 
 public class OtherUtils {
-    public static int getPolymerVersionWorth(){
-        String version = Polymer.INSTANCE.getPluginMeta().getVersion().replaceAll("\\.", "")
-                .replaceAll("-SNAPSHOT", "");
-        return Integer.parseInt(version);
+    public static boolean isPolymerVersionAtLeast(String version){
+        return isPolymerVersionAtLeast(Integer.parseInt(version.split("\\.")[0]), Integer.parseInt(version.split("\\.")[1]), Integer.parseInt(version.split("\\.")[2]));
+    }
+    public static boolean isPolymerVersionAtLeast(int major, int minor, int p){
+        String version = Polymer.INSTANCE.getPluginMeta().getVersion().replace("-SNAPSHOT","");
+        return Integer.parseInt(version.split("\\.")[0]) >= major && Integer.parseInt(version.split("\\.")[1]) >= minor && Integer.parseInt(version.split("\\.")[2]) >= p;
     }
     public static boolean isVersionAtLeast(int minor){
         String version = Bukkit.getMinecraftVersion().split("\\.")[1];
