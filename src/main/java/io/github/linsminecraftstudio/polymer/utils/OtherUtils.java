@@ -12,7 +12,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class OtherUtils {
     public static boolean isPolymerVersionAtLeast(String version){
-        return isPolymerVersionAtLeast(Integer.parseInt(version.split("\\.")[0]), Integer.parseInt(version.split("\\.")[1]), Integer.parseInt(version.split("\\.")[2]));
+        String[] split = version.split("\\.");
+        return isPolymerVersionAtLeast(Integer.parseInt(split[0]), Integer.parseInt(split[1]), split.length == 2 ? 0 : Integer.parseInt(split[2]));
     }
     public static boolean isPolymerVersionAtLeast(int major, int minor, int p){
         String version = Polymer.INSTANCE.getPluginMeta().getVersion().replace("-SNAPSHOT","");
