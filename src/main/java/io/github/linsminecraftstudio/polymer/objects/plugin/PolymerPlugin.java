@@ -16,13 +16,14 @@ import java.util.logging.Level;
 public abstract class PolymerPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
-        if (OtherUtils.isPolymerVersionAtLeast(requireVersion())) {
+        if (!OtherUtils.isPolymerVersionAtLeast(requireVersion())) {
             getLogger().log(Level.SEVERE, """
                     Plugin %1$s requires Polymer version %2$s.
                     But the version is %3$s instead.
                     It will disable automatically.
                     """.formatted(getPluginMeta().getName(), requireVersion(), Polymer.INSTANCE.getPluginMeta().getVersion()));
             Bukkit.getPluginManager().disablePlugin(this);
+            return;
         }
         onPluginEnable();
         for (PolymerCommand command : registerCommands()) {
