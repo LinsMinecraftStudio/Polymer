@@ -1,5 +1,6 @@
 package io.github.linsminecraftstudio.polymer.command;
 
+import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -9,18 +10,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class PolymerCommand extends Command {
     public PolymerCommand(@Nonnull String name){
         this(name, new ArrayList<>());
     }
     public PolymerCommand(@Nonnull String name, List<String> aliases) {
-        super(name, null, null, new ArrayList<>(aliases));
+        super(name, null, null, new ArrayList<>());
         try {
-            setCMDDescription();
+            autoSetCMDInfo(aliases);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -29,12 +28,21 @@ public abstract class PolymerCommand extends Command {
     /**
      * Gets description for this command
      */
-    private void setCMDDescription() {
+    private void autoSetCMDInfo(List<String> defAliases) {
         JavaPlugin plugin = OtherUtils.findPlugin();
         if (plugin != null) {
-            Map<String,Object> descriptionObject = plugin.getDescription().getCommands().get(this.getName());
-            Object descriptionObject2 = descriptionObject != null ? descriptionObject.get("description") : null;
-            this.description = descriptionObject2 != null ? descriptionObject.toString() : "No descriptions available";
+            Map<String,Object> commandObject = plugin.getDescription().getCommands().get(this.getName());
+            if (commandObject != null) {
+                Object descriptionObject = commandObject.get("description");
+                Object aliasesObject = commandObject.get("aliases");
+                this.description = descriptionObject != null ? descriptionObject.toString() : "No descriptions available";
+                if (aliasesObject.getClass().isArray()) {
+                    List<String> list = Arrays.stream((Object[])aliasesObject).map(String::valueOf).toList();
+                    this.setAliases(list);
+                } else {
+                    this.setAliases(defAliases);
+                }
+            }
         }
     }
     public abstract String requirePlugin();
@@ -51,7 +59,7 @@ public abstract class PolymerCommand extends Command {
     public boolean hasCustomPermission(CommandSender cs,String perm){
         if (cs == null) return true;
         if (!cs.hasPermission("mixtools."+perm)){
-            sendMessage(cs,"Command.NoPermission");
+            Polymer.messageHandler.sendMessage(cs,"Command.NoPermission");
             return false;
         }
         return true;
@@ -60,7 +68,7 @@ public abstract class PolymerCommand extends Command {
         if (cs instanceof Player p){
             return p;
         }else {
-            sendMessage(cs,"Command.RunAsConsole");
+            Polymer.messageHandler.sendMessage(cs,"Command.RunAsConsole");
             return null;
         }
     }
@@ -68,7 +76,7 @@ public abstract class PolymerCommand extends Command {
     public Player findPlayer(CommandSender from,String name){
         Player p = Bukkit.getPlayer(name);
         if (p == null){
-            sendMessage(from, "Command.PlayerNotFound");
+            Polymer.messageHandler.sendMessage(from, "Command.PlayerNotFound");
         }
         return p;
     }
@@ -77,12 +85,12 @@ public abstract class PolymerCommand extends Command {
         try {
             int i = Integer.parseInt(s);
             if (i < 1){
-                sendMessage(cs,"Value.TooLow",position);
+                Polymer.messageHandler.sendMessage(cs, "");
                 return -100;
             }
             return i;
         }catch (NumberFormatException e){
-            sendMessage(cs,"Value.NotInt",position);
+            Polymer.messageHandler.sendMessage(cs,"Value.NotInt",position);
             return -100;
         }
     }
@@ -91,12 +99,12 @@ public abstract class PolymerCommand extends Command {
         try {
             double d = Double.parseDouble(s);
             if (d < 0.01){
-                sendMessage(cs,"Value.TooLow",position);
+                Polymer.messageHandler.sendMessage(cs,"Value.TooLow",position);
                 return -100;
             }
             return d;
         }catch (NumberFormatException e){
-            sendMessage(cs,"Value.NotDouble",position);
+            Polymer.messageHandler.sendMessage(cs,"Value.NotDouble",position);
             return -100;
         }
     }

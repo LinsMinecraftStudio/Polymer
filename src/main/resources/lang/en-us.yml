@@ -1,0 +1,15 @@
+Command:
+  NoPermission: "&4You don't have permission to do that!"
+  RunAsConsole: "&4Please don't use the console to execute this command!"
+  ArgError: "&4Insufficient arguments or too many arguments, or incorrect input of command arguments!"
+  PlayerNotFound: "&4That player is not found..."
+Value:
+  NoMatchRegex: "&4Argument %d does not conform to regular expression."
+  NoMatchNameRegex: "&4Your Minecraft name does not meet the requirements."
+  NotDouble: "&4Argument %d is not a double."
+  NotFloat: "&4Argument %d is not a float."
+  NotBool: "&4Argument %d is not a boolean."
+  NotInt: "&4Argument %d is not an integer."
+  NotLong: "&4Argument %d is not a long."
+  TooHigh: "&4The value of parameter %d is too high."
+  TooLow: "&4The value of parameter %d is too low."

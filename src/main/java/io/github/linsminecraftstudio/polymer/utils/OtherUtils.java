@@ -19,9 +19,10 @@ public class OtherUtils {
         String version = Polymer.INSTANCE.getPluginMeta().getVersion().replace("-SNAPSHOT","");
         return Integer.parseInt(version.split("\\.")[0]) >= major && Integer.parseInt(version.split("\\.")[1]) >= minor && Integer.parseInt(version.split("\\.")[2]) >= p;
     }
-    public static boolean isVersionAtLeast(int minor){
-        String version = Bukkit.getMinecraftVersion().split("\\.")[1];
-        return Integer.parseInt(version) >= minor;
+    public static boolean isMinecraftVersionAtLeast(int minor, int patch){
+        String[] version = Bukkit.getMinecraftVersion().split("\\.");
+        int p = version.length == 1 ? 0 : Integer.parseInt(version[1]);
+        return Integer.parseInt(version[0]) >= minor & p >= patch;
     }
 
     public static String getPluginLatestVersion(String resourceID) {

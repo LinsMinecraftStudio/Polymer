@@ -1,0 +1,15 @@
+Command:
+  NoPermission: "&4你没有权限去这样做！"
+  RunAsConsole: "&4请不要用控制台执行此指令！"
+  ArgError: "&4参数不足或者可能为参数过多，或指令参数输入不正确！"
+  PlayerNotFound: "&4那个玩家未找到。。。"
+Value:
+  NoMatchRegex: "&4参数%d不匹配正则表达式。"
+  NoMatchNameRegex: "&4你的Minecraft名称不符合要求。"
+  NotDouble: "&4参数%d不是一个双精度浮点数。"
+  NotFloat: "&4参数%d不是一个浮点数。"
+  NotBool: "&4参数%d不是一个布尔值。"
+  NotInt: "&4参数%d不是一个整数。"
+  NotLong: "&4参数%d不是一个长整型数。"
+  TooHigh: "&4参数%d的值太高。"
+  TooLow: "&4参数%d的值太低。"
