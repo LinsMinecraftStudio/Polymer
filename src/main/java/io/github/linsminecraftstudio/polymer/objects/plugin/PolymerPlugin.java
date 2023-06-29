@@ -17,7 +17,7 @@ public abstract class PolymerPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         if (!OtherUtils.isPolymerVersionAtLeast(requireVersion())) {
-            getLogger().log(Level.SEVERE, """
+            Polymer.INSTANCE.getLogger().log(Level.SEVERE, """
                     Plugin %1$s requires Polymer version %2$s.
                     But the version is %3$s instead.
                     It will disable automatically.
@@ -25,7 +25,7 @@ public abstract class PolymerPlugin extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-        onPluginEnable();
+        onEnable();
         for (PolymerCommand command : registerCommands()) {
             if (command.requirePlugin() != null && !command.requirePlugin().isBlank()) {
                 if (Bukkit.getPluginManager().isPluginEnabled(command.requirePlugin())){
@@ -45,13 +45,31 @@ public abstract class PolymerPlugin extends JavaPlugin {
     }
     @Override
     public void onDisable() {
-        onPluginDisable();
-        getLogger().info("Disabled plugin "+getPluginMeta().getName());
+        Polymer.INSTANCE.getLogger().info("Disabled plugin "+getPluginMeta().getName());
     }
-    public abstract void onPluginEnable();
-    public void onPluginDisable(){}
     public abstract List<PolymerCommand> registerCommands();
     public abstract String requireVersion();
+    public void suggestPaper(){
+        if (!Polymer.isPaper()) {
+            getLogger().log(Level.WARNING,"""
+                    ============================================================
+                     {} works better if you use Paper as your server software.
+                     
+                     Paper offers significant performance improvements,
+                     bug fixes, security enhancements and optional
+                     features for server owners to enhance their server.
+                     
+                     Paper includes Timings v2, which is significantly
+                     better at diagnosing lag problems over v1.
+                     
+                     All of your plugins should still work, and the
+                     Paper community will gladly help you fix any issues.
+                     
+                     Join the Paper Community @ https://papermc.io
+                    ============================================================
+                    """, getPluginMeta().getName());
+        }
+    }
     protected void completeDefaultConfig(){
         FileUtils.completeFile(this, "config.yml");
     }

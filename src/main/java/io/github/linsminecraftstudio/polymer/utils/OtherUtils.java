@@ -7,7 +7,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 

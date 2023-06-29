@@ -1,4 +1,4 @@
-package io.github.linsminecraftstudio.polymer.objects.plugin;
+package io.github.linsminecraftstudio.polymer.objects.plugin.message;
 
 import io.github.linsminecraftstudio.polymer.objects.ArgumentReplacement;
 import io.github.linsminecraftstudio.polymer.utils.ComponentConverter;
@@ -12,21 +12,25 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 /**
- * A message handler that handles messages from language files
+ * A message handler that handles messages from language files.
+ * Ensure that this is a Paper server or the MinieMessage library is loaded before use, otherwise it will throw a {@link ClassNotFoundException}.
  */
 public class PolymerMessageHandler {
     private final YamlConfiguration message;
 
+    public PolymerMessageHandler(Plugin plugin){
+        this(plugin, "en-us");
+    }
     /**
      * Creates a new message handler
      * @param plugin need the plugin to read language files from plugin data folder
+     * @param defLangName the name of the default language(Usually English is used as the default language)
      */
-    public PolymerMessageHandler(Plugin plugin){
-        String language = plugin.getConfig().getString("language","en-us");
+    public PolymerMessageHandler(Plugin plugin, String defLangName){
+        String language = plugin.getConfig().getString("language",defLangName);
         String fileName = "lang/"+language.toLowerCase()+".yml";
         File file = new File(plugin.getDataFolder(),fileName);
         if (!file.exists()) {
@@ -34,7 +38,7 @@ public class PolymerMessageHandler {
             if (is != null) {
                 plugin.saveResource(fileName,false);
             }else {
-                file = new File(plugin.getDataFolder(),"lang/en-us.yml");
+                file = new File(plugin.getDataFolder(),"lang/"+defLangName+".yml");
             }
         }
         message = YamlConfiguration.loadConfiguration(file);
@@ -52,6 +56,14 @@ public class PolymerMessageHandler {
     public Component getColored(String node, Object... args){
         try {return colorize(String.format(get(node),args));
         } catch (Exception e) {return colorize(get(node));}
+    }
+
+    public Component getColored(String node, char replacementChar, Map<String, Object> argMap){
+        String original = get(node);
+        for (Map.Entry<String, Object> entry : argMap.entrySet()) {
+            original = original.replaceAll(replacementChar+entry.getKey()+replacementChar, (String) entry.getValue());
+        }
+        return colorize(original);
     }
 
     /**
@@ -116,22 +128,5 @@ public class PolymerMessageHandler {
 
     public Component colorize(String string) {
         return ComponentConverter.toComponent(string);
-    }
-
-    /**
-     * For replace legacy color chars to color
-     * @param string The string to colorize
-     * @return colorized string
-     */
-    @Deprecated(forRemoval = true)
-    public static String legacyColorize(String string) {
-        Pattern pattern = Pattern.compile("&#[a-fA-F0-9]{6}");
-        for (Matcher matcher = pattern.matcher(string); matcher.find(); matcher = pattern.matcher(string)) {
-            String str = string.substring(matcher.start(), matcher.end());
-            String color = str.replace("&","");
-            string = string.replace(str, net.md_5.bungee.api.ChatColor.of(color)+"");
-        }
-        string = org.bukkit.ChatColor.translateAlternateColorCodes('&', string);
-        return string;
     }
 }

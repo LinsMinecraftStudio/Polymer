@@ -4,6 +4,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
+/**
+ * Ensure that this is a Paper server or the MinieMessage library is loaded before use, otherwise it will throw a {@link ClassNotFoundException}.
+ */
 public class ComponentConverter {
     public static String replaceLegacyColorsToMiniMessageFormat(String text){
         MiniMessage miniMessage = MiniMessage.miniMessage();
