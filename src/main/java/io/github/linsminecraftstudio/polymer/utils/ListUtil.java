@@ -3,6 +3,8 @@ package io.github.linsminecraftstudio.polymer.utils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,11 +18,28 @@ public final class ListUtil {
      * @return the object that matches the given filter or null
      * @param <T> type
      */
-    public static <T> Optional<T> listGetIf(Iterable<T> iterable, Predicate<T> filter){
+    @ParametersAreNonnullByDefault
+    public static <T> Optional<T> getIf(Iterable<T> iterable, Predicate<T> filter){
         for (T item : iterable){
             if (filter.test(item)) return Optional.of(item);
         }
         return Optional.empty();
+    }
+
+    @Nonnull
+    @ParametersAreNonnullByDefault
+    public static <T> T getIfOrElse(Iterable<T> iterable, Predicate<T> filter, T def){
+        return getIf(iterable, filter).orElse(def);
+    }
+
+    @Nonnull
+    @ParametersAreNonnullByDefault
+    public static <T> List<T> getAllMatches(Iterable<T> iterable, Predicate<T> filter){
+        List<T> tList = new ArrayList<>();
+        for (T item : iterable){
+            if (filter.test(item)) tList.add(item);
+        }
+        return tList;
     }
 
     /**
@@ -28,15 +47,10 @@ public final class ListUtil {
      * @param stringList the strings you want to convert
      * @return the components
      */
+    @Nonnull
     public static List<Component> stringListToComponentList(List<String> stringList){
-        if (stringList == null) return new ArrayList<>();
-        if (stringList.isEmpty()) return new ArrayList<>();
-        List<Component> components = new ArrayList<>();
-        for (String string : stringList) {
-            if (string == null || string.isBlank()) continue;
-            components.add(MiniMessage.miniMessage().deserialize(string));
-        }
-        return components;
+        if (stringList == null || stringList.isEmpty()) return new ArrayList<>();
+        return stringList.stream().map(ComponentConverter::toComponent).toList();
     }
 
     /**
@@ -44,14 +58,9 @@ public final class ListUtil {
      * @param componentList the components you want to convert
      * @return the strings
      */
+    @Nonnull
     public static List<String> componentListToStringList(List<Component> componentList){
-        if (componentList == null) return new ArrayList<>();
-        if (componentList.isEmpty()) return new ArrayList<>();
-        List<String> components = new ArrayList<>();
-        for (Component component : componentList) {
-            if (component == null) continue;
-            components.add(MiniMessage.miniMessage().serialize(component));
-        }
-        return components;
+        if (componentList == null || componentList.isEmpty()) return new ArrayList<>();
+        return componentList.stream().map(MiniMessage.miniMessage()::serialize).toList();
     }
 }

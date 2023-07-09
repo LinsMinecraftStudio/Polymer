@@ -4,14 +4,13 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 
 public final class FileUtils {
     /**
@@ -19,6 +18,7 @@ public final class FileUtils {
      * @param plugin plugin instance
      * @param resourceFile the resource file you want to complete
      */
+    @ParametersAreNonnullByDefault
     public static void completeFile(Plugin plugin,String resourceFile){
         completeFile(plugin,resourceFile,new ArrayList<>());
     }
@@ -29,6 +29,7 @@ public final class FileUtils {
      * @param resourceFile the resource file you want to complete
      * @param notNeedToComplete the keys that are not needed to complete
      */
+    @ParametersAreNonnullByDefault
     public static void completeFile(Plugin plugin,String resourceFile,List<String> notNeedToComplete){
         InputStream stream = plugin.getResource(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);
@@ -99,11 +100,13 @@ public final class FileUtils {
      * @param plugin plugin instance
      * @param resourceFile the language file you want to complete
      */
+    @ParametersAreNonnullByDefault
     public static void completeLangFile(Plugin plugin, String resourceFile){
         InputStream stream = plugin.getResource(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);
+
         if (!file.exists()){
-            if (stream!=null) {
+            if (stream != null) {
                 plugin.saveResource(resourceFile,false);
                 return;
             }
@@ -113,6 +116,7 @@ public final class FileUtils {
             plugin.getLogger().warning("File completion of '"+resourceFile+"' is failed.");
             return;
         }
+
         try {File temp = File.createTempFile(resourceFile+"_temp","yml");
             Files.copy(stream, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
             YamlConfiguration configuration = new YamlConfiguration();
@@ -162,22 +166,26 @@ public final class FileUtils {
 
             File[] files = dirFile.listFiles();
 
-
-            for (int i = 0; i < Objects.requireNonNull(files).length; i++) {
-                if (files[i].isFile()) {
-                    flag = deleteFile(files[i]);
+            for (File file : Objects.requireNonNull(files)) {
+                if (file.isFile()) {
+                    flag = deleteFile(file);
                 } else {
-                    flag = deleteDir(files[i]);
+                    flag = deleteDir(file);
                 }
-                if (!flag) break;
+                if (!flag) {
+                    break;
+                }
             }
-            if (!flag) return false;
 
-            return dirFile.delete();
+            return flag && dirFile.delete();
         };
-        FutureTask<Boolean> future = new FutureTask<>(callable);
-        new Thread(future).start();
-        try {return future.get();
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<Boolean> future = executorService.submit(callable);
+        executorService.shutdown();
+
+        try {
+            return future.get();
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
@@ -192,9 +200,9 @@ public final class FileUtils {
         boolean flag = false;
 
         if (file.isFile() && file.exists()) {
-            file.delete();
-            flag = true;
+            flag = file.delete();
         }
+
         return flag;
     }
 }

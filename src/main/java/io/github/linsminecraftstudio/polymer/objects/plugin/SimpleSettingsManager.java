@@ -19,6 +19,7 @@ import java.util.UUID;
 
 public class SimpleSettingsManager {
     private final FileConfiguration configuration;
+
     public SimpleSettingsManager(@NotNull FileConfiguration configuration) {
         this.configuration = configuration;
     }
@@ -52,9 +53,9 @@ public class SimpleSettingsManager {
     public void set(String key, Object value){
         if (value instanceof Location){
             setLocation(key, (Location) value);
-        }else {
-            configuration.set(key, value);
+            return;
         }
+        configuration.set(key, value);
     }
     private void setLocation(String path, Location loc){
         if (loc == null){
@@ -63,7 +64,7 @@ public class SimpleSettingsManager {
         }
         ConfigurationSection cs = configuration.getConfigurationSection(path);
         if (cs == null){
-            cs = configuration.createSection("spawn");
+            cs = configuration.createSection(path);
         }
         cs.set("world", loc.getWorld());
         cs.set("x", loc.getX());
