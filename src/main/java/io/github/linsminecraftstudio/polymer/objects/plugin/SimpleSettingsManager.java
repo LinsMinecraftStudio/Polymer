@@ -2,7 +2,7 @@ package io.github.linsminecraftstudio.polymer.objects.plugin;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.objects.plugin.message.SpigotPolymerMessageHandler;
-import io.github.linsminecraftstudio.polymer.utils.ComponentConverter;
+import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -34,7 +34,7 @@ public class SimpleSettingsManager {
         return colorize ? SpigotPolymerMessageHandler.colorize(configuration.getString(key,"")) : getString(key);
     }
     public Component getComponent(String key, boolean colorize){
-        return colorize ? ComponentConverter.toComponent(getString(key)) : Component.text(getString(key));
+        return colorize ? ObjectConverter.toComponent(getString(key)) : Component.text(getString(key));
     }
     public boolean getBoolean(String key){
         return configuration.getBoolean(key);

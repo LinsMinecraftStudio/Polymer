@@ -1,7 +1,7 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin.message;
 
 import io.github.linsminecraftstudio.polymer.objects.ArgumentReplacement;
-import io.github.linsminecraftstudio.polymer.utils.ComponentConverter;
+import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -127,6 +127,6 @@ public class PolymerMessageHandler {
     }
 
     public Component colorize(String string) {
-        return ComponentConverter.toComponent(string);
+        return ObjectConverter.toComponent(string);
     }
 }

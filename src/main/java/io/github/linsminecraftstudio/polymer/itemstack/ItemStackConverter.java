@@ -1,7 +1,7 @@
 package io.github.linsminecraftstudio.polymer.itemstack;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import io.github.linsminecraftstudio.polymer.utils.ComponentConverter;
+import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import io.github.linsminecraftstudio.polymer.utils.ListUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -32,7 +32,7 @@ public final class ItemStackConverter {
             builder.amount(section.getInt("amount", 1));
         }
         if (section.contains("displayname")) {
-            builder.name(ComponentConverter.toComponent(section.getString("displayname", "")));
+            builder.name(ObjectConverter.toComponent(section.getString("displayname", "")));
         }
         if (section.contains("lore")) {
             builder.lore(ListUtil.stringListToComponentList(section.getStringList("lore")));

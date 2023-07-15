@@ -1,7 +1,7 @@
 package io.github.linsminecraftstudio.polymer.itemstack;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import io.github.linsminecraftstudio.polymer.utils.ComponentConverter;
+import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -75,7 +75,7 @@ public class ItemStackBuilder {
     }
 
     public void nameInConfig(Plugin plugin, String node){
-        itemMeta.displayName(ComponentConverter.toComponent(plugin.getConfig().getString(node,"")));
+        itemMeta.displayName(ObjectConverter.toComponent(plugin.getConfig().getString(node,"")));
     }
 
     public void nbt(String key, String value){

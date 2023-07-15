@@ -50,7 +50,7 @@ public final class ListUtil {
     @Nonnull
     public static List<Component> stringListToComponentList(List<String> stringList){
         if (stringList == null || stringList.isEmpty()) return new ArrayList<>();
-        return stringList.stream().map(ComponentConverter::toComponent).toList();
+        return stringList.stream().map(ObjectConverter::toComponent).toList();
     }
 
     /**
