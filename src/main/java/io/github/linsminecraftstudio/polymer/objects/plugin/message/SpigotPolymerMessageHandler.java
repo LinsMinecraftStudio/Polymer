@@ -1,10 +1,13 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin.message;
 
+import net.kyori.adventure.text.Component;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,5 +70,19 @@ public class SpigotPolymerMessageHandler {
         }
         string = org.bukkit.ChatColor.translateAlternateColorCodes('&', string);
         return string;
+    }
+
+    public void sendMessage(CommandSender cs, String node, Object... args){
+        if (!get(node).isBlank()) {
+            cs.sendMessage(getColored(node, args));
+        }
+    }
+
+    public void sendMessages(CommandSender cs, List<Component> list){
+        if (!list.isEmpty()){
+            for (Component msg : list){
+                cs.sendMessage(msg);
+            }
+        }
     }
 }

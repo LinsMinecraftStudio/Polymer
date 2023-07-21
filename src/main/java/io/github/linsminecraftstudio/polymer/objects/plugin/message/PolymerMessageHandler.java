@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * A message handler that handles messages from language files.
- * Ensure that this is a Paper server or the MinieMessage library is loaded before use, otherwise it will throw a {@link ClassNotFoundException}.
+ * Ensure that this is a Paper server or the MiniMessage library is loaded before use, otherwise it will throw a {@link ClassNotFoundException}.
  */
 public class PolymerMessageHandler {
     private final YamlConfiguration message;
@@ -91,17 +91,35 @@ public class PolymerMessageHandler {
         return s;
     }
 
-    public List<Component> getColoredMessagesParseVarPerLine(String node, ArgumentReplacement... replacement){
+    /**
+     * Get string list and parse var(per line)
+     * @param node key
+     * @param replacements the args you want to replace
+     * @return components
+     */
+    public List<Component> getColoredMessages(String node, ArgumentReplacement... replacements){
         List<String> s = message.getStringList(node);
         List<Component> new_s = new ArrayList<>();
-        for (int j = 0; j < replacement.length; j++) {
+        for (int j = 0; j < replacements.length; j++) {
             String st = s.get(j);
-            ArgumentReplacement arg = replacement[j];
+            ArgumentReplacement arg = replacements[j];
             if (!arg.isEmpty()) st = String.format(st, arg.args());
             Component st2 = colorize(st);
             new_s.add(st2);
         }
         return new_s;
+    }
+
+    public Component getColoredMessagesAsSingle(String node, ArgumentReplacement... replacements){
+        List<Component> components = getColoredMessages(node, replacements);
+        Component main = Component.empty();
+        for (Component c : components){
+            if (components.indexOf(c) != components.size() - 1) {
+                main = main.appendNewline();
+            }
+            main = main.append(c);
+        }
+        return main;
     }
 
     public void sendMessage(CommandSender cs,String node,Object... args){
