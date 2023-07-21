@@ -2,6 +2,7 @@ package io.github.linsminecraftstudio.polymer.utils;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.file.YamlConfigurationOptions;
 import org.bukkit.plugin.Plugin;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -86,6 +87,11 @@ public final class FileUtils {
                 }
                 if (!configuration.getComments(key).equals(configuration2.getComments(key))) {
                     configuration2.setComments(key, configuration.getComments(key));
+                }
+                YamlConfigurationOptions options1 = configuration.options();
+                YamlConfigurationOptions options2 = configuration2.options();
+                if (!options2.getHeader().equals(options1.getHeader())) {
+                    options2.setHeader(options1.getHeader());
                 }
             }
             configuration2.save(file);

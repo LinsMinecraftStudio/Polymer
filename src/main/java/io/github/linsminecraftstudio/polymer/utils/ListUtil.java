@@ -48,8 +48,8 @@ public final class ListUtil {
      * @return the components
      */
     @Nonnull
-    public static List<Component> stringListToComponentList(List<String> stringList){
-        if (stringList == null || stringList.isEmpty()) return new ArrayList<>();
+    public static List<Component> stringListToComponentList(@Nonnull List<String> stringList){
+        if (stringList.isEmpty()) return new ArrayList<>();
         return stringList.stream().map(ObjectConverter::toComponent).toList();
     }
 
@@ -59,8 +59,8 @@ public final class ListUtil {
      * @return the strings
      */
     @Nonnull
-    public static List<String> componentListToStringList(List<Component> componentList){
-        if (componentList == null || componentList.isEmpty()) return new ArrayList<>();
+    public static List<String> componentListToStringList(@Nonnull List<Component> componentList){
+        if (componentList.isEmpty()) return new ArrayList<>();
         return componentList.stream().map(MiniMessage.miniMessage()::serialize).toList();
     }
 }
