@@ -78,9 +78,9 @@ public class SpigotPolymerMessageHandler {
         }
     }
 
-    public void sendMessages(CommandSender cs, List<Component> list){
+    public void sendMessages(CommandSender cs, List<String> list){
         if (!list.isEmpty()){
-            for (Component msg : list){
+            for (String msg : list){
                 cs.sendMessage(msg);
             }
         }

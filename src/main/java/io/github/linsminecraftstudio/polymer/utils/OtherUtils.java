@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 
@@ -27,7 +28,7 @@ public class OtherUtils {
         return Integer.parseInt(version[1]) >= minor & p >= patch;
     }
 
-    public static String getPluginLatestVersion(String resourceID) {
+    public static Optional<String> getPluginLatestVersion(int resourceID) {
         CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
             try (InputStream stream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceID).openStream();
                  Scanner scanner = new Scanner(stream)) {
@@ -38,15 +39,15 @@ public class OtherUtils {
                 return builder.toString();
             } catch (IOException e) {
                 if (Polymer.isDebug()) e.printStackTrace();
-                return "";
+                return null;
             }
         });
         try {
-            return future.join();
+            return Optional.ofNullable(future.join());
         } catch (Exception e) {
             if (Polymer.isDebug()) e.printStackTrace();
+            return Optional.empty();
         }
-        return "";
     }
 
     public static JavaPlugin findPlugin(){
@@ -56,8 +57,7 @@ public class OtherUtils {
                 String className = stackTraceElement.getClassName();
                 Class<?> clazz = Class.forName(className);
                 if (JavaPlugin.class.isAssignableFrom(clazz)) {
-                    Class<? extends JavaPlugin> clazz2 = (Class<? extends JavaPlugin>) clazz;
-                    return JavaPlugin.getPlugin(clazz2);
+                    return JavaPlugin.getPlugin((Class<? extends JavaPlugin>) clazz);
                 }
             }
         } catch (Exception e) {

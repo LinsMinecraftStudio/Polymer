@@ -1,6 +1,6 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin.message;
 
-import io.github.linsminecraftstudio.polymer.objects.ArgumentReplacement;
+import io.github.linsminecraftstudio.polymer.objects.Arguments;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -92,17 +92,17 @@ public class PolymerMessageHandler {
     }
 
     /**
-     * Get string list and parse var(per line)
+     * Get string list and parse variables(per line)
      * @param node key
      * @param replacements the args you want to replace
      * @return components
      */
-    public List<Component> getColoredMessages(String node, ArgumentReplacement... replacements){
+    public List<Component> getColoredMessages(String node, Arguments... replacements){
         List<String> s = message.getStringList(node);
         List<Component> new_s = new ArrayList<>();
         for (int j = 0; j < replacements.length; j++) {
             String st = s.get(j);
-            ArgumentReplacement arg = replacements[j];
+            Arguments arg = replacements[j];
             if (!arg.isEmpty()) st = String.format(st, arg.args());
             Component st2 = colorize(st);
             new_s.add(st2);
@@ -110,7 +110,14 @@ public class PolymerMessageHandler {
         return new_s;
     }
 
-    public Component getColoredMessagesAsSingle(String node, ArgumentReplacement... replacements){
+    /**
+     * The function is the same as the {@link #getColoredMessages(String, Arguments...)} method,
+     * but this method concatenates all components into one component.
+     * @param node key
+     * @param replacements the args you want to replace
+     * @return a single component
+     */
+    public Component getColoredMessagesAsSingle(String node, Arguments... replacements){
         List<Component> components = getColoredMessages(node, replacements);
         Component main = Component.empty();
         for (Component c : components){

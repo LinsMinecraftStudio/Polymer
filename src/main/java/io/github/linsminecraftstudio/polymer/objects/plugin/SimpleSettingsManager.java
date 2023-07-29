@@ -1,6 +1,5 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin;
 
-import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.objects.plugin.message.SpigotPolymerMessageHandler;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import net.kyori.adventure.text.Component;
@@ -14,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,11 +57,8 @@ public class SimpleSettingsManager {
         }
         configuration.set(key, value);
     }
+    @ParametersAreNonnullByDefault
     private void setLocation(String path, Location loc){
-        if (loc == null){
-            Polymer.INSTANCE.getLogger().warning("Can't set a location(path: "+path+"), because the location is null.'");
-            return;
-        }
         ConfigurationSection cs = configuration.getConfigurationSection(path);
         if (cs == null){
             cs = configuration.createSection(path);

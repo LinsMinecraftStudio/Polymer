@@ -13,3 +13,9 @@ Value:
   NotLong: "&4Argument %d is not a long."
   TooHigh: "&4The value of parameter %d is too high."
   TooLow: "&4The value of parameter %d is too low."
+Help:
+  Head: "&a%1$s &ev%2$s"
+  Content: "&a/%1$s &7---- &e%2$s"
+  Pre: "&2Previous"
+  Next: "&3Next"
+  Split: " &b|&f "

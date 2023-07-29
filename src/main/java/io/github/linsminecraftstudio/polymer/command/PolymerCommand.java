@@ -10,9 +10,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public abstract class PolymerCommand extends Command {
+    public JavaPlugin pluginInstance;
     public PolymerCommand(@Nonnull String name){
         this(name, new ArrayList<>());
     }
@@ -31,6 +35,7 @@ public abstract class PolymerCommand extends Command {
     private void autoSetCMDInfo(List<String> defAliases) {
         JavaPlugin plugin = OtherUtils.findPlugin();
         if (plugin != null) {
+            pluginInstance = plugin;
             Map<String,Object> commandObject = plugin.getDescription().getCommands().get(this.getName());
             if (commandObject != null) {
                 Object descriptionObject = commandObject.get("description");
@@ -58,7 +63,7 @@ public abstract class PolymerCommand extends Command {
     }
     public boolean hasCustomPermission(CommandSender cs,String perm){
         if (cs == null) return true;
-        if (!cs.hasPermission("mixtools."+perm)){
+        if (!cs.hasPermission(pluginInstance.getPluginMeta().getName().toLowerCase()+"."+perm)){
             Polymer.messageHandler.sendMessage(cs,"Command.NoPermission");
             return false;
         }
