@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class PolymerCommand extends Command {
-    public JavaPlugin pluginInstance;
+    protected JavaPlugin pluginInstance;
     public PolymerCommand(@Nonnull String name){
         this(name, new ArrayList<>());
     }
@@ -51,17 +51,17 @@ public abstract class PolymerCommand extends Command {
         }
     }
     public abstract String requirePlugin();
-    public abstract void sendMessage(CommandSender sender, String message, Object... args);
-    public boolean hasPermission(CommandSender cs){
+    protected abstract void sendMessage(CommandSender sender, String message, Object... args);
+    protected boolean hasPermission(CommandSender cs){
         return hasCustomPermission(cs,"command." + this.getName());
     }
-    public boolean hasSubPermission(CommandSender cs,String... subs){
+    protected boolean hasSubPermission(CommandSender cs,String... subs){
         List<String> subList = new ArrayList<>(List.of(subs));
         subList.add(0, "command");
         subList.add(1, this.getName());
         return hasCustomPermission(cs, String.join(".", subList));
     }
-    public boolean hasCustomPermission(CommandSender cs,String perm){
+    protected boolean hasCustomPermission(CommandSender cs,String perm){
         if (cs == null) return true;
         if (!cs.hasPermission(pluginInstance.getPluginMeta().getName().toLowerCase()+"."+perm)){
             Polymer.messageHandler.sendMessage(cs,"Command.NoPermission");
@@ -69,7 +69,7 @@ public abstract class PolymerCommand extends Command {
         }
         return true;
     }
-    public Player toPlayer(CommandSender cs){
+    protected Player toPlayer(CommandSender cs){
         if (cs instanceof Player p){
             return p;
         }else {
@@ -78,7 +78,7 @@ public abstract class PolymerCommand extends Command {
         }
     }
 
-    public Player findPlayer(CommandSender from,String name){
+    protected Player findPlayer(CommandSender from,String name){
         Player p = Bukkit.getPlayer(name);
         if (p == null){
             Polymer.messageHandler.sendMessage(from, "Command.PlayerNotFound");
@@ -86,11 +86,11 @@ public abstract class PolymerCommand extends Command {
         return p;
     }
 
-    public int toInteger(CommandSender cs,String s,int position){
+    protected int toInteger(CommandSender cs,String s,int position){
         try {
             int i = Integer.parseInt(s);
             if (i < 1){
-                Polymer.messageHandler.sendMessage(cs, "");
+                Polymer.messageHandler.sendMessage(cs, "Value.TooLow");
                 return -100;
             }
             return i;
@@ -100,7 +100,7 @@ public abstract class PolymerCommand extends Command {
         }
     }
 
-    public double toDouble(CommandSender cs, String s, int position){
+    protected double toDouble(CommandSender cs, String s, int position){
         try {
             double d = Double.parseDouble(s);
             if (d < 0.01){
@@ -114,11 +114,11 @@ public abstract class PolymerCommand extends Command {
         }
     }
 
-    public List<String> copyPartialMatches(String token, Iterable<String> original){
+    protected List<String> copyPartialMatches(String token, Iterable<String> original){
         return StringUtil.copyPartialMatches(token,original,new ArrayList<>());
     }
 
-    public List<String> getPlayerNames(){
+    protected List<String> getPlayerNames(){
         List<String> list = new ArrayList<>();
         for (Player p: Bukkit.getOnlinePlayers()){
             list.add(p.getName());
