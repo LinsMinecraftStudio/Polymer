@@ -24,13 +24,4 @@ public final class Polymer extends JavaPlugin {
     public static boolean isDebug() {
         return INSTANCE.getConfig().getBoolean("debug", false);
     }
-
-    public static boolean isPaper() {
-        try {
-            Class.forName("com.destroystokyo.paper.Namespaced");
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
 }

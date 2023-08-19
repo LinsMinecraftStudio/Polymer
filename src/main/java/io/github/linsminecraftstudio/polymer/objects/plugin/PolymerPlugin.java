@@ -15,7 +15,16 @@ import java.util.logging.Level;
  * Created for tag polymer plugin and make useful methods
  */
 public abstract class PolymerPlugin extends JavaPlugin {
+    /**
+     * The message handler
+     * <h4>You should initialize it manually!</h4>
+     */
     public static PolymerMessageHandler messageHandler;
+    /**
+     * The message handler
+     * <h4>You should initialize it manually!</h4>
+     */
+    public static SimpleSettingsManager settings;
     @Override
     public final void onEnable() {
         if (!OtherUtils.isPolymerVersionAtLeast(requireVersion())) {
@@ -28,7 +37,6 @@ public abstract class PolymerPlugin extends JavaPlugin {
             return;
         }
         completeDefaultConfig();
-        messageHandler = new PolymerMessageHandler(this);
         onPlEnable();
         for (PolymerCommand command : registerCommands()) {
             if (Polymer.isDebug()) Polymer.INSTANCE.getLogger().warning("Registering command: "+command.getLabel()+
@@ -56,23 +64,20 @@ public abstract class PolymerPlugin extends JavaPlugin {
     public abstract List<PolymerCommand> registerCommands();
     public abstract String requireVersion();
     /////
-    public void suggestPaper(){
-        if (!Polymer.isPaper()) {
+    public void suggestSpark(){
+        if (!getServer().getPluginManager().isPluginEnabled("spark")) {
             getLogger().log(Level.WARNING,"""
                     ============================================================
-                     {} works better if you use Paper as your server software.
+                     Spark is a plugin similar to Timings v2, but it has better analyzers and
+                     real-time viewing of TPS/MSPT/CPU usage and other functions.
                      
-                     Paper offers significant performance improvements,
-                     bug fixes, security enhancements and optional
-                     features for server owners to enhance their server.
+                     And in the Pufferfish/Purpur server core, the development team has disabled Timings v2
+                     (although PufferFish can still be used, there will still be a warning).
                      
-                     Paper includes Timings v2, which is significantly
-                     better at diagnosing lag problems over v1.
+                     In order for you to better view the recent performance of the server,
+                     we recommend using the Spark plugin.
                      
-                     All of your plugins should still work, and the
-                     Paper community will gladly help you fix any issues.
-                     
-                     Join the Paper Community @ https://papermc.io
+                     Download Spark plugin @ https://spark.lucko.me/
                     ============================================================
                     """, getPluginMeta().getName());
         }

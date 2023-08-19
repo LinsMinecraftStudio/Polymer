@@ -8,12 +8,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public abstract class AbstractFeatureManager {
-    public Plugin plugin;
+    private static Plugin plugin;
     public AbstractFeatureManager(Plugin plugin){
-        this.plugin = plugin;
+        AbstractFeatureManager.plugin = plugin;
     }
 
-    public YamlConfiguration handleConfig(String fileName){
+    protected static YamlConfiguration handleConfig(String fileName){
         File f = new File(plugin.getDataFolder(), fileName);
         if (!f.exists()) {
             InputStream is = plugin.getResource(fileName);
