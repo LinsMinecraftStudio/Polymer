@@ -1,6 +1,7 @@
 package io.github.linsminecraftstudio.polymer.command;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
+import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -51,7 +52,11 @@ public abstract class PolymerCommand extends Command {
         }
     }
     public abstract String requirePlugin();
-    protected abstract void sendMessage(CommandSender sender, String message, Object... args);
+    protected void sendMessage(CommandSender sender, String message, Object... args) {
+        if (pluginInstance instanceof PolymerPlugin pp) {
+            pp.messageHandler.sendMessage(sender, message, args);
+        }
+    }
     protected boolean hasPermission(CommandSender cs){
         return hasCustomPermission(cs,"command." + this.getName());
     }
