@@ -58,7 +58,7 @@ public class PolymerMessageHandler {
         } catch (Exception e) {return colorize(get(node));}
     }
 
-    public Component getColored(String node, char replacementChar, Map<String, Object> argMap){
+    public Component getColored(String node, Map<String, Object> argMap, char replacementChar) {
         String original = get(node);
         for (Map.Entry<String, Object> entry : argMap.entrySet()) {
             original = original.replaceAll(replacementChar+entry.getKey()+replacementChar, (String) entry.getValue());
@@ -129,17 +129,29 @@ public class PolymerMessageHandler {
         return main;
     }
 
-    public void sendMessage(CommandSender cs,String node,Object... args){
+    public void sendMessage(CommandSender cs,String node,Object... args) {
         if (!get(node).isBlank()) {
             cs.sendMessage(getColored(node, args));
         }
     }
 
-    public void sendMessages(CommandSender cs, List<Component> list){
+    public void sendMessages(CommandSender cs, List<Component> list) {
         if (!list.isEmpty()){
             for (Component msg : list){
                 cs.sendMessage(msg);
             }
+        }
+    }
+
+    /**
+     * Is that necessary??
+     * @param cs
+     * @param node
+     * @param arguments
+     */
+    public void sendMessages(CommandSender cs, String node, Arguments... arguments) {
+        for (Component c : getColoredMessages(node, arguments)) {
+            cs.sendMessage(c);
         }
     }
 
