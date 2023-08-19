@@ -25,6 +25,7 @@ public abstract class PolymerPlugin extends JavaPlugin {
      * <h4>You should initialize it manually!</h4>
      */
     public static SimpleSettingsManager settings;
+
     @Override
     public final void onEnable() {
         if (!OtherUtils.isPolymerVersionAtLeast(requireVersion())) {
@@ -69,7 +70,7 @@ public abstract class PolymerPlugin extends JavaPlugin {
             getLogger().log(Level.WARNING,"""
                     ============================================================
                      Spark is a plugin similar to Timings v2, but it has better analyzers and
-                     real-time viewing of TPS/MSPT/CPU usage and other functions.
+                     viewing of TPS/MSPT/CPU usage and other functions.
                      
                      And in the Pufferfish/Purpur server core, the development team has disabled Timings v2
                      (although PufferFish can still be used, there will still be a warning).

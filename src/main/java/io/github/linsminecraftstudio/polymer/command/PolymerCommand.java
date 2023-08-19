@@ -1,6 +1,7 @@
 package io.github.linsminecraftstudio.polymer.command;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
+import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import org.bukkit.Bukkit;
@@ -96,12 +97,12 @@ public abstract class PolymerCommand extends Command {
             int i = Integer.parseInt(s);
             if (i < 1){
                 Polymer.messageHandler.sendMessage(cs, "Value.TooLow");
-                return -100;
+                return PolymerConstants.ERROR_CODE;
             }
             return i;
         }catch (NumberFormatException e){
             Polymer.messageHandler.sendMessage(cs,"Value.NotInt",position);
-            return -100;
+            return PolymerConstants.ERROR_CODE;
         }
     }
 
@@ -110,12 +111,12 @@ public abstract class PolymerCommand extends Command {
             double d = Double.parseDouble(s);
             if (d < 0.01){
                 Polymer.messageHandler.sendMessage(cs,"Value.TooLow",position);
-                return -100;
+                return PolymerConstants.ERROR_CODE;
             }
             return d;
         }catch (NumberFormatException e){
             Polymer.messageHandler.sendMessage(cs,"Value.NotDouble",position);
-            return -100;
+            return PolymerConstants.ERROR_CODE;
         }
     }
 

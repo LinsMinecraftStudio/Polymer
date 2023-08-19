@@ -1,6 +1,5 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin.message;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -12,7 +11,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+@Deprecated(
+        forRemoval = true
+)
 public class SpigotPolymerMessageHandler {
     private final YamlConfiguration message;
 

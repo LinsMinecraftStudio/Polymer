@@ -7,10 +7,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public abstract class AbstractFeatureManager {
+public abstract class AbstractFileStorage {
     private static Plugin plugin;
-    public AbstractFeatureManager(Plugin plugin){
-        AbstractFeatureManager.plugin = plugin;
+    public AbstractFileStorage(Plugin plugin){
+        AbstractFileStorage.plugin = plugin;
     }
 
     protected static YamlConfiguration handleConfig(String fileName){

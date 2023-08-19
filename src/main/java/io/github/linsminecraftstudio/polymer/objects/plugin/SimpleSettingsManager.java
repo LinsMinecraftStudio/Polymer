@@ -25,7 +25,7 @@ public class SimpleSettingsManager {
     }
 
     public int getInt(String key){
-        return configuration.getInt(key);
+        return configuration.getInt(key, -100);
     }
     public String getString(String key){
         return configuration.getString(key,"");
@@ -42,7 +42,7 @@ public class SimpleSettingsManager {
     public long getLong(String key) {
         return configuration.getLong(key);
     }
-    public ItemStack getItemStack(String key){
+    public ItemStack getSimpleItemStack(String key){
         Material m;
         try {m = Material.valueOf(configuration.getString(key,"").toUpperCase());
         }catch (IllegalArgumentException e) {m = Material.STONE;}
@@ -50,6 +50,7 @@ public class SimpleSettingsManager {
     }
     public List<Integer> getIntList(String key) {return configuration.getIntegerList(key);}
     public ConfigurationSection getSection(String key) {return configuration.getConfigurationSection(key);}
+    public char getChar(String key) {return configuration.getObject(key, char.class,' ');}
     public void set(String key, Object value){
         if (value instanceof Location){
             setLocation(key, (Location) value);
