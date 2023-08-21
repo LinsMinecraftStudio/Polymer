@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +27,8 @@ public final class ListUtil {
         return Optional.empty();
     }
 
-    @Nonnull
-    @ParametersAreNonnullByDefault
-    public static <T> T getIfOrElse(Iterable<T> iterable, Predicate<T> filter, T def){
+    @Nullable
+    public static <T> T getIfOrElse(Iterable<T> iterable, Predicate<T> filter, @Nullable T def){
         return getIf(iterable, filter).orElse(def);
     }
 

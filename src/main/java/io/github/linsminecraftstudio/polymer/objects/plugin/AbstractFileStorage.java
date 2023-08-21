@@ -9,6 +9,7 @@ import java.io.InputStream;
 
 public abstract class AbstractFileStorage {
     private static Plugin plugin;
+
     public AbstractFileStorage(Plugin plugin){
         AbstractFileStorage.plugin = plugin;
     }
@@ -27,5 +28,7 @@ public abstract class AbstractFileStorage {
         return YamlConfiguration.loadConfiguration(f);
     }
 
-    public abstract void reload();
+    public void reload(){
+
+    }
 }

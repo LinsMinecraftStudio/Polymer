@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,30 +26,47 @@ public class SimpleSettingsManager {
     public int getInt(String key){
         return configuration.getInt(key, -100);
     }
+
     public String getString(String key){
         return configuration.getString(key,"");
     }
+
     public String getString(String key, boolean colorize){
         return colorize ? SpigotPolymerMessageHandler.colorize(configuration.getString(key,"")) : getString(key);
     }
+
     public Component getComponent(String key, boolean colorize){
         return colorize ? ObjectConverter.toComponent(getString(key)) : Component.text(getString(key));
     }
+
     public boolean getBoolean(String key){
         return configuration.getBoolean(key);
     }
+
     public long getLong(String key) {
         return configuration.getLong(key);
     }
-    public ItemStack getSimpleItemStack(String key){
-        Material m;
-        try {m = Material.valueOf(configuration.getString(key,"").toUpperCase());
-        }catch (IllegalArgumentException e) {m = Material.STONE;}
-        return new ItemStack(m);
+
+    public Material getMaterial(String key) {
+        return Material.getMaterial(configuration.getString(key,"STONE"), true);
     }
-    public List<Integer> getIntList(String key) {return configuration.getIntegerList(key);}
-    public ConfigurationSection getSection(String key) {return configuration.getConfigurationSection(key);}
-    public char getChar(String key) {return configuration.getObject(key, char.class,' ');}
+
+    public List<Integer> getIntList(String key) {
+        return configuration.getIntegerList(key);
+    }
+
+    public ConfigurationSection getSection(String key) {
+        return configuration.getConfigurationSection(key);
+    }
+
+    public char getChar(String key) {
+        return configuration.getObject(key, char.class,' ');
+    }
+
+    public List<String> getStrList(String key) {
+        return configuration.getStringList(key);
+    }
+
     public void set(String key, Object value){
         if (value instanceof Location){
             setLocation(key, (Location) value);

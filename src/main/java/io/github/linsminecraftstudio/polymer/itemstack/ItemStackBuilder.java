@@ -1,14 +1,14 @@
 package io.github.linsminecraftstudio.polymer.itemstack;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -74,8 +74,8 @@ public class ItemStackBuilder {
         itemMeta.setCustomModelData(customModelData);
     }
 
-    public void nameInConfig(Plugin plugin, String node){
-        itemMeta.displayName(ObjectConverter.toComponent(plugin.getConfig().getString(node,"")));
+    public <X,Z> void persistentData(NamespacedKey key, PersistentDataType<X,Z> dataType, Z object) {
+        itemMeta.getPersistentDataContainer().set(key, dataType, object);
     }
 
     public void nbt(String key, String value){
