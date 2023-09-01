@@ -8,26 +8,17 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public abstract class AbstractFileStorage {
-    private static Plugin plugin;
-    private static File cfg;
+    private Plugin plugin;
+    private File cfg;
 
     public AbstractFileStorage(Plugin plugin){
-        AbstractFileStorage.plugin = plugin;
+        this.plugin = plugin;
     }
 
     protected YamlConfiguration handleConfig(String fileName) {
         File f = new File(plugin.getDataFolder(), fileName);
-        if (!f.exists()) {
-            InputStream is = plugin.getResource(fileName);
-            if (is != null) {
-                plugin.saveResource(fileName, false);
-            }else {
-                try {f.createNewFile();
-                } catch (IOException e) {throw new RuntimeException(e);}
-            }
-        }
         cfg = f;
-        return YamlConfiguration.loadConfiguration(f);
+        return handleConfig(f);
     }
 
     protected YamlConfiguration handleConfig(File file) {
