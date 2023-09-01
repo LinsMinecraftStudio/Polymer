@@ -9,12 +9,13 @@ import java.io.InputStream;
 
 public abstract class AbstractFileStorage {
     private static Plugin plugin;
+    private static File cfg;
 
     public AbstractFileStorage(Plugin plugin){
         AbstractFileStorage.plugin = plugin;
     }
 
-    protected static YamlConfiguration handleConfig(String fileName){
+    protected YamlConfiguration handleConfig(String fileName) {
         File f = new File(plugin.getDataFolder(), fileName);
         if (!f.exists()) {
             InputStream is = plugin.getResource(fileName);
@@ -25,7 +26,22 @@ public abstract class AbstractFileStorage {
                 } catch (IOException e) {throw new RuntimeException(e);}
             }
         }
+        cfg = f;
         return YamlConfiguration.loadConfiguration(f);
+    }
+
+    protected YamlConfiguration handleConfig(File file) {
+        if (!file.exists()) {
+            InputStream is = plugin.getResource(file.getName());
+            if (is != null) {
+                plugin.saveResource(file.getName(), false);
+            } else {
+                try {file.createNewFile();
+                } catch (IOException e) {throw new RuntimeException(e);}
+            }
+        }
+        cfg = file;
+        return YamlConfiguration.loadConfiguration(file);
     }
 
     public void reload(){
