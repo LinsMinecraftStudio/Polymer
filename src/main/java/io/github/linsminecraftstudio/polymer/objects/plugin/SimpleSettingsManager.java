@@ -1,6 +1,5 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin;
 
-import io.github.linsminecraftstudio.polymer.objects.plugin.message.SpigotPolymerMessageHandler;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -29,10 +28,6 @@ public class SimpleSettingsManager {
 
     public String getString(String key){
         return configuration.getString(key,"");
-    }
-
-    public String getString(String key, boolean colorize){
-        return colorize ? SpigotPolymerMessageHandler.colorize(configuration.getString(key,"")) : getString(key);
     }
 
     public Component getComponent(String key, boolean colorize){
@@ -106,13 +101,13 @@ public class SimpleSettingsManager {
         return null;
     }
 
-    @NotNull
+    @Nullable
     public UUID getUUID(String path) {
         String strUUID = configuration.getString(path);
         if (strUUID != null && !strUUID.isBlank()) {
             return UUID.fromString(strUUID);
         }else {
-            return UUID.randomUUID();
+            return null;
         }
     }
 }
