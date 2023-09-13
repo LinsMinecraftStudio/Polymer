@@ -53,11 +53,7 @@ public abstract class PolymerCommand extends Command {
         }
     }
     public abstract String requirePlugin();
-    protected void sendMessage(CommandSender sender, String message, Object... args) {
-        if (pluginInstance instanceof PolymerPlugin pp) {
-            pp.messageHandler.sendMessage(sender, message, args);
-        }
-    }
+    protected abstract void sendMessage(CommandSender sender, String message, Object... args);
     protected boolean hasPermission(CommandSender cs){
         return hasCustomPermission(cs,"command." + this.getName());
     }

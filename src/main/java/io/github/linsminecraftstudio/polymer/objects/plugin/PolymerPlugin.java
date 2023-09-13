@@ -2,7 +2,6 @@ package io.github.linsminecraftstudio.polymer.objects.plugin;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
-import io.github.linsminecraftstudio.polymer.objects.plugin.message.PolymerMessageHandler;
 import io.github.linsminecraftstudio.polymer.utils.FileUtils;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import org.bukkit.Bukkit;
@@ -15,17 +14,6 @@ import java.util.logging.Level;
  * Created for tag polymer plugin and make useful methods
  */
 public abstract class PolymerPlugin extends JavaPlugin {
-    /**
-     * The message handler
-     * <h4>You should initialize it manually!</h4>
-     */
-    public static PolymerMessageHandler messageHandler;
-    /**
-     * The message handler
-     * <h4>You should initialize it manually!</h4>
-     */
-    public static SimpleSettingsManager settings;
-
     @Override
     public final void onEnable() {
         if (!OtherUtils.isPolymerVersionAtLeast(requireVersion())) {

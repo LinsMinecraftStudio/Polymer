@@ -8,15 +8,18 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
 public class SimpleSettingsManager {
-    private final FileConfiguration configuration;
+    private FileConfiguration configuration;
 
     public SimpleSettingsManager(@NotNull FileConfiguration configuration) {
         this.configuration = configuration;
@@ -69,6 +72,16 @@ public class SimpleSettingsManager {
         }
         configuration.set(key, value);
     }
+
+    public void saveAndReload(File file) {
+        try {
+            configuration.save(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        configuration = YamlConfiguration.loadConfiguration(file);
+    }
+
     @ParametersAreNonnullByDefault
     private void setLocation(String path, Location loc){
         ConfigurationSection cs = configuration.getConfigurationSection(path);
