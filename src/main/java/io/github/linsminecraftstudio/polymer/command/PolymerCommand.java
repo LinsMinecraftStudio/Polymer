@@ -44,10 +44,13 @@ public abstract class PolymerCommand extends Command {
                 this.description = descriptionObject != null ? descriptionObject.toString() : "No descriptions available";
                 if (aliasesObject.getClass().isArray()) {
                     List<String> list = Arrays.stream((Object[])aliasesObject).map(String::valueOf).toList();
-                    this.setAliases(list);
+                    defAliases.addAll(list);
+                    this.setAliases(defAliases);
                 } else {
                     this.setAliases(defAliases);
                 }
+            } else {
+                this.setAliases(defAliases);
             }
         }
     }
