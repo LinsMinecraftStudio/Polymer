@@ -57,14 +57,17 @@ public abstract class PolymerPlugin extends JavaPlugin {
         if (!getServer().getPluginManager().isPluginEnabled("spark")) {
             getLogger().log(Level.WARNING,"""
                     ============================================================
+                     We recommend you install Spark!!
+                    
                      Spark is a plugin similar to Timings v2, but it has better analyzers and
                      viewing of TPS/MSPT/CPU usage and other functions.
                      
                      And in the Pufferfish/Purpur server core, the development team has disabled Timings v2
-                     (although PufferFish can still be used, there will still be a warning).
+                     (although PufferFish/Paper can still be used, there will still be a warning).
                      
-                     In order for you to better view the recent performance of the server,
-                     we recommend using the Spark plugin.
+                     Spark's performance monitor GUI is more comfortable than Timings v2,
+                     and many plugins now use the results of this monitor as one of their submission issues.
+                     If you really need to check the server's recent usage, just install the Spark plugin.
                      
                      Download Spark plugin @ https://spark.lucko.me/
                     ============================================================

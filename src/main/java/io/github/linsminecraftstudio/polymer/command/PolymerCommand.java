@@ -2,7 +2,6 @@ package io.github.linsminecraftstudio.polymer.command;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
-import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -88,30 +87,25 @@ public abstract class PolymerCommand extends Command {
         return p;
     }
 
-    protected int toInteger(CommandSender cs,String s,int position){
-        try {
-            int i = Integer.parseInt(s);
-            if (i < 1){
-                Polymer.messageHandler.sendMessage(cs, "Value.TooLow");
-                return PolymerConstants.ERROR_CODE;
-            }
-            return i;
-        }catch (NumberFormatException e){
-            Polymer.messageHandler.sendMessage(cs,"Value.NotInt",position);
-            return PolymerConstants.ERROR_CODE;
+    protected <T> T toValue(Class<T> clazz, Object value, CommandSender cs, int position) {
+        if (clazz.isInstance(value)) {
+            return clazz.cast(value);
         }
+
+        Polymer.messageHandler.sendMessage(cs, "Value.Not"+clazz.getSimpleName(), position);
+        return null;
     }
 
-    protected double toDouble(CommandSender cs, String s, int position){
+    protected double toIntOrDouble(CommandSender cs, String s, int position, boolean isInt){
         try {
-            double d = Double.parseDouble(s);
-            if (d < 0.01){
+            double d = isInt ? Integer.parseInt(s) : Double.parseDouble(s);
+            if ((isInt && d < 0) || (!isInt && d < 0.01)){
                 Polymer.messageHandler.sendMessage(cs,"Value.TooLow",position);
                 return PolymerConstants.ERROR_CODE;
             }
             return d;
         }catch (NumberFormatException e){
-            Polymer.messageHandler.sendMessage(cs,"Value.NotDouble",position);
+            Polymer.messageHandler.sendMessage(cs,isInt ? "Value.NotInt" : "Value.NotDouble",position);
             return PolymerConstants.ERROR_CODE;
         }
     }

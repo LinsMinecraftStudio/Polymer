@@ -27,7 +27,7 @@ public class PolymerMessageHandler {
     /**
      * Creates a new message handler
      * @param plugin need the plugin to read language files from plugin data folder
-     * @param defLangName the name of the default language(Usually English is used as the default language)
+     * @param defLangName the name of the default language (Usually English is used as the default language)
      */
     public PolymerMessageHandler(Plugin plugin, String defLangName){
         String language = plugin.getConfig().getString("language",defLangName);
@@ -50,7 +50,7 @@ public class PolymerMessageHandler {
      * @return the message
      */
     public String get(String node){
-        return message.getString(node,"§4Get message '"+node+"' failed, maybe it's not exists.");
+        return message.getString(node,"get message '"+node+"' failed, maybe it's not exists.");
     }
 
     public Component getColored(String node, Object... args){
@@ -135,19 +135,10 @@ public class PolymerMessageHandler {
         }
     }
 
-    public void sendMessages(CommandSender cs, List<Component> list) {
-        if (!list.isEmpty()){
-            for (Component msg : list){
-                cs.sendMessage(msg);
-            }
-        }
-    }
-
     /**
-     * Is that necessary??
-     * @param cs
-     * @param node
-     * @param arguments
+     * @param cs the sender
+     * @param node the key
+     * @param arguments replacements
      */
     public void sendMessages(CommandSender cs, String node, Arguments... arguments) {
         for (Component c : getColoredMessages(node, arguments)) {

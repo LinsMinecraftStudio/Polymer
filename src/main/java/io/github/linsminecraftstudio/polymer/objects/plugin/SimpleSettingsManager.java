@@ -7,8 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,10 +19,17 @@ import java.util.List;
 import java.util.UUID;
 
 public class SimpleSettingsManager {
-    private FileConfiguration configuration;
+    private YamlConfiguration configuration;
+    private final File file;
 
-    public SimpleSettingsManager(@NotNull FileConfiguration configuration) {
-        this.configuration = configuration;
+    public SimpleSettingsManager(@NotNull File file) {
+        configuration = YamlConfiguration.loadConfiguration(file);
+        this.file = file;
+    }
+
+    public SimpleSettingsManager(@NotNull Plugin plugin) {
+        configuration = (YamlConfiguration) plugin.getConfig();
+        file = new File(plugin.getDataFolder(), "config.yml");
     }
 
     public int getInt(String key){
@@ -71,9 +78,10 @@ public class SimpleSettingsManager {
             return;
         }
         configuration.set(key, value);
+        save();
     }
 
-    public void saveAndReload(File file) {
+    private void save() {
         try {
             configuration.save(file);
         } catch (IOException e) {
@@ -94,6 +102,7 @@ public class SimpleSettingsManager {
         cs.set("z", loc.getZ());
         cs.set("pitch", loc.getPitch());
         cs.set("yaw", loc.getYaw());
+        save();
     }
 
     @Nullable

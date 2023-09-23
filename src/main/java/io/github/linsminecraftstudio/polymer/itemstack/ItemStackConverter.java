@@ -1,10 +1,9 @@
 package io.github.linsminecraftstudio.polymer.itemstack;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import io.github.linsminecraftstudio.polymer.utils.ListUtil;
+import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
@@ -87,10 +86,10 @@ public final class ItemStackConverter {
         if(meta != null){
             Component displayName = meta.displayName();
             if(displayName != null){
-                map.put("displayname", MiniMessage.miniMessage().serialize(displayName));
+                map.put("displayname", displayName);
             }
             if(meta.hasLore()){
-                map.put("lore", ListUtil.componentListToStringList(meta.lore()));
+                map.put("lore", meta.lore());
             }
             if(meta.hasEnchants()){
                 Map<String,Integer> enchantsMap = new HashMap<>();

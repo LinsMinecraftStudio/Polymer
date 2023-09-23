@@ -1,6 +1,5 @@
-package io.github.linsminecraftstudio.polymer.objects.plugin;
+package io.github.linsminecraftstudio.polymer.objects.plugin.file;
 
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -8,10 +7,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public abstract class AbstractFileStorage {
-    private final Plugin plugin;
+public class SingleFileStorage {
+    protected final Plugin plugin;
 
-    public AbstractFileStorage(Plugin plugin){
+    public SingleFileStorage(Plugin plugin){
         this.plugin = plugin;
     }
 
@@ -30,16 +29,8 @@ public abstract class AbstractFileStorage {
                 } catch (IOException e) {throw new RuntimeException(e);}
             }
         }
-        YamlConfiguration cfg = new YamlConfiguration();
-        try {
-            cfg.load(file);
-        } catch (IOException | InvalidConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        return cfg;
+        return YamlConfiguration.loadConfiguration(file);
     }
 
-    public void reload(){
-
-    }
+    public void reload(){}
 }

@@ -4,6 +4,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConfigurationOptions;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
@@ -14,13 +15,8 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public final class FileUtils {
-    /**
-     * Complete configuration(key and value, comments, etc)
-     * @param plugin plugin instance
-     * @param resourceFile the resource file you want to complete
-     */
-    @ParametersAreNonnullByDefault
-    public static void completeFile(Plugin plugin,String resourceFile){
+
+    public static void completeFile(Plugin plugin,String resourceFile) {
         completeFile(plugin,resourceFile,new ArrayList<>());
     }
 
@@ -28,24 +24,24 @@ public final class FileUtils {
      * Complete configuration(key and value, comments, etc)
      * @param plugin plugin instance
      * @param resourceFile the resource file you want to complete
-     * @param notNeedToComplete the keys that are not needed to complete
      */
     @ParametersAreNonnullByDefault
-    public static void completeFile(Plugin plugin,String resourceFile,List<String> notNeedToComplete){
+    public static void completeFile(Plugin plugin, String resourceFile,@NotNull List<String> notNeedToComplete) {
         InputStream stream = plugin.getResource(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);
-        if (!file.exists()){
-            if (stream!=null) {
-                plugin.saveResource(resourceFile,false);
+        if (!file.exists()) {
+            if (stream != null) {
+                plugin.saveResource(resourceFile, false);
                 return;
             }
             return;
         }
-        if (stream==null) {
-            plugin.getLogger().warning("File completion of '"+resourceFile+"' is failed.");
+        if (stream == null) {
+            plugin.getLogger().warning("File completion of '" + resourceFile + "' is failed.");
             return;
         }
-        try {File temp = File.createTempFile(resourceFile+"_temp","yml");
+        try {
+            File temp = File.createTempFile(resourceFile + "_temp", "yml");
             Files.copy(stream, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
             YamlConfiguration configuration = new YamlConfiguration();
             configuration.load(temp);
@@ -71,7 +67,7 @@ public final class FileUtils {
                             int index = strings.indexOf(str);
                             if (index != -1) {
                                 ConfigurationSection section = configuration2.createSection(key);
-                                if (section.getKeys(false).size()==0){
+                                if (section.getKeys(false).isEmpty()) {
                                     ConfigurationSection section1 = configuration.getConfigurationSection(key);
                                     if (section1 == null) continue KeyCheck;
                                     String str1 = section1.getKeys(false).stream().toList().get(0);
@@ -82,6 +78,7 @@ public final class FileUtils {
                         }
                     }
                 }
+
                 if (!configuration2.contains(key)) {
                     configuration2.set(key, value);
                 }
@@ -97,12 +94,13 @@ public final class FileUtils {
             configuration2.save(file);
         } catch (Exception e) {
             e.printStackTrace();
-            plugin.getLogger().warning("File completion of '"+resourceFile+"' is failed.");
+            plugin.getLogger().warning("File completion of '" + resourceFile + "' is failed.");
+
         }
     }
 
     /**
-     * Complete language file(keys and values, comments, etc)
+     * Complete language file (keys and values, comments, etc.)
      * @param plugin plugin instance
      * @param resourceFile the language file you want to complete
      */
@@ -111,19 +109,20 @@ public final class FileUtils {
         InputStream stream = plugin.getResource(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);
 
-        if (!file.exists()){
+        if (!file.exists()) {
             if (stream != null) {
-                plugin.saveResource(resourceFile,false);
+                plugin.saveResource(resourceFile, false);
                 return;
             }
             return;
         }
-        if (stream==null) {
-            plugin.getLogger().warning("File completion of '"+resourceFile+"' is failed.");
+        if (stream == null) {
+            plugin.getLogger().warning("File completion of '" + resourceFile + "' is failed.");
             return;
         }
 
-        try {File temp = File.createTempFile(resourceFile+"_temp","yml");
+        try {
+            File temp = File.createTempFile(resourceFile + "_temp", "yml");
             Files.copy(stream, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
             YamlConfiguration configuration = new YamlConfiguration();
             configuration.load(temp);
@@ -148,13 +147,13 @@ public final class FileUtils {
             }
             for (String key : configuration2.getKeys(true)) {
                 if (configuration2.contains(key) & !configuration.contains(key)) {
-                    configuration2.set(key,null);
+                    configuration2.set(key, null);
                 }
             }
             configuration2.save(file);
         } catch (Exception e) {
             e.printStackTrace();
-            plugin.getLogger().warning("File completion of '"+resourceFile+"' is failed.");
+            plugin.getLogger().warning("File completion of '" + resourceFile + "' is failed.");
         }
     }
 
@@ -163,7 +162,7 @@ public final class FileUtils {
      * @param dirFile the directory
      * @return result
      */
-    public static boolean deleteDir(File dirFile) {
+    public static boolean deleteDir(File dirFile){
         Callable<Boolean> callable = () -> {
             if (!dirFile.exists() || !dirFile.isDirectory() || dirFile.listFiles() == null) {
                 return false;
@@ -202,7 +201,7 @@ public final class FileUtils {
      * @param file the file
      * @return result
      */
-    public static boolean deleteFile(File file) {
+    public static boolean deleteFile (File file){
         boolean flag = false;
 
         if (file.isFile() && file.exists()) {
