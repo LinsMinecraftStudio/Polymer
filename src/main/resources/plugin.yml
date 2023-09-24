@@ -1,5 +1,7 @@
 name: Polymer
 version: '${project.version}'
 main: io.github.linsminecraftstudio.polymer.Polymer
-api-version: 1.20
+api-version: 1.19
 author: "lijinhong11"
+
+build_number: '${buildNumber}'

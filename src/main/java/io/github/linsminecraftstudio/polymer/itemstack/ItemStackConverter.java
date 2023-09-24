@@ -26,6 +26,7 @@ public final class ItemStackConverter {
         if (material == null){
             material = Material.STONE;
         }
+
         ItemStackBuilder builder = new ItemStackBuilder(material);
         if (section.contains("amount")) {
             builder.amount(section.getInt("amount", 1));

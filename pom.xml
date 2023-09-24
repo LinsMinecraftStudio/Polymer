@@ -13,6 +13,11 @@
 	<description>An API for LMS</description>
 	<url>https://github.com/LinsMinecraftStudio/Polymer</url>
 
+	<properties>
+		<buildNumber>2</buildNumber>
+		<java.version>17</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<scm>
 		<url>https://github.com/LinsMinecraftStudio/Polymer</url>
 		<connection>https://github.com/LinsMinecraftStudio/Polymer</connection>
@@ -24,11 +29,6 @@
 			<url>https://github.com/LinsMinecraftStudio/Polymer/blob/main/LICENSE</url>
 		</license>
 	</licenses>
-
-	<properties>
-		<java.version>17</java.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 
 	<developers>
 		<developer>
@@ -123,6 +123,7 @@
 	</profiles>
 
 	<build>
+		<finalName>${artifactId}-${version}-b${buildNumber}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
