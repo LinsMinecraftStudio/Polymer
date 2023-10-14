@@ -15,10 +15,10 @@ Value:
   TooLow: "&4The value of parameter %d is too low."
 Info:
   List:
-    Head: "&a------------------&ePage %d&a------------------"
+    Head: "&a-----------------&ePage %d&a-----------------"
     ListEmpty: "&4There aren't any elements in the list."
     DefaultStyle: "&a%1$d.&e%2$s"
-    Tail: "&a------------------------------------------"
+    Tail: "&a----------------------------------------"
     Prev: "&a<- &ePrev"
     Next: "&eNext &a->"
     PrevUnavailable: "&a<- &8&lPrev"
