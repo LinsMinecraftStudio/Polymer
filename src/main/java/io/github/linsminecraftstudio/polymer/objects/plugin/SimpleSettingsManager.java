@@ -1,5 +1,7 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin;
 
+import com.google.common.base.Strings;
+import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -33,7 +35,7 @@ public class SimpleSettingsManager {
     }
 
     public int getInt(String key){
-        return configuration.getInt(key, -100);
+        return configuration.getInt(key, PolymerConstants.ERROR_CODE);
     }
 
     public String getString(String key){
@@ -49,7 +51,7 @@ public class SimpleSettingsManager {
     }
 
     public long getLong(String key) {
-        return configuration.getLong(key);
+        return configuration.getLong(key, PolymerConstants.ERROR_CODE);
     }
 
     public Material getMaterial(String key) {
@@ -106,7 +108,7 @@ public class SimpleSettingsManager {
     }
 
     @Nullable
-    public Location getLocation(String path) {
+    public Location getLocation(@NotNull String path) {
         ConfigurationSection cs = configuration.getConfigurationSection(path);
         if (cs != null){
             double x = cs.getDouble("x");
@@ -124,7 +126,7 @@ public class SimpleSettingsManager {
     }
 
     @Nullable
-    public UUID getUUID(String path) {
+    public UUID getUUID(@NotNull String path) {
         String strUUID = configuration.getString(path);
         if (strUUID != null && !strUUID.isBlank()) {
             return UUID.fromString(strUUID);

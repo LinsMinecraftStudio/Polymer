@@ -13,3 +13,13 @@ Value:
   NotLong: "&4参数%d不是一个长整型数。"
   TooHigh: "&4参数%d的值太高。"
   TooLow: "&4参数%d的值太低。"
+Info:
+  List:
+    Head: "&a------------------&e第%d页&a------------------"
+    ListEmpty: "&4列表里没有任何元素。"
+    DefaultStyle: "&a%1$d. &e%2$s"
+    Tail: "&a------------------------------------------"
+    Prev: "&a<- &e上一页"
+    Next: "&e下一页 &a->"
+    PrevUnavailable: "<- &8&l上一页"
+    NextUnavailable: "&8&l下一页 ->"

@@ -2,10 +2,12 @@ package io.github.linsminecraftstudio.polymer.objects.plugin;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
-import io.github.linsminecraftstudio.polymer.utils.FileUtils;
+import io.github.linsminecraftstudio.polymer.utils.FileUtil;
+import io.github.linsminecraftstudio.polymer.utils.Metrics;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -14,6 +16,8 @@ import java.util.logging.Level;
  * Created for tag polymer plugin and make useful methods
  */
 public abstract class PolymerPlugin extends JavaPlugin {
+    private Metrics metrics;
+
     @Override
     public final void onEnable() {
         if (!OtherUtils.isPolymerVersionAtLeast(requireVersion())) {
@@ -42,20 +46,39 @@ public abstract class PolymerPlugin extends JavaPlugin {
             }
         }
     }
+
     @Override
     public final void onDisable() {
+        if (metrics != null) {
+            metrics.shutdown();
+        }
         onPlDisable();
         Polymer.INSTANCE.getLogger().info("Disabled plugin "+getPluginMeta().getName());
     }
+
+    protected void startMetrics(int pluginId) {
+        metrics = new Metrics(this, pluginId);
+    }
+
+    public static <T extends PolymerPlugin> PolymerPlugin getPolymerPlugin(@NotNull Class<T> clazz) {
+        try {
+            return getPlugin(clazz);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     //Needs impl
     public abstract void onPlEnable();
     public abstract void onPlDisable();
     public abstract List<PolymerCommand> registerCommands();
     public abstract String requireVersion();
     /////
+
     public void suggestSpark(){
         if (!getServer().getPluginManager().isPluginEnabled("spark")) {
             getLogger().log(Level.WARNING,"""
+                    \n
                     ============================================================
                      We recommend you install Spark!!
                     
@@ -75,11 +98,11 @@ public abstract class PolymerPlugin extends JavaPlugin {
         }
     }
     protected void completeDefaultConfig(){
-        FileUtils.completeFile(this, "config.yml");
+        FileUtil.completeFile(this, "config.yml");
     }
     protected void completeLangFile(String... langNames){
         for (String lang : langNames){
-            FileUtils.completeLangFile(this, "lang/"+lang+".yml");
+            FileUtil.completeLangFile(this, "lang/"+lang+".yml");
         }
     }
 }

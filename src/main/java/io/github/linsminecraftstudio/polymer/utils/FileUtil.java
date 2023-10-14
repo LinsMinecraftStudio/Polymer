@@ -1,10 +1,8 @@
 package io.github.linsminecraftstudio.polymer.utils;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConfigurationOptions;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
@@ -14,11 +12,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.*;
 
-public final class FileUtils {
-
-    public static void completeFile(Plugin plugin,String resourceFile) {
-        completeFile(plugin,resourceFile,new ArrayList<>());
-    }
+public final class FileUtil {
 
     /**
      * Complete configuration(key and value, comments, etc)
@@ -26,7 +20,7 @@ public final class FileUtils {
      * @param resourceFile the resource file you want to complete
      */
     @ParametersAreNonnullByDefault
-    public static void completeFile(Plugin plugin, String resourceFile,@NotNull List<String> notNeedToComplete) {
+    public static void completeFile(Plugin plugin, String resourceFile, String... notNeedSyncKeys) {
         InputStream stream = plugin.getResource(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);
         if (!file.exists()) {
@@ -47,35 +41,14 @@ public final class FileUtils {
             configuration.load(temp);
             YamlConfiguration configuration2 = new YamlConfiguration();
             configuration2.load(file);
-            Set<String> keys = configuration.getKeys(true);
-            KeyCheck:
-            for (String key : keys) {
+
+            for (String key : configuration.getKeys(true)) {
                 Object value = configuration.get(key);
                 if (value instanceof List<?>) {
                     List<?> list2 = configuration2.getList(key);
                     if (list2 == null) {
                         configuration2.set(key, value);
                         continue;
-                    }
-                }
-                NotNeedToComplete:
-                for (String str : notNeedToComplete) {
-                    List<String> strings = Arrays.stream(key.split("\\.")).toList();
-                    for (String s : strings) {
-                        if (s.equals(str)) {
-                            // check subs
-                            int index = strings.indexOf(str);
-                            if (index != -1) {
-                                ConfigurationSection section = configuration2.createSection(key);
-                                if (section.getKeys(false).isEmpty()) {
-                                    ConfigurationSection section1 = configuration.getConfigurationSection(key);
-                                    if (section1 == null) continue KeyCheck;
-                                    String str1 = section1.getKeys(false).stream().toList().get(0);
-                                    if (str1 == null) continue NotNeedToComplete;
-                                    section.set(key, str1);
-                                }
-                            }
-                        }
                     }
                 }
 
@@ -91,6 +64,19 @@ public final class FileUtils {
                     options2.setHeader(options1.getHeader());
                 }
             }
+
+            List<String> notSync = Arrays.stream(notNeedSyncKeys).toList();
+
+            for (String key2 : configuration2.getKeys(true)) {
+                boolean b = notSync.contains(key2);
+
+                if (!configuration.contains(key2)) {
+                    if (!b) {
+                        configuration2.set(key2, null);
+                    }
+                }
+            }
+
             configuration2.save(file);
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,6 +87,7 @@ public final class FileUtils {
 
     /**
      * Complete language file (keys and values, comments, etc.)
+     * FORCE SYNC
      * @param plugin plugin instance
      * @param resourceFile the language file you want to complete
      */

@@ -1,6 +1,6 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin.message;
 
-import io.github.linsminecraftstudio.polymer.objects.Arguments;
+import io.github.linsminecraftstudio.polymer.objects.array.ObjectArray;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -73,7 +73,7 @@ public class PolymerMessageHandler {
      * @param keys message nodes
      * @return the message
      */
-    public Component getColoredReplaceToOtherMessages(String node, String... keys){
+    public Component getColoredFormatToOtherMessages(String node, String... keys){
         try {return colorize(String.format(get(node), getMessageObjects(keys)));
         } catch (Exception e) {return colorize(get(node));}
     }
@@ -97,12 +97,12 @@ public class PolymerMessageHandler {
      * @param replacements the args you want to replace
      * @return components
      */
-    public List<Component> getColoredMessages(String node, Arguments... replacements){
+    public List<Component> getColoredMessages(String node, ObjectArray... replacements){
         List<String> s = message.getStringList(node);
         List<Component> new_s = new ArrayList<>();
         for (int j = 0; j < replacements.length; j++) {
             String st = s.get(j);
-            Arguments arg = replacements[j];
+            ObjectArray arg = replacements[j];
             if (!arg.isEmpty()) st = String.format(st, arg.args());
             Component st2 = colorize(st);
             new_s.add(st2);
@@ -111,13 +111,13 @@ public class PolymerMessageHandler {
     }
 
     /**
-     * The function is the same as the {@link #getColoredMessages(String, Arguments...)} method,
+     * The function is the same as the {@link #getColoredMessages(String, ObjectArray...)} method,
      * but this method concatenates all components into one component.
      * @param node key
      * @param replacements the args you want to replace
      * @return a single component
      */
-    public Component getColoredMessagesAsSingle(String node, Arguments... replacements){
+    public Component getColoredMessagesAsSingle(String node, ObjectArray... replacements){
         List<Component> components = getColoredMessages(node, replacements);
         Component main = Component.empty();
         for (Component c : components){
@@ -140,7 +140,7 @@ public class PolymerMessageHandler {
      * @param node the key
      * @param arguments replacements
      */
-    public void sendMessages(CommandSender cs, String node, Arguments... arguments) {
+    public void sendMessages(CommandSender cs, String node, ObjectArray... arguments) {
         for (Component c : getColoredMessages(node, arguments)) {
             cs.sendMessage(c);
         }

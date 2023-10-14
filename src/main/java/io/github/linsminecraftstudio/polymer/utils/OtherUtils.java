@@ -1,15 +1,18 @@
 package io.github.linsminecraftstudio.polymer.utils;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
+import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.checkerframework.checker.units.qual.K;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 
 public class OtherUtils {
     public static boolean isPolymerVersionAtLeast(String version){
@@ -50,19 +53,31 @@ public class OtherUtils {
         }
     }
 
-    public static JavaPlugin findPlugin(){
+    public static PolymerPlugin findCallingPlugin() {
         try {
             StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
             for (StackTraceElement stackTraceElement : stackTraceElements){
                 String className = stackTraceElement.getClassName();
                 Class<?> clazz = Class.forName(className);
-                if (JavaPlugin.class.isAssignableFrom(clazz)) {
-                    return JavaPlugin.getPlugin((Class<? extends JavaPlugin>) clazz);
+                if (clazz.getSuperclass() != null && clazz.getSuperclass() == PolymerPlugin.class) {
+                    return PolymerPlugin.getPolymerPlugin((Class<? extends PolymerPlugin>) clazz);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static class Updater {
+        /**
+         * Make a updater
+         * @param resourceId the resource id on spigotmc
+         * @param consumer handle
+         */
+        public Updater(int resourceId, BiConsumer<String, Boolean> consumer) {
+            Optional<String> ver = getPluginLatestVersion(resourceId);
+            consumer.accept(ver.orElse(""), ver.isPresent());
+        }
     }
 }
