@@ -36,13 +36,13 @@ public abstract class PolymerCommand extends Command{
 
     @Override
     public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
-        if (args.length == 0) {
-            return subCommands.values().stream().map(SubCommand::getName).toList();
-        } else {
+        if (args.length == 1) {
+            return copyPartialMatches(args[0], subCommands.values().stream().map(SubCommand::getName).toList());
+        } else if (args.length > 1){
             String sub = args[0];
             if (subCommands.containsKey(sub)) {
                 Map<Integer, List<String>> map = subCommands.get(sub).tabCompletion(sender);
-                return map.get(args.length - 1);
+                return copyPartialMatches(args[args.length - 1], map.get(args.length - 1));
             }
         }
         return new ArrayList<>();
