@@ -2,7 +2,6 @@ package io.github.linsminecraftstudio.polymer.utils;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
-import org.bukkit.Bukkit;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,12 +30,6 @@ public class OtherUtils {
         return polymerMajor > major ||
                 (polymerMajor == major && polymerMinor > minor) ||
                 (polymerMajor == major && polymerMinor == minor && polymerPatch >= p);
-    }
-
-    public static boolean isMinecraftVersionAtLeast(int minor, int patch){
-        String[] version = Bukkit.getMinecraftVersion().split("\\.");
-        int p = version.length == 2 ? 0 : Integer.parseInt(version[2]);
-        return Integer.parseInt(version[1]) >= minor & p >= patch;
     }
 
     public static Optional<String> getPluginLatestVersion(int resourceID) {

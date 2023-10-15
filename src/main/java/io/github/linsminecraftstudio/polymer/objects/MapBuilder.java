@@ -32,4 +32,8 @@ public class MapBuilder<K, V> {
     public Map<K, V> build() {
         return map;
     }
+
+    public static <K, V> Map<K, V> empty() {
+        return new HashMap<>();
+    }
 }
