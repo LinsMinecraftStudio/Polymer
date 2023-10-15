@@ -6,7 +6,11 @@ import java.util.Map;
 public class MapBuilder<K, V> {
     private final Map<K, V> map;
     public MapBuilder() {
-        map = new HashMap<>();
+        this.map = new HashMap<>();
+    }
+
+    public MapBuilder(Map<K, V> map) {
+        this.map = map;
     }
 
     public MapBuilder<K, V> put(K key, V value) {

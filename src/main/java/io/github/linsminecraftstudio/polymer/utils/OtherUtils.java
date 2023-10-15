@@ -3,28 +3,36 @@ package io.github.linsminecraftstudio.polymer.utils;
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import org.bukkit.Bukkit;
-import org.checkerframework.checker.units.qual.K;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 public class OtherUtils {
-    public static boolean isPolymerVersionAtLeast(String version){
-        String[] split = version.replaceAll("-SNAPSHOT","").split("\\.");
-        return isPolymerVersionAtLeast(Integer.parseInt(split[0]), Integer.parseInt(split[1]), split.length == 2 ? 0 : Integer.parseInt(split[2]));
+    public static boolean isPolymerVersionAtLeast(String version) {
+        String[] split = version.replaceAll("-SNAPSHOT", "").split("\\.");
+        if (split.length == 2) {
+            return isPolymerVersionAtLeast(Integer.parseInt(split[0]), Integer.parseInt(split[1]), 0);
+        } else {
+            return isPolymerVersionAtLeast(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+        }
     }
-    public static boolean isPolymerVersionAtLeast(int major, int minor, int p){
-        String[] version = Polymer.INSTANCE.getPluginMeta().getVersion().replaceAll("-SNAPSHOT","").split("\\.");
-        return Integer.parseInt(version[0]) > major ||
-                (Integer.parseInt(version[0]) == major && Integer.parseInt(version[1]) > minor) ||
-                (Integer.parseInt(version[0]) == major && Integer.parseInt(version[1]) == minor && Integer.parseInt(version[2]) >= p);
+
+    public static boolean isPolymerVersionAtLeast(int major, int minor, int p) {
+        String[] version = Polymer.INSTANCE.getPluginMeta().getVersion().replaceAll("-SNAPSHOT", "").split("\\.");
+        int polymerMajor = Integer.parseInt(version[0]);
+        int polymerMinor = Integer.parseInt(version[1]);
+        int polymerPatch = (version.length > 2) ? Integer.parseInt(version[2]) : 0;
+
+        return polymerMajor > major ||
+                (polymerMajor == major && polymerMinor > minor) ||
+                (polymerMajor == major && polymerMinor == minor && polymerPatch >= p);
     }
+
     public static boolean isMinecraftVersionAtLeast(int minor, int patch){
         String[] version = Bukkit.getMinecraftVersion().split("\\.");
         int p = version.length == 2 ? 0 : Integer.parseInt(version[2]);
