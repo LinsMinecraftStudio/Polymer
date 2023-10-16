@@ -20,27 +20,25 @@ import java.util.Map;
  */
 public class ItemStackBuilder {
     private final NBTItem nbtItem;
-    private final ItemStack itemStack;
     private final ItemMeta itemMeta;
     private final Map<Enchantment, Integer> enchantments = new HashMap<>();
-    private int amount = 1;
+    private int amount;
 
-    public ItemStackBuilder(ItemStack item){
-        this.itemStack = item;
-        this.itemMeta = item.getItemMeta();
-        this.nbtItem = new NBTItem(itemStack);
-    }
 
     public ItemStackBuilder(Material material){
         this(material, 1);
     }
 
     public ItemStackBuilder(Material material, int amount){
-        this.itemStack = new ItemStack(material);
-        this.amount = amount;
-        this.itemMeta = itemStack.getItemMeta();
-        this.nbtItem = new NBTItem(itemStack);
+       this(new ItemStack(material, amount));
     }
+
+    public ItemStackBuilder(ItemStack item){
+        this.itemMeta = item.getItemMeta();
+        this.nbtItem = new NBTItem(item);
+        this.amount = item.getAmount();
+    }
+
 
     public void name(Component itemName){
         itemMeta.displayName(itemName);

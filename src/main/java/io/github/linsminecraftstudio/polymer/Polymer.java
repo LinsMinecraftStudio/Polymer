@@ -25,7 +25,7 @@ public final class Polymer extends JavaPlugin {
                         getLogger().info("Polymer is up to date.");
                     }
                 } else {
-                    getLogger().severe("Failed to check update.");
+                    getLogger().warning("Failed to check update.");
                 }
             });
         }

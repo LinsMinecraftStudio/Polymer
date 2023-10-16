@@ -3,6 +3,8 @@ package io.github.linsminecraftstudio.polymer.command;
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
 import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,12 +33,18 @@ public abstract class SubCommand {
         this.args = new SimpleTypeArray<>(args);
         if (enabled()) {
             execute(sender, args);
+        } else {
+            sender.sendMessage(noEnabledMsg());
         }
     }
 
     public abstract boolean enabled();
 
     public abstract Map<Integer, List<String>> tabCompletion(CommandSender sender);
+
+    public Component noEnabledMsg() {
+        return LegacyComponentSerializer.legacyAmpersand().deserialize("&4This command is disabled by developer!");
+    }
 
     /**
      * DON'T INVOKE IT DIRECTLY
