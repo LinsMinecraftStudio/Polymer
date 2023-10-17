@@ -96,6 +96,10 @@ public class ItemStackBuilder {
         nbtItem.setLong(key, value);
     }
 
+    public void nbt(String key, float value){
+        nbtItem.setFloat(key, value);
+    }
+
     public void removeNbt(String key){
         nbtItem.removeKey(key);
     }

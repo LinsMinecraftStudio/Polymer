@@ -29,6 +29,11 @@ public class MapBuilder<K, V> {
         return this;
     }
 
+    public MapBuilder<K, V> remove(K key) {
+        map.remove(key);
+        return this;
+    }
+
     public Map<K, V> build() {
         return map;
     }

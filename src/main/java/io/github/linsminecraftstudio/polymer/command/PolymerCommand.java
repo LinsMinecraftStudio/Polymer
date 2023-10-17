@@ -9,14 +9,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public abstract class PolymerCommand extends Command{
+public abstract class PolymerCommand extends Command implements ICommand{
     protected JavaPlugin pluginInstance;
     protected SimpleTypeArray<String> arguments;
     private CommandSender sender;
@@ -29,8 +28,7 @@ public abstract class PolymerCommand extends Command{
         super(name, null, null, new ArrayList<>());
         try {
             autoSetCMDInfo(aliases);
-        }catch (Exception e) {
-            e.printStackTrace();
+        }catch (Exception ignored) {
         }
     }
 
@@ -42,7 +40,10 @@ public abstract class PolymerCommand extends Command{
             String sub = args[0];
             if (subCommands.containsKey(sub)) {
                 Map<Integer, List<String>> map = subCommands.get(sub).tabCompletion(sender);
-                return copyPartialMatches(args[args.length - 1], map.get(args.length - 1));
+                if (!map.isEmpty()) {
+                    return copyPartialMatches(args[args.length - 1], map.get(args.length - 1));
+                }
+                return new ArrayList<>();
             }
         }
         return new ArrayList<>();
@@ -101,7 +102,7 @@ public abstract class PolymerCommand extends Command{
     }
 
     public abstract String requirePlugin();
-    protected abstract void execute(CommandSender sender, String alias);
+    public abstract void execute(CommandSender sender, String alias);
 
     protected boolean hasPermission(){
         return hasSubPermission(sender);
@@ -147,18 +148,6 @@ public abstract class PolymerCommand extends Command{
         return p;
     }
 
-    protected List<String> copyPartialMatches(String token, Iterable<String> original){
-        return StringUtil.copyPartialMatches(token,original,new ArrayList<>());
-    }
-
-    protected List<String> getPlayerNames(){
-        List<String> list = new ArrayList<>();
-        for (Player p: Bukkit.getOnlinePlayers()){
-            list.add(p.getName());
-        }
-        return list;
-    }
-
     @Nullable
     protected String getArg(int index) {
         try {
@@ -167,12 +156,15 @@ public abstract class PolymerCommand extends Command{
             return null;
         }
     }
+
     protected boolean isArgEmpty() {
         return arguments.isEmpty();
     }
+
     protected int argSize() {
         return arguments.size();
     }
+
     protected double getArgAsDoubleOrInt(int index, boolean isInt, boolean allowNegative) {
         String s = getArg(index);
         try {

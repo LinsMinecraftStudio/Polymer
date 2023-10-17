@@ -8,14 +8,12 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class SubCommand {
+public abstract class SubCommand implements ICommand{
     private final String name;
     private CommandSender sender;
     private SimpleTypeArray<String> args;
@@ -32,7 +30,7 @@ public abstract class SubCommand {
         this.sender = sender;
         this.args = new SimpleTypeArray<>(args);
         if (enabled()) {
-            execute(sender, args);
+            execute(sender, "");
         } else {
             sender.sendMessage(noEnabledMsg());
         }
@@ -46,11 +44,7 @@ public abstract class SubCommand {
         return LegacyComponentSerializer.legacyAmpersand().deserialize("&4This command is disabled by developer!");
     }
 
-    /**
-     * DON'T INVOKE IT DIRECTLY
-     * You should use {@link SubCommand#run(CommandSender, String[])} instead.
-     */
-    protected abstract void execute(CommandSender sender, String[] args);
+    public abstract void execute(CommandSender sender, String alias);
 
     protected Player toPlayer(boolean NoMsg){
         if (sender instanceof Player p){
@@ -73,18 +67,6 @@ public abstract class SubCommand {
             Polymer.messageHandler.sendMessage(sender, "Command.PlayerNotFound");
         }
         return p;
-    }
-
-    protected List<String> copyPartialMatches(String token, Iterable<String> original){
-        return StringUtil.copyPartialMatches(token,original,new ArrayList<>());
-    }
-
-    protected List<String> getPlayerNames(){
-        List<String> list = new ArrayList<>();
-        for (Player p: Bukkit.getOnlinePlayers()){
-            list.add(p.getName());
-        }
-        return list;
     }
 
     protected String getArg(int index) {
