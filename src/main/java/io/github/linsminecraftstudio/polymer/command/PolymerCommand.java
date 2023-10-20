@@ -1,14 +1,13 @@
 package io.github.linsminecraftstudio.polymer.command;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
-import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
 import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
+import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +15,7 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 public abstract class PolymerCommand extends Command implements ICommand{
-    protected JavaPlugin pluginInstance;
+    protected PolymerPlugin pluginInstance;
     protected SimpleTypeArray<String> arguments;
     private CommandSender sender;
     private final Map<String, SubCommand> subCommands = new HashMap<>();
@@ -40,7 +39,7 @@ public abstract class PolymerCommand extends Command implements ICommand{
             String sub = args[0];
             if (subCommands.containsKey(sub)) {
                 Map<Integer, List<String>> map = subCommands.get(sub).tabCompletion(sender);
-                if (!map.isEmpty()) {
+                if (map != null && !map.isEmpty()) {
                     return copyPartialMatches(args[args.length - 1], map.get(args.length - 1));
                 }
                 return new ArrayList<>();
@@ -74,11 +73,17 @@ public abstract class PolymerCommand extends Command implements ICommand{
         subCommands.put(subCommand.getName(), subCommand);
     }
 
+    public final void sendMessage(String key, Object... args) {
+        if (pluginInstance != null) {
+            pluginInstance.getMessageHandler().sendMessage(sender, key, args);
+        }
+    }
+
     /**
      * Gets description for this command
      */
     private void autoSetCMDInfo(List<String> defAliases) {
-        JavaPlugin plugin = OtherUtils.findCallingPlugin();
+        PolymerPlugin plugin = OtherUtils.findCallingPlugin();
         if (plugin != null) {
             pluginInstance = plugin;
             Map<String,Object> commandObject = plugin.getDescription().getCommands().get(this.getName());
@@ -149,7 +154,7 @@ public abstract class PolymerCommand extends Command implements ICommand{
     }
 
     @Nullable
-    protected String getArg(int index) {
+    public String getArg(int index) {
         try {
             return arguments.get(index);
         } catch (Exception e) {
@@ -166,19 +171,6 @@ public abstract class PolymerCommand extends Command implements ICommand{
     }
 
     protected double getArgAsDoubleOrInt(int index, boolean isInt, boolean allowNegative) {
-        String s = getArg(index);
-        try {
-            double d = isInt ? Integer.parseInt(s) : Double.parseDouble(s);
-            if (!allowNegative) {
-                if ((isInt && d < 0) || (!isInt && d < 0.01)) {
-                    Polymer.messageHandler.sendMessage(sender, "Value.TooLow", index + 1);
-                    return PolymerConstants.ERROR_CODE;
-                }
-            }
-            return d;
-        }catch (NumberFormatException e){
-            Polymer.messageHandler.sendMessage(sender, isInt ? "Value.NotInt" : "Value.NotDouble", index+1);
-            return PolymerConstants.ERROR_CODE;
-        }
+        return getArgAsDoubleOrInt(sender, index, isInt, allowNegative);
     }
 }

@@ -1,5 +1,6 @@
 # Polymer
-Polymer is a library for LMS plugins, and you can also use it (of course, this is more suitable for lazy developers, like me).  
+Polymer is a library for plugins from Lins Minecraft Studio, and you can also use it
+(of course, this is more suitable for lazy developers, like me).  
 Discord: https://discord.gg/W36MJhBtGy
 ## Installation
 ### Maven

@@ -1,12 +1,12 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin.message;
 
 import io.github.linsminecraftstudio.polymer.objects.array.ObjectArray;
+import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.InputStream;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class PolymerMessageHandler {
     private final YamlConfiguration message;
 
-    public PolymerMessageHandler(Plugin plugin){
+    public <T extends PolymerPlugin> PolymerMessageHandler(PolymerPlugin plugin){
         this(plugin, "en-us");
     }
     /**
@@ -29,7 +29,7 @@ public class PolymerMessageHandler {
      * @param plugin need the plugin to read language files from plugin data folder
      * @param defLangName the name of the default language (Usually English is used as the default language)
      */
-    public PolymerMessageHandler(Plugin plugin, String defLangName){
+    public <T extends PolymerPlugin> PolymerMessageHandler(PolymerPlugin plugin, String defLangName){
         String language = plugin.getConfig().getString("language",defLangName);
         String fileName = "lang/"+language.toLowerCase()+".yml";
         File file = new File(plugin.getDataFolder(),fileName);

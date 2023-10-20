@@ -2,9 +2,11 @@ package io.github.linsminecraftstudio.polymer.objects.plugin;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
+import io.github.linsminecraftstudio.polymer.objects.plugin.message.PolymerMessageHandler;
 import io.github.linsminecraftstudio.polymer.utils.FileUtil;
 import io.github.linsminecraftstudio.polymer.utils.Metrics;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -17,19 +19,24 @@ import java.util.logging.Level;
  */
 public abstract class PolymerPlugin extends JavaPlugin {
     private Metrics metrics;
+    @Getter
+    private PolymerMessageHandler messageHandler;
 
     @Override
     public final void onEnable() {
-        if (!OtherUtils.isPolymerVersionAtLeast(requireVersion())) {
-            Polymer.INSTANCE.getLogger().log(Level.SEVERE, """
-                    Plugin %1$s requires Polymer version %2$s.
-                    But the version is %3$s instead.
-                    It will disable automatically.
-                    """.formatted(getPluginMeta().getName(), requireVersion(), Polymer.INSTANCE.getPluginMeta().getVersion()));
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
+        if (requireVersion() != null && !requireVersion().isBlank()) {
+            if (!OtherUtils.isPolymerVersionAtLeast(requireVersion())) {
+                Polymer.INSTANCE.getLogger().log(Level.SEVERE, """
+                        Plugin %1$s requires Polymer version %2$s.
+                        But the version is %3$s instead.
+                        It will disable automatically.
+                        """.formatted(getPluginMeta().getName(), requireVersion(), Polymer.INSTANCE.getPluginMeta().getVersion()));
+                Bukkit.getPluginManager().disablePlugin(this);
+                return;
+            }
         }
         completeDefaultConfig();
+        messageHandler = new PolymerMessageHandler(this);
         onPlEnable();
         for (PolymerCommand command : registerCommands()) {
             if (Polymer.isDebug()) Polymer.INSTANCE.getLogger().warning("Registering command: "+command.getLabel()+

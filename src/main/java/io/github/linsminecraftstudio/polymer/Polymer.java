@@ -1,18 +1,22 @@
 package io.github.linsminecraftstudio.polymer;
 
+import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
+import io.github.linsminecraftstudio.polymer.command.plugin.MainCmd;
+import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.objects.plugin.message.PolymerMessageHandler;
-import io.github.linsminecraftstudio.polymer.utils.FileUtil;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public final class Polymer extends JavaPlugin {
+import java.util.List;
+
+public final class Polymer extends PolymerPlugin {
     public static Polymer INSTANCE;
     public static PolymerMessageHandler messageHandler;
+
     @Override
-    public void onEnable() {
+    public void onPlEnable() {
         // Plugin startup logic
         INSTANCE = this;
-        FileUtil.completeFile(this, "config.yml");
+        completeLangFile("en-us", "zh-cn");
         messageHandler = new PolymerMessageHandler(this);
         getLogger().info("Polymer enabled!");
         if (getConfig().getBoolean("checkUpdate")) {
@@ -32,11 +36,25 @@ public final class Polymer extends JavaPlugin {
     }
 
     @Override
-    public void onDisable() {
-        // Plugin shutdown logic
+    public void onPlDisable() {
+    }
+
+    @Override
+    public List<PolymerCommand> registerCommands() {
+        return List.of(new MainCmd("polymer"));
+    }
+
+    @Override
+    public String requireVersion() {
+        return null;
     }
 
     public static boolean isDebug() {
         return INSTANCE.getConfig().getBoolean("debug", false);
+    }
+
+    public static void doReload() {
+        INSTANCE.reloadConfig();
+        messageHandler = new PolymerMessageHandler(INSTANCE);
     }
 }

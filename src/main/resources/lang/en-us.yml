@@ -14,6 +14,8 @@ Value:
   TooHigh: "&4The value of parameter %d is too high."
   TooLow: "&4The value of parameter %d is too low."
 Info:
+  Plugin: "&aRunning Polymer version %1$s by %2$s on MC version %3$s."
+  ReloadSuccess: "&aReloaded successfully!"
   List:
     Head: "&a-----------------&ePage %d&a-----------------"
     ListEmpty: "&4There aren't any elements in the list."

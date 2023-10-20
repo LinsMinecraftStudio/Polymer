@@ -1,7 +1,6 @@
 package io.github.linsminecraftstudio.polymer.command;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
-import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
 import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -69,24 +68,11 @@ public abstract class SubCommand implements ICommand{
         return p;
     }
 
-    protected String getArg(int index) {
+    public String getArg(int index) {
         return args.get(index);
     }
 
     protected double getArgAsDoubleOrInt(int index, boolean isInt, boolean allowNegative) {
-        String s = getArg(index);
-        try {
-            double d = isInt ? Integer.parseInt(s) : Double.parseDouble(s);
-            if (!allowNegative) {
-                if ((isInt && d < 0) || (!isInt && d < 0.01)) {
-                    Polymer.messageHandler.sendMessage(sender, "Value.TooLow", index + 1);
-                    return PolymerConstants.ERROR_CODE;
-                }
-            }
-            return d;
-        }catch (NumberFormatException e){
-            Polymer.messageHandler.sendMessage(sender, isInt ? "Value.NotInt" : "Value.NotDouble", index+1);
-            return PolymerConstants.ERROR_CODE;
-        }
+        return getArgAsDoubleOrInt(sender, index, isInt, allowNegative);
     }
 }

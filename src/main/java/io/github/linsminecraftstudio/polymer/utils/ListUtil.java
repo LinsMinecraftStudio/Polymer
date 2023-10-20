@@ -63,4 +63,8 @@ public final class ListUtil {
         if (componentList.isEmpty()) return new ArrayList<>();
         return componentList.stream().map(MiniMessage.miniMessage()::serialize).toList();
     }
+
+    public static String asString(List<?> list) {
+        return list.toString().replaceAll("\\[", "").replaceAll("]", "");
+    }
 }
