@@ -135,7 +135,7 @@ public abstract class PolymerPlugin extends JavaPlugin {
         FileUtil.completeFile(this, "config.yml");
     }
 
-    public final synchronized void reload() {
+    public void reload() {
         reloadConfig();
         completeDefaultConfig();
         messageHandler.reload();
