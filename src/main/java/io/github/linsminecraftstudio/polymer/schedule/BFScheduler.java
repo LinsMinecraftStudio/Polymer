@@ -1,25 +1,19 @@
 package io.github.linsminecraftstudio.polymer.schedule;
 
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
 
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
  * A scheduler for compatible with Folia (A fork of paper).
  */
 public class BFScheduler {
-    private ConcurrentHashMap<Integer, ScheduledTask> foliaTasks;
     private PolymerPlugin plugin;
     private boolean modern;
 
     public BFScheduler(PolymerPlugin plugin) {
         testClasses();
-        if (modern) {
-            foliaTasks = new ConcurrentHashMap<>(5000);
-        }
         this.plugin = plugin;
     }
 

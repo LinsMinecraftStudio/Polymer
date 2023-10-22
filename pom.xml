@@ -70,8 +70,8 @@
 						<configuration>
 							<encoding>UTF-8</encoding>
 							<excludes>
-								<exclude>io.github.linsminecraftstudio.polymer.command.plugin.MainCmd</exclude>
-								<exclude>io.github.linsminecraftstudio.polymer.Polymer</exclude>
+								<exclude>io/github/linsminecraftstudio/polymer/command/plugin/MainCmd.java</exclude>
+								<exclude>io/github/linsminecraftstudio/polymer/Polymer.java</exclude>
 							</excludes>
 						</configuration>
 						<executions>
