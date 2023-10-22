@@ -69,6 +69,10 @@
 						<version>3.5.0</version>
 						<configuration>
 							<encoding>UTF-8</encoding>
+							<excludes>
+								<exclude>io.github.linsminecraftstudio.polymer.command.plugin.MainCmd</exclude>
+								<exclude>io.github.linsminecraftstudio.polymer.Polymer</exclude>
+							</excludes>
 						</configuration>
 						<executions>
 							<execution>

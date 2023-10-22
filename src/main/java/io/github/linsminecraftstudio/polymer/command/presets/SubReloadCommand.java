@@ -10,8 +10,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A preset command for reload the plugin.
+ */
 public class SubReloadCommand extends SubCommand {
-    private PolymerPlugin plugin;
+    private final PolymerPlugin plugin;
 
     public SubReloadCommand(@NotNull PolymerPlugin plugin) {
         super("reload");

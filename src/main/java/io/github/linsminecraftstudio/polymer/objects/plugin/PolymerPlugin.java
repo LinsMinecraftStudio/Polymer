@@ -102,7 +102,7 @@ public abstract class PolymerPlugin extends JavaPlugin {
 
     /**
      * Requires a Polymer API version of the plugin.<br>
-     * Set 0 for no API requirement.
+     * Set 0 or lower for no API requirement.
      * @return the required Polymer API version.
      */
     public abstract int requireApiVersion();

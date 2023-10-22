@@ -40,7 +40,7 @@ public abstract class PolymerCommand extends Command implements ICommand{
             if (subCommands.containsKey(sub)) {
                 Map<Integer, List<String>> map = subCommands.get(sub).tabCompletion(sender);
                 if (map != null && !map.isEmpty()) {
-                    return copyPartialMatches(args[args.length - 1], map.get(args.length - 1));
+                    return copyPartialMatches(args[args.length - 1], map.get(args.length - 2));
                 }
                 return new ArrayList<>();
             }
