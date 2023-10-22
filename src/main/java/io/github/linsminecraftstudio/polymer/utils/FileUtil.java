@@ -103,6 +103,7 @@ public final class FileUtil {
             }
             return;
         }
+
         if (stream == null) {
             plugin.getLogger().warning("File completion of '" + resourceFile + "' is failed.");
             return;

@@ -3,22 +3,20 @@ package io.github.linsminecraftstudio.polymer;
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
 import io.github.linsminecraftstudio.polymer.command.plugin.MainCmd;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
-import io.github.linsminecraftstudio.polymer.objects.plugin.message.PolymerMessageHandler;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
+import org.bukkit.event.Listener;
 
 import java.util.List;
 
-public final class Polymer extends PolymerPlugin {
+public final class Polymer extends PolymerPlugin implements Listener {
     public static Polymer INSTANCE;
-    public static PolymerMessageHandler messageHandler;
 
     @Override
     public void onPlEnable() {
         // Plugin startup logic
         INSTANCE = this;
-        completeLangFile("en-us", "zh-cn");
-        messageHandler = new PolymerMessageHandler(this);
         getLogger().info("Polymer enabled!");
+        getServer().getPluginManager().registerEvents(this, this);
         if (getConfig().getBoolean("checkUpdate")) {
             new OtherUtils.Updater(110542, (ver, success) -> {
                 if (success) {
@@ -49,12 +47,16 @@ public final class Polymer extends PolymerPlugin {
         return null;
     }
 
+    @Override
+    public int requireApiVersion() {
+        return 0;
+    }
+
     public static boolean isDebug() {
         return INSTANCE.getConfig().getBoolean("debug", false);
     }
 
     public static void doReload() {
         INSTANCE.reloadConfig();
-        messageHandler = new PolymerMessageHandler(INSTANCE);
     }
 }

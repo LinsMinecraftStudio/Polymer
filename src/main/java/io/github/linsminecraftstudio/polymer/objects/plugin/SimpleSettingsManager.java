@@ -1,6 +1,5 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin;
 
-import com.google.common.base.Strings;
 import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import net.kyori.adventure.text.Component;
@@ -75,8 +74,12 @@ public class SimpleSettingsManager {
     }
 
     public void set(String key, Object value){
-        if (value instanceof Location){
-            setLocation(key, (Location) value);
+        if (value instanceof Location loc){
+            setLocation(key, loc);
+            return;
+        }
+        if (value instanceof UUID u) {
+            configuration.set(key, u.toString());
             return;
         }
         configuration.set(key, value);
@@ -109,6 +112,11 @@ public class SimpleSettingsManager {
 
     @Nullable
     public Location getLocation(@NotNull String path) {
+        return getLocation(path, null);
+    }
+
+    @Nullable
+    public Location getLocation(@NotNull String path, @Nullable Location def) {
         ConfigurationSection cs = configuration.getConfigurationSection(path);
         if (cs != null){
             double x = cs.getDouble("x");
@@ -120,18 +128,23 @@ public class SimpleSettingsManager {
             if (w != null) {
                 return new Location(w, x, y, z, p, y2);
             }
-            return null;
+            return def;
         }
-        return null;
+        return def;
     }
 
     @Nullable
     public UUID getUUID(@NotNull String path) {
+        return getUUID(path, null);
+    }
+
+    @Nullable
+    public UUID getUUID(@NotNull String path, @Nullable UUID def) {
         String strUUID = configuration.getString(path);
         if (strUUID != null && !strUUID.isBlank()) {
             return UUID.fromString(strUUID);
         }else {
-            return null;
+            return def;
         }
     }
 }

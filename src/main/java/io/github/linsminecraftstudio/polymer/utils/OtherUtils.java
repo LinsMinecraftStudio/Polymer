@@ -70,6 +70,17 @@ public class OtherUtils {
         return null;
     }
 
+    public static String convertToRightLangCode(String lang) {
+        if (lang == null || lang.isBlank()) return "en-US";
+        String[] split = lang.split("-");
+        if (split.length == 1) {
+            String[] split2 = lang.split("_");
+            if (split2.length == 1) return lang;
+            return lang.replace(split2[1], split2[1].toUpperCase()).replace("_", "-");
+        }
+        return lang.replace(split[1], split[1].toUpperCase());
+    }
+
     public static class Updater {
         /**
          * Make a updater

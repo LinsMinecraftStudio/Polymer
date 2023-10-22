@@ -29,6 +29,7 @@ public abstract class ListCommand<T> extends PolymerCommand{
         return null;
     }
 
+
     public abstract List<T> list(CommandSender sender);
     public abstract void sendLineMessage(CommandSender sender, int number, T object);
 
@@ -52,7 +53,7 @@ public abstract class ListCommand<T> extends PolymerCommand{
             } else if (argSize() == 1){
                 sendMessages((int) getArgAsDoubleOrInt(0, true, false));
             } else {
-                Polymer.messageHandler.sendMessage(sender,"Command.ArgError");
+                Polymer.INSTANCE.getMessageHandler().sendMessage(sender,"Command.ArgError");
             }
         }
     }
@@ -65,18 +66,18 @@ public abstract class ListCommand<T> extends PolymerCommand{
         }
 
         if (list(sender).isEmpty()) {
-            Polymer.messageHandler.sendMessage(sender, "Info.List.Empty");
+            Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Info.List.Empty");
             return;
         }
 
         if (page > partition.size()) {
-            Polymer.messageHandler.sendMessage(sender, "Value.TooHigh", 1);
+            Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Value.TooHigh", 1);
             return;
         }
 
         int realPage = page - 1;
         List<T> partedList = partition.get(realPage);
-        Polymer.messageHandler.sendMessage(sender, "Info.List.Head", page);
+        Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Info.List.Head", page);
 
         int head = (page == 1) ? 1 : (10 * realPage) + 1;
 
@@ -85,23 +86,23 @@ public abstract class ListCommand<T> extends PolymerCommand{
             head++;
         }
 
-        Polymer.messageHandler.sendMessage(sender, "Info.List.Tail");
+        Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Info.List.Tail");
         sender.sendMessage(buildClickEvent(partition, page));
     }
 
     private Component buildClickEvent(List<List<T>> partition, int page) {
-        Component prev = Polymer.messageHandler.getColored("Info.List.Prev");
-        Component next = Polymer.messageHandler.getColored("Info.List.Next");
+        Component prev = Polymer.INSTANCE.getMessageHandler().getColored(sender, "Info.List.Prev");
+        Component next = Polymer.INSTANCE.getMessageHandler().getColored(sender, "Info.List.Next");
 
         ClickEvent prevClick = ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getName() + " " + (page-1));
         ClickEvent nextClick = ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getName() + " " + (page+1));
 
         if (page == 1) {
-            prev = Polymer.messageHandler.getColored("Info.List.PrevUnavailable");
+            prev = Polymer.INSTANCE.getMessageHandler().getColored(sender, "Info.List.PrevUnavailable");
             prevClick = null;
         }
         if (page >= partition.size()) {
-            next = Polymer.messageHandler.getColored("Info.List.NextUnavailable");
+            next = Polymer.INSTANCE.getMessageHandler().getColored(sender, "Info.List.NextUnavailable");
             nextClick = null;
         }
 

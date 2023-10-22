@@ -2,7 +2,9 @@ package io.github.linsminecraftstudio.polymer.objects.plugin;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
+import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
 import io.github.linsminecraftstudio.polymer.objects.plugin.message.PolymerMessageHandler;
+import io.github.linsminecraftstudio.polymer.schedule.BFScheduler;
 import io.github.linsminecraftstudio.polymer.utils.FileUtil;
 import io.github.linsminecraftstudio.polymer.utils.Metrics;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
@@ -19,14 +21,17 @@ import java.util.logging.Level;
  */
 public abstract class PolymerPlugin extends JavaPlugin {
     private Metrics metrics;
-    @Getter
-    private PolymerMessageHandler messageHandler;
+
+    private volatile @Getter PolymerMessageHandler messageHandler;
+
+    private @Getter BFScheduler scheduler;
 
     @Override
     public final void onEnable() {
         if (requireVersion() != null && !requireVersion().isBlank()) {
             if (!OtherUtils.isPolymerVersionAtLeast(requireVersion())) {
                 Polymer.INSTANCE.getLogger().log(Level.SEVERE, """
+                        \n
                         Plugin %1$s requires Polymer version %2$s.
                         But the version is %3$s instead.
                         It will disable automatically.
@@ -35,9 +40,23 @@ public abstract class PolymerPlugin extends JavaPlugin {
                 return;
             }
         }
+        if (requireApiVersion() > 0) {
+            if (PolymerConstants.API_VERSION != requireApiVersion()) {
+                Polymer.INSTANCE.getLogger().log(Level.SEVERE, """
+                        \n
+                        Plugin %1$s requires Polymer API version %2$d.
+                        But the api version is %3$d instead.
+                        It will disable automatically.
+                        Try to use newer Polymer version or older Polymer version.
+                        """.formatted(getPluginMeta().getName(), requireApiVersion(), PolymerConstants.API_VERSION));
+            }
+        }
+
         completeDefaultConfig();
+        scheduler = new BFScheduler(this);
         messageHandler = new PolymerMessageHandler(this);
         onPlEnable();
+
         for (PolymerCommand command : registerCommands()) {
             if (Polymer.isDebug()) Polymer.INSTANCE.getLogger().warning("Registering command: "+command.getLabel()+
                     ", plugin: " + getPluginMeta().getName());
@@ -80,6 +99,13 @@ public abstract class PolymerPlugin extends JavaPlugin {
     public abstract void onPlDisable();
     public abstract List<PolymerCommand> registerCommands();
     public abstract String requireVersion();
+
+    /**
+     * Requires a Polymer API version of the plugin.<br>
+     * Set 0 for no API requirement.
+     * @return the required Polymer API version.
+     */
+    public abstract int requireApiVersion();
     /////
 
     public void suggestSpark(){
@@ -104,12 +130,14 @@ public abstract class PolymerPlugin extends JavaPlugin {
                     """, getPluginMeta().getName());
         }
     }
+
     protected void completeDefaultConfig(){
         FileUtil.completeFile(this, "config.yml");
     }
-    protected void completeLangFile(String... langNames){
-        for (String lang : langNames){
-            FileUtil.completeLangFile(this, "lang/"+lang+".yml");
-        }
+
+    public final synchronized void reload() {
+        reloadConfig();
+        completeDefaultConfig();
+        messageHandler.reload();
     }
 }

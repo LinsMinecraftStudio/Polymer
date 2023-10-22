@@ -14,6 +14,8 @@ Value:
   TooHigh: "&4参数%d的值太高。"
   TooLow: "&4参数%d的值太低。"
 Info:
+  Plugin: "&a正在运行 Polymer 版本 %1$s 作者：%2$s MC服务器版本：%3$s。"
+  ReloadSuccess: "&a重载成功！"
   List:
     Head: "&a-----------------&e第%d页&a-----------------"
     ListEmpty: "&4列表里没有任何元素。"
@@ -21,5 +23,5 @@ Info:
     Tail: "&a----------------------------------------"
     Prev: "&a<- &e上一页"
     Next: "&e下一页 &a->"
-    PrevUnavailable: "<- &8&l上一页"
+    PrevUnavailable: "&8&l<- 上一页"
     NextUnavailable: "&8&l下一页 ->"

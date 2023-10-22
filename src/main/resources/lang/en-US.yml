@@ -14,7 +14,7 @@ Value:
   TooHigh: "&4The value of parameter %d is too high."
   TooLow: "&4The value of parameter %d is too low."
 Info:
-  Plugin: "&aRunning Polymer version %1$s by %2$s on MC version %3$s."
+  Plugin: "&aRunning Polymer version %1$s by %2$s. Server MC version: %3$s."
   ReloadSuccess: "&aReloaded successfully!"
   List:
     Head: "&a-----------------&ePage %d&a-----------------"
@@ -23,5 +23,5 @@ Info:
     Tail: "&a----------------------------------------"
     Prev: "&a<- &ePrev"
     Next: "&eNext &a->"
-    PrevUnavailable: "&a<- &8&lPrev"
-    NextUnavailable: "&8&lNext &a->"
+    PrevUnavailable: "&8&l<- Prev"
+    NextUnavailable: "&8&lNext ->"

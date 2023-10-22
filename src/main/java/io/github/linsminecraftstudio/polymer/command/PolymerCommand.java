@@ -24,7 +24,7 @@ public abstract class PolymerCommand extends Command implements ICommand{
         this(name, new ArrayList<>());
     }
     public PolymerCommand(@Nonnull String name, List<String> aliases) {
-        super(name, null, null, new ArrayList<>());
+        super(name, "", "", new ArrayList<>());
         try {
             autoSetCMDInfo(aliases);
         }catch (Exception ignored) {
@@ -63,20 +63,24 @@ public abstract class PolymerCommand extends Command implements ICommand{
             String subName = strings[0];
             if (subCommands.containsKey(subName)) {
                 SubCommand subCommand = subCommands.get(subName);
-                subCommand.run(commandSender, Arrays.copyOfRange(strings, 1, strings.length));
+                subCommand.run(commandSender, Arrays.copyOfRange(strings, 1, strings.length), pluginInstance);
             }
         }
         return true;
     }
 
-    public final void registerSubCommand(SubCommand subCommand) {
-        subCommands.put(subCommand.getName(), subCommand);
-    }
-
     public final void sendMessage(String key, Object... args) {
         if (pluginInstance != null) {
-            pluginInstance.getMessageHandler().sendMessage(sender, key, args);
+            sendMessage(sender, key, args);
         }
+    }
+
+    public final void sendMessage(CommandSender sender, String key, Object... args) {
+        pluginInstance.getMessageHandler().sendMessage(sender, key, args);
+    }
+
+    public final void registerSubCommand(SubCommand subCommand) {
+        subCommands.put(subCommand.getName(), subCommand);
     }
 
     /**
@@ -124,7 +128,7 @@ public abstract class PolymerCommand extends Command implements ICommand{
     protected boolean hasCustomPermission(CommandSender cs,String perm){
         if (cs == null) return true;
         if (!cs.hasPermission(pluginInstance.getPluginMeta().getName().toLowerCase()+"."+perm)){
-            Polymer.messageHandler.sendMessage(cs,"Command.NoPermission");
+            Polymer.INSTANCE.getMessageHandler().sendMessage(cs,"Command.NoPermission");
             return false;
         }
         return true;
@@ -139,7 +143,7 @@ public abstract class PolymerCommand extends Command implements ICommand{
             return p;
         }else {
             if (!NoMsg) {
-                Polymer.messageHandler.sendMessage(sender, "Command.RunAsConsole");
+                Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Command.RunAsConsole");
             }
             return null;
         }
@@ -148,7 +152,7 @@ public abstract class PolymerCommand extends Command implements ICommand{
     protected Player findPlayer(String name){
         Player p = Bukkit.getPlayer(name);
         if (p == null){
-            Polymer.messageHandler.sendMessage(sender, "Command.PlayerNotFound");
+            Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Command.PlayerNotFound");
         }
         return p;
     }

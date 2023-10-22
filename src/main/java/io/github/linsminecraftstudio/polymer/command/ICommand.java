@@ -11,13 +11,15 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public interface ICommand{
+public interface ICommand {
     /**
      * DON'T TRY TO INVOKE IT DIRECTLY
      */
     void execute(CommandSender sender, String alias);
 
     String getArg(int index);
+
+    void sendMessage(CommandSender sender, String key, Object... args);
 
     default List<String> copyPartialMatches(@Nonnull String token, Iterable<String> original){
         if (original == null) {
@@ -40,13 +42,13 @@ public interface ICommand{
             double d = isInt ? Integer.parseInt(s) : Double.parseDouble(s);
             if (!allowNegative) {
                 if ((isInt && d < 0) || (!isInt && d < 0.01)) {
-                    Polymer.messageHandler.sendMessage(sender, "Value.TooLow", index + 1);
+                    Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Value.TooLow", index + 1);
                     return PolymerConstants.ERROR_CODE;
                 }
             }
             return d;
         }catch (NumberFormatException e){
-            Polymer.messageHandler.sendMessage(sender, isInt ? "Value.NotInt" : "Value.NotDouble", index+1);
+            Polymer.INSTANCE.getMessageHandler().sendMessage(sender, isInt ? "Value.NotInt" : "Value.NotDouble", index+1);
             return PolymerConstants.ERROR_CODE;
         }
     }

@@ -2,46 +2,75 @@ package io.github.linsminecraftstudio.polymer.objects.plugin.message;
 
 import io.github.linsminecraftstudio.polymer.objects.array.ObjectArray;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
+import io.github.linsminecraftstudio.polymer.utils.FileUtil;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
+import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * A message handler that handles messages from language files.
  * Ensure that this is a Paper server or the MiniMessage library is loaded before use, otherwise it will throw a {@link ClassNotFoundException}.
  */
-public class PolymerMessageHandler {
-    private final YamlConfiguration message;
+public final class PolymerMessageHandler {
+    private final PolymerPlugin plugin;
+    private final Map<String, YamlConfiguration> configurations = new HashMap<>();
 
-    public <T extends PolymerPlugin> PolymerMessageHandler(PolymerPlugin plugin){
-        this(plugin, "en-us");
-    }
     /**
      * Creates a new message handler
      * @param plugin need the plugin to read language files from plugin data folder
-     * @param defLangName the name of the default language (Usually English is used as the default language)
      */
-    public <T extends PolymerPlugin> PolymerMessageHandler(PolymerPlugin plugin, String defLangName){
-        String language = plugin.getConfig().getString("language",defLangName);
-        String fileName = "lang/"+language.toLowerCase()+".yml";
-        File file = new File(plugin.getDataFolder(),fileName);
-        if (!file.exists()) {
-            InputStream is = plugin.getResource(fileName);
-            if (is != null) {
-                plugin.saveResource(fileName,false);
-            }else {
-                file = new File(plugin.getDataFolder(),"lang/"+defLangName+".yml");
+    public PolymerMessageHandler(PolymerPlugin plugin){
+        this.plugin = plugin;
+
+        File pluginFolder = plugin.getDataFolder();
+
+        URL fileURL = Objects.requireNonNull(plugin.getClass().getClassLoader().getResource("lang/"));
+        String jarPath = fileURL.toString().substring(0, fileURL.toString().indexOf("!/") + 2);
+        try {
+            URL jar = new URL(jarPath);
+            JarURLConnection jarCon = (JarURLConnection) jar.openConnection();
+            JarFile jarFile = jarCon.getJarFile();
+            Enumeration<JarEntry> jarEntries = jarFile.entries();
+
+            while (jarEntries.hasMoreElements()) {
+                JarEntry entry = jarEntries.nextElement();
+                String name = entry.getName();
+                if (name.startsWith("lang/") && !entry.isDirectory()) {
+                    String realName = name.replaceAll("lang/","");
+                    InputStream stream = plugin.getClass().getClassLoader().getResourceAsStream(name);
+                    File destinationFile = new File(pluginFolder, "lang/" + realName);
+
+                    if (!destinationFile.exists() && stream != null) {
+                        plugin.saveResource("lang/" + realName, false);
+                    }
+
+                    FileUtil.completeLangFile(plugin, "lang/" + realName);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        File[] languageFiles = new File(pluginFolder, "lang").listFiles();
+        if (languageFiles != null) {
+            for (File languageFile : languageFiles) {
+                String language = OtherUtils.convertToRightLangCode(languageFile.getName().replace(".yml", ""));
+                configurations.put(language, YamlConfiguration.loadConfiguration(languageFile));
             }
         }
-        message = YamlConfiguration.loadConfiguration(file);
     }
 
     /**
@@ -49,33 +78,33 @@ public class PolymerMessageHandler {
      * @param node the node
      * @return the message
      */
-    public String get(String node){
-        return message.getString(node,"get message '"+node+"' failed, maybe it's not exists.");
+    public String get(@Nullable CommandSender cs, String node){
+        return getConfig(cs).getString(node,"get message '"+node+"' failed, maybe it's not exists.");
     }
 
-    public Component getColored(String node, Object... args){
-        try {return colorize(String.format(get(node),args));
-        } catch (Exception e) {return colorize(get(node));}
+    public Component getColored(@Nullable CommandSender cs, String node, Object... args){
+        try {return ObjectConverter.toComponent(String.format(get(cs, node),args));
+        } catch (Exception e) {return ObjectConverter.toComponent(get(cs, node));}
     }
 
-    public Component getColored(String node, Map<String, Object> argMap, char replacementChar) {
-        String original = get(node);
+    public Component getColored(@Nullable CommandSender cs, String node, Map<String, Object> argMap, char replacementChar) {
+        String original = get(cs, node);
         for (Map.Entry<String, Object> entry : argMap.entrySet()) {
             original = original.replaceAll(replacementChar+entry.getKey()+replacementChar, (String) entry.getValue());
         }
-        return colorize(original);
+        return ObjectConverter.toComponent(original);
     }
 
     /**
      * Obtain color messages and format them with messages.
-     * You can see {@link #getMessageObjects(String...)} for how to get message objects.
+     * You can see {@link #getMessageObjects(CommandSender, String...)} for how to get message objects.
      * @param node the node
      * @param keys message nodes
      * @return the message
      */
-    public Component getColoredFormatToOtherMessages(String node, String... keys){
-        try {return colorize(String.format(get(node), getMessageObjects(keys)));
-        } catch (Exception e) {return colorize(get(node));}
+    public Component getColoredFormatToOtherMessages(@Nullable CommandSender cs, String node, String... keys){
+        try {return ObjectConverter.toComponent(String.format(get(cs, node), getMessageObjects(cs, keys)));
+        } catch (Exception e) {return ObjectConverter.toComponent(get(cs, node));}
     }
 
     /**
@@ -83,10 +112,10 @@ public class PolymerMessageHandler {
      * @param keys message nodes
      * @return the message objects
      */
-    public Object[] getMessageObjects(String... keys){
+    public Object[] getMessageObjects(@Nullable CommandSender cs, String... keys){
         Object[] s = new Object[keys.length];
         for (int i = 0; i < keys.length; i++) {
-            s[i] = get(keys[i]);
+            s[i] = get(cs, keys[i]);
         }
         return s;
     }
@@ -97,28 +126,28 @@ public class PolymerMessageHandler {
      * @param replacements the args you want to replace
      * @return components
      */
-    public List<Component> getColoredMessages(String node, ObjectArray... replacements){
-        List<String> s = message.getStringList(node);
+    private List<Component> getColoredMessages(@Nullable CommandSender cs, String node, ObjectArray... replacements){
+        List<String> s = getConfig(cs).getStringList(node);
         List<Component> new_s = new ArrayList<>();
         for (int j = 0; j < replacements.length; j++) {
             String st = s.get(j);
             ObjectArray arg = replacements[j];
             if (!arg.isEmpty()) st = String.format(st, arg.args());
-            Component st2 = colorize(st);
+            Component st2 = ObjectConverter.toComponent(st);
             new_s.add(st2);
         }
         return new_s;
     }
 
     /**
-     * The function is the same as the {@link #getColoredMessages(String, ObjectArray...)} method,
+     * The function is the same as the {@link #getColoredMessages(CommandSender, String, ObjectArray...)} method,
      * but this method concatenates all components into one component.
      * @param node key
      * @param replacements the args you want to replace
      * @return a single component
      */
-    public Component getColoredMessagesAsSingle(String node, ObjectArray... replacements){
-        List<Component> components = getColoredMessages(node, replacements);
+    public Component getColoredMessagesAsSingle(CommandSender cs, String node, ObjectArray... replacements){
+        List<Component> components = getColoredMessages(cs, node, replacements);
         Component main = Component.empty();
         for (Component c : components){
             if (components.indexOf(c) != components.size() - 1) {
@@ -130,8 +159,8 @@ public class PolymerMessageHandler {
     }
 
     public void sendMessage(CommandSender cs,String node,Object... args) {
-        if (!get(node).isBlank()) {
-            cs.sendMessage(getColored(node, args));
+        if (!get(cs, node).isBlank()) {
+            cs.sendMessage(getColored(cs, node, args));
         }
     }
 
@@ -141,20 +170,65 @@ public class PolymerMessageHandler {
      * @param arguments replacements
      */
     public void sendMessages(CommandSender cs, String node, ObjectArray... arguments) {
-        for (Component c : getColoredMessages(node, arguments)) {
+        for (Component c : getColoredMessages(cs, node, arguments)) {
             cs.sendMessage(c);
         }
     }
 
     public void broadcastMessage(String node,Object... args){
-        Bukkit.broadcast(getColored(node, args));
+        Bukkit.broadcast(getColored(null, node, args));
     }
 
-    public void broadcastCustomMessage(String message){
-        Bukkit.broadcast(colorize(message));
+    public void reload() {
+        configurations.clear();
+        File pluginFolder = plugin.getDataFolder();
+
+        URL fileURL = Objects.requireNonNull(plugin.getClass().getClassLoader().getResource("lang/"));
+        String jarPath = fileURL.toString().substring(0, fileURL.toString().indexOf("!/") + 2);
+        try {
+            URL jar = new URL(jarPath);
+            JarURLConnection jarCon = (JarURLConnection) jar.openConnection();
+            JarFile jarFile = jarCon.getJarFile();
+            Enumeration<JarEntry> jarEntries = jarFile.entries();
+
+            while (jarEntries.hasMoreElements()) {
+                JarEntry entry = jarEntries.nextElement();
+                String name = entry.getName();
+                if (name.startsWith("lang/") && !entry.isDirectory()) {
+                    String realName = name.replaceAll("lang/","");
+                    InputStream stream = plugin.getClass().getClassLoader().getResourceAsStream(name);
+                    File destinationFile = new File(pluginFolder, "lang/" + realName);
+
+                    if (!destinationFile.exists() && stream != null) {
+                        plugin.saveResource("lang/" + realName, false);
+                    }
+
+                    FileUtil.completeLangFile(plugin, "lang/" + realName);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        File[] languageFiles = new File(pluginFolder, "lang").listFiles();
+        if (languageFiles != null) {
+            for (File languageFile : languageFiles) {
+                String language = OtherUtils.convertToRightLangCode(languageFile.getName().replace(".yml", ""));
+                configurations.put(language, YamlConfiguration.loadConfiguration(languageFile));
+            }
+        }
     }
 
-    public Component colorize(String string) {
-        return ObjectConverter.toComponent(string);
+    private YamlConfiguration getConfig(CommandSender cs){
+        return configurations.computeIfAbsent(getLocale(cs), y -> configurations.get("en-US"));
+    }
+
+    private String getLocale(CommandSender sender) {
+        if (sender != null) {
+            if (sender instanceof Player p) {
+                return p.locale().toLanguageTag();
+            }
+        }
+        return OtherUtils.convertToRightLangCode(plugin.getConfig().getString("language",""));
     }
 }
