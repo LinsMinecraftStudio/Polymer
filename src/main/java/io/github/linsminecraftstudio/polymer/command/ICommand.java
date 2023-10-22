@@ -21,6 +21,10 @@ public interface ICommand {
 
     void sendMessage(CommandSender sender, String key, Object... args);
 
+    default void sendPolymerMessage(CommandSender sender, String key, Object... args){
+        Polymer.INSTANCE.getMessageHandler().sendMessage(sender, key, args);
+    }
+
     default List<String> copyPartialMatches(@Nonnull String token, Iterable<String> original){
         if (original == null) {
             return new ArrayList<>();
@@ -42,13 +46,13 @@ public interface ICommand {
             double d = isInt ? Integer.parseInt(s) : Double.parseDouble(s);
             if (!allowNegative) {
                 if ((isInt && d < 0) || (!isInt && d < 0.01)) {
-                    Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Value.TooLow", index + 1);
+                    sendPolymerMessage(sender, "Value.TooLow", index + 1);
                     return PolymerConstants.ERROR_CODE;
                 }
             }
             return d;
         }catch (NumberFormatException e){
-            Polymer.INSTANCE.getMessageHandler().sendMessage(sender, isInt ? "Value.NotInt" : "Value.NotDouble", index+1);
+            sendPolymerMessage(sender, isInt ? "Value.NotInt" : "Value.NotDouble", index+1);
             return PolymerConstants.ERROR_CODE;
         }
     }
