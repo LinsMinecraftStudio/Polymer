@@ -19,6 +19,7 @@ public class BFScheduler {
 
     private void testClasses() {
         try {
+            //for checking legacy paper builds or forks or paper 1.19.3
             Class.forName("io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler");
             Class.forName("io.papermc.paper.threadedregions.scheduler.ScheduledTask");
             Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
@@ -28,19 +29,19 @@ public class BFScheduler {
         }
     }
 
-    public void scheduleAsync(Runnable runnable) {
-        if (modern) {
-            Bukkit.getAsyncScheduler().runNow(plugin, t -> runnable.run());
-        } else {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, t -> runnable.run());
-        }
-    }
-
     public void schedule(Runnable runnable) {
         if (modern) {
             Bukkit.getGlobalRegionScheduler().run(plugin, t -> runnable.run());
         } else {
             Bukkit.getScheduler().runTask(plugin, runnable);
+        }
+    }
+
+    public void scheduleAsync(Runnable runnable) {
+        if (modern) {
+            Bukkit.getAsyncScheduler().runNow(plugin, t -> runnable.run());
+        } else {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, t -> runnable.run());
         }
     }
 

@@ -64,6 +64,8 @@ public abstract class PolymerCommand extends Command implements ICommand{
             if (subCommands.containsKey(subName)) {
                 SubCommand subCommand = subCommands.get(subName);
                 subCommand.run(commandSender, Arrays.copyOfRange(strings, 1, strings.length), pluginInstance);
+            } else {
+                execute(commandSender, s);
             }
         }
         return true;
@@ -170,7 +172,7 @@ public abstract class PolymerCommand extends Command implements ICommand{
         return arguments.isEmpty();
     }
 
-    protected int argSize() {
+    public int argSize() {
         return arguments.size();
     }
 

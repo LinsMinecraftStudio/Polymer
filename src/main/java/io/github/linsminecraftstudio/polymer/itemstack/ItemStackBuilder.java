@@ -2,12 +2,14 @@ package io.github.linsminecraftstudio.polymer.itemstack;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Arrays;
@@ -23,7 +25,7 @@ public class ItemStackBuilder {
     private final ItemMeta itemMeta;
     private final Map<Enchantment, Integer> enchantments = new HashMap<>();
     private int amount;
-
+    private String skull;
 
     public ItemStackBuilder(Material material){
         this(material, 1);
@@ -104,12 +106,23 @@ public class ItemStackBuilder {
         nbtItem.removeKey(key);
     }
 
+    public void head(String owner){
+        this.skull = owner;
+    }
+
     /**
      * Returns the item stack
      * @return an item stack
      */
     public ItemStack build() {
         ItemStack stack = nbtItem.getItem();
+        if (skull != null) {
+            stack.setType(Material.PLAYER_HEAD);
+            SkullMeta meta = (SkullMeta) stack.getItemMeta();
+
+            meta.setOwningPlayer(Bukkit.getOfflinePlayer(skull));
+            stack.setItemMeta(meta);
+        }
         stack.setAmount(amount);
         stack.addUnsafeEnchantments(enchantments);
         stack.setItemMeta(itemMeta);

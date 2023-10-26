@@ -19,6 +19,8 @@ public interface ICommand {
 
     String getArg(int index);
 
+    int argSize();
+
     void sendMessage(CommandSender sender, String key, Object... args);
 
     default void sendPolymerMessage(CommandSender sender, String key, Object... args){

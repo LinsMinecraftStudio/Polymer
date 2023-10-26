@@ -1,5 +1,6 @@
 package io.github.linsminecraftstudio.polymer.utils;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConfigurationOptions;
 import org.bukkit.plugin.Plugin;
@@ -150,6 +151,7 @@ public final class FileUtil {
      * @param dirFile the directory
      * @return result
      */
+    @CanIgnoreReturnValue
     public static boolean deleteDir(File dirFile){
         Callable<Boolean> callable = () -> {
             if (!dirFile.exists() || !dirFile.isDirectory() || dirFile.listFiles() == null) {
@@ -189,7 +191,8 @@ public final class FileUtil {
      * @param file the file
      * @return result
      */
-    public static boolean deleteFile (File file){
+    @CanIgnoreReturnValue
+    public static boolean deleteFile(File file){
         boolean flag = false;
 
         if (file.isFile() && file.exists()) {

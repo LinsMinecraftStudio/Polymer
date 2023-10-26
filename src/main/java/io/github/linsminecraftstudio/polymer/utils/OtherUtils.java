@@ -6,9 +6,9 @@ import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 public class OtherUtils {
@@ -30,28 +30,6 @@ public class OtherUtils {
         return polymerMajor > major ||
                 (polymerMajor == major && polymerMinor > minor) ||
                 (polymerMajor == major && polymerMinor == minor && polymerPatch >= p);
-    }
-
-    public static Optional<String> getPluginLatestVersion(int resourceID) {
-        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
-            try (InputStream stream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceID).openStream();
-                 Scanner scanner = new Scanner(stream)) {
-                StringBuilder builder = new StringBuilder();
-                while (scanner.hasNextLine()) {
-                    builder.append(scanner.nextLine());
-                }
-                return builder.toString();
-            } catch (IOException e) {
-                if (Polymer.isDebug()) e.printStackTrace();
-                return null;
-            }
-        });
-        try {
-            return Optional.ofNullable(future.join());
-        } catch (Exception e) {
-            if (Polymer.isDebug()) e.printStackTrace();
-            return Optional.empty();
-        }
     }
 
     public static PolymerPlugin findCallingPlugin() {
@@ -88,8 +66,28 @@ public class OtherUtils {
          * @param consumer handle
          */
         public Updater(int resourceId, BiConsumer<String, Boolean> consumer) {
-            Optional<String> ver = getPluginLatestVersion(resourceId);
-            consumer.accept(ver.orElse(""), ver.isPresent());
+            CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+                try (InputStream stream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId).openStream();
+                     Scanner scanner = new Scanner(stream)) {
+                    StringBuilder builder = new StringBuilder();
+                    while (scanner.hasNextLine()) {
+                        builder.append(scanner.nextLine());
+                    }
+                    return builder.toString();
+                } catch (IOException e) {
+                    if (Polymer.isDebug()) e.printStackTrace();
+                    return null;
+                }
+            }).completeOnTimeout(null, 5, TimeUnit.SECONDS);
+            String ver;
+            try {
+                future.join();
+                ver = future.join();
+            } catch (Exception e) {
+                if (Polymer.isDebug()) e.printStackTrace();
+                ver = null;
+            }
+            consumer.accept(ver, ver != null);
         }
     }
 }

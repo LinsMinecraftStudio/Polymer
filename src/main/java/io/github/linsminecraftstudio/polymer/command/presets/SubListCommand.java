@@ -1,32 +1,32 @@
-package io.github.linsminecraftstudio.polymer.command;
+package io.github.linsminecraftstudio.polymer.command.presets;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
-import net.kyori.adventure.text.Component;
+import io.github.linsminecraftstudio.polymer.command.IListCommand;
+import io.github.linsminecraftstudio.polymer.command.SubCommand;
+import io.github.linsminecraftstudio.polymer.objects.MapBuilder;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public abstract class ListCommand<T> extends PolymerCommand implements IListCommand<T> {
+public abstract class SubListCommand<T> extends SubCommand implements IListCommand<T> {
+    public SubListCommand(@NotNull String name) {
+        super(name);
+    }
+
     private CommandSender sender;
 
-    public ListCommand(@NotNull String name) {
-        this(name, new ArrayList<>());
-    }
-
-    public ListCommand(@NotNull String name, List<String> aliases) {
-        super(name, aliases);
+    @Override
+    public String name() {
+        return getName();
     }
 
     @Override
-    public String requirePlugin() {
-        return null;
-    }
-
-    @Override
-    public final @NotNull List<String> tabComplete(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String[] args){
-        return super.tabComplete(commandSender, s, args);
+    public final Map<Integer, List<String>> tabCompletion(@NotNull CommandSender commandSender){
+        return new MapBuilder<Integer, List<String>>()
+                .put(0, tabComplete(commandSender))
+                .build();
     }
 
     @Override

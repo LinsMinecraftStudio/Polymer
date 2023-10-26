@@ -1,5 +1,6 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin;
 
+import com.google.errorprone.annotations.ForOverride;
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
 import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
@@ -82,7 +83,7 @@ public abstract class PolymerPlugin extends JavaPlugin {
         Polymer.INSTANCE.getLogger().info("Disabled plugin "+getPluginMeta().getName());
     }
 
-    protected void startMetrics(int pluginId) {
+    protected final void startMetrics(int pluginId) {
         metrics = new Metrics(this, pluginId);
     }
 
@@ -108,7 +109,7 @@ public abstract class PolymerPlugin extends JavaPlugin {
     public abstract int requireApiVersion();
     /////
 
-    public void suggestSpark(){
+    public final void suggestSpark(){
         if (!getServer().getPluginManager().isPluginEnabled("spark")) {
             getLogger().log(Level.WARNING,"""
                     \n
@@ -131,10 +132,11 @@ public abstract class PolymerPlugin extends JavaPlugin {
         }
     }
 
-    protected void completeDefaultConfig(){
+    protected final void completeDefaultConfig(){
         FileUtil.completeFile(this, "config.yml");
     }
 
+    @ForOverride
     public void reload() {
         reloadConfig();
         completeDefaultConfig();

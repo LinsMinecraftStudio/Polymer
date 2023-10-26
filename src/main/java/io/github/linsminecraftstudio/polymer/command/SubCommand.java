@@ -53,6 +53,8 @@ public abstract class SubCommand implements ICommand{
 
     public abstract Map<Integer, List<String>> tabCompletion(CommandSender sender);
 
+    public abstract @NotNull List<String> tabCompletion(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String[] args);
+
     public abstract void execute(CommandSender sender, String alias);
 
     public Component noEnabledMsg() {
@@ -109,5 +111,13 @@ public abstract class SubCommand implements ICommand{
             return false;
         }
         return true;
+    }
+
+    protected boolean isArgEmpty() {
+        return args.isEmpty();
+    }
+
+    public int argSize() {
+        return args.size();
     }
 }
