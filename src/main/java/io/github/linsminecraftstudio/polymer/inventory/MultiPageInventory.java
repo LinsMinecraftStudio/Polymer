@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.intellij.lang.annotations.RegExp;
@@ -32,11 +33,6 @@ public abstract class MultiPageInventory<T> {
     private List<Inventory> inventoryCache = new ArrayList<>();
 
     public abstract Component title();
-
-    /**
-     * offer args: {@link Player} player, {@link Integer} slot and {@link ItemStack} stack
-     * @return a ciconsumer
-     */
     public abstract void buttonHandle(Player p, int slot, ItemStack button);
     public abstract ItemStack getItemStackButton(Player p, int slot, T data);
 
@@ -49,7 +45,11 @@ public abstract class MultiPageInventory<T> {
     }
 
     public final void openInventory(Player p) {
-        openInventory(p, 1);
+        int page = 1;
+        if (map.containsKey(p.getUniqueId())) {
+            page = map.get(p.getUniqueId());
+        }
+        openInventory(p, page);
     }
 
     public final void openInventory(Player p, int page) {
@@ -65,7 +65,7 @@ public abstract class MultiPageInventory<T> {
     }
 
     public int getPage(UUID u) {
-        return map.getOrDefault(u, ERROR_CODE);
+        return map.getOrDefault(u, 1);
     }
 
 //private methods
@@ -119,7 +119,6 @@ public abstract class MultiPageInventory<T> {
 
             for (int sl : CONTENTS_SLOTS) {
                 if (dataIndex < data.size()) {
-                    // 如果data仍有项目可用，将其添加到Inventory
                     ItemStack itemStack = getItemStackButton(p, sl, data.get(dataIndex));
                     inventory.setItem(sl, itemStack);
                     dataIndex++;
@@ -143,16 +142,16 @@ public abstract class MultiPageInventory<T> {
         public void onClick(InventoryClickEvent e) {
             Player player = (Player) e.getWhoClicked();
             UUID uuid = player.getUniqueId();
-            if (e.getView().title().equals(doParse(map.getOrDefault(uuid, 1)))) {
+            if (e.getView().title().equals(doParse(getPage(uuid)))) {
                 int next = NEXT_PAGE_SLOT;
                 int prev = PREV_PAGE_SLOT;
                 int close = CLOSE_BUTTON_SLOT;
                 int slot = e.getRawSlot();
                 List<Inventory> inventories = getOrGenerateInventories(player);
                 if (slot == next) {
-                    int p = map.getOrDefault(uuid, 1);
+                    int p = getPage(uuid);
                     e.setCancelled(true);
-                    if (inventories.size() == map.getOrDefault(uuid, 1)) {
+                    if (inventories.size() == getPage(uuid)) {
                         return;
                     }
                     p += 1;
@@ -160,7 +159,7 @@ public abstract class MultiPageInventory<T> {
                     player.closeInventory();
                     player.openInventory(inventories.get(p - 1));
                 } else if (slot == prev){
-                    int p = map.getOrDefault(uuid, 1);
+                    int p = getPage(uuid);
                     if (p > 1) {
                         p -= 1;
                         map.put(uuid, p);
@@ -178,6 +177,16 @@ public abstract class MultiPageInventory<T> {
                     buttonHandle(player, e.getRawSlot(), e.getCurrentItem());
                     e.setCancelled(true);
                 }
+            }
+        }
+
+        @EventHandler
+        public void onClose(InventoryCloseEvent e) {
+            Player player = (Player) e.getPlayer();
+            UUID uuid = player.getUniqueId();
+            if (e.getView().title().equals(doParse(getPage(uuid)))) {
+                map.put(uuid, getPage(uuid));
+                HandlerList.unregisterAll(this);
             }
         }
     }
