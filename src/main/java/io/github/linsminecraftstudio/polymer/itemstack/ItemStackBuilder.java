@@ -1,5 +1,7 @@
 package io.github.linsminecraftstudio.polymer.itemstack;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -12,10 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Use to create and edit item stacks
@@ -120,7 +119,9 @@ public class ItemStackBuilder {
             stack.setType(Material.PLAYER_HEAD);
             SkullMeta meta = (SkullMeta) stack.getItemMeta();
 
-            meta.setOwningPlayer(Bukkit.getOfflinePlayer(skull));
+            PlayerProfile profile = meta.getPlayerProfile();
+            assert profile != null;
+            profile.setProperty(new ProfileProperty("textures", skull));
             stack.setItemMeta(meta);
         }
         stack.setAmount(amount);

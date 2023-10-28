@@ -1,7 +1,5 @@
 package io.github.linsminecraftstudio.polymer.command;
 
-import io.github.linsminecraftstudio.polymer.Polymer;
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +36,7 @@ public abstract class ListCommand<T> extends PolymerCommand implements IListComm
             } else if (argSize() == 1){
                 sendMessages((int) getArgAsDoubleOrInt(0, true, false));
             } else {
-                Polymer.INSTANCE.getMessageHandler().sendMessage(sender,"Command.ArgError");
+                sendPolymerMessage(sender,"Command.ArgError");
             }
         }
     }

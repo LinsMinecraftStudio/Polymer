@@ -130,7 +130,7 @@ public abstract class PolymerCommand extends Command implements ICommand{
     protected boolean hasCustomPermission(CommandSender cs,String perm){
         if (cs == null) return true;
         if (!cs.hasPermission(pluginInstance.getPluginMeta().getName().toLowerCase()+"."+perm)){
-            Polymer.INSTANCE.getMessageHandler().sendMessage(cs,"Command.NoPermission");
+            sendPolymerMessage(cs,"Command.NoPermission");
             return false;
         }
         return true;
@@ -145,7 +145,7 @@ public abstract class PolymerCommand extends Command implements ICommand{
             return p;
         }else {
             if (!NoMsg) {
-                Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Command.RunAsConsole");
+                sendPolymerMessage(sender, "Command.RunAsConsole");
             }
             return null;
         }
@@ -154,7 +154,7 @@ public abstract class PolymerCommand extends Command implements ICommand{
     protected Player findPlayer(String name){
         Player p = Bukkit.getPlayer(name);
         if (p == null){
-            Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Command.PlayerNotFound");
+            sendPolymerMessage(sender, "Command.PlayerNotFound");
         }
         return p;
     }

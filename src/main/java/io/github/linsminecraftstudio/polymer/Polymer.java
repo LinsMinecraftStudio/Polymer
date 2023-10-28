@@ -10,14 +10,13 @@ import java.util.List;
 
 public final class Polymer extends PolymerPlugin implements Listener {
     public static Polymer INSTANCE;
-    public static boolean autoDetectClientLang;
 
     @Override
     public void onPlEnable() {
         // Plugin startup logic
         INSTANCE = this;
         getLogger().info("Polymer enabled!");
-        getServer().getPluginManager().registerEvents(this, this);
+        getMessageHandler().setAutoDetectClientLanguage(getConfig().getBoolean("auto-detect-client-language", true));
         if (getConfig().getBoolean("checkUpdate")) {
             new OtherUtils.Updater(110542, (ver, success) -> {
                 if (success) {
@@ -32,7 +31,6 @@ public final class Polymer extends PolymerPlugin implements Listener {
                 }
             });
         }
-        autoDetectClientLang = getConfig().getBoolean("auto-detect-client-language", true);
     }
 
     @Override
@@ -61,6 +59,5 @@ public final class Polymer extends PolymerPlugin implements Listener {
     @Override
     public void reload() {
         super.reload();
-        autoDetectClientLang = getConfig().getBoolean("auto-detect-client-language", true);
     }
 }

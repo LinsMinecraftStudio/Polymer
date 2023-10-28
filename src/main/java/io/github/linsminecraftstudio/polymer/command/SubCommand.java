@@ -1,6 +1,5 @@
 package io.github.linsminecraftstudio.polymer.command;
 
-import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import net.kyori.adventure.text.Component;
@@ -53,8 +52,6 @@ public abstract class SubCommand implements ICommand{
 
     public abstract Map<Integer, List<String>> tabCompletion(CommandSender sender);
 
-    public abstract @NotNull List<String> tabCompletion(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String[] args);
-
     public abstract void execute(CommandSender sender, String alias);
 
     public Component noEnabledMsg() {
@@ -66,7 +63,7 @@ public abstract class SubCommand implements ICommand{
             return p;
         }else {
             if (!NoMsg) {
-                Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Command.RunAsConsole");
+                sendPolymerMessage(sender, "Command.RunAsConsole");
             }
             return null;
         }
@@ -79,7 +76,7 @@ public abstract class SubCommand implements ICommand{
     protected Player findPlayer(String name){
         Player p = Bukkit.getPlayer(name);
         if (p == null){
-            Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Command.PlayerNotFound");
+            sendPolymerMessage(sender, "Command.PlayerNotFound");
         }
         return p;
     }
@@ -107,7 +104,7 @@ public abstract class SubCommand implements ICommand{
     protected boolean hasCustomPermission(CommandSender cs,String perm){
         if (cs == null) return true;
         if (!cs.hasPermission(instance.getPluginMeta().getName().toLowerCase()+"."+perm)){
-            Polymer.INSTANCE.getMessageHandler().sendMessage(cs,"Command.NoPermission");
+            sendPolymerMessage(cs,"Command.NoPermission");
             return false;
         }
         return true;

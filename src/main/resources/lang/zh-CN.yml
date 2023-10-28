@@ -16,6 +16,7 @@ Value:
 Info:
   Plugin: "&a正在运行 Polymer 版本 %1$s 作者：%2$s MC服务器版本：%3$s。"
   ReloadSuccess: "&a重载成功！"
+  InputQuit: "&e(输入 '##QUIT' 来取消)"
   List:
     Head: "&a-----------------&e第%d页&a-----------------"
     ListEmpty: "&4列表里没有任何元素。"
@@ -25,3 +26,8 @@ Info:
     Next: "&e下一页 &a->"
     PrevUnavailable: "&8&l<- 上一页"
     NextUnavailable: "&8&l下一页 ->"
+GUI:
+  Previous: "&a上一页"
+  Next: "&a下一页"
+  Close: "&c关闭"
+  DataEmpty: "&4这没有任何数据可以展示！"

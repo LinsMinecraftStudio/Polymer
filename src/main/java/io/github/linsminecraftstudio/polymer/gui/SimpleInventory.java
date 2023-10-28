@@ -1,4 +1,4 @@
-package io.github.linsminecraftstudio.polymer.inventory;
+package io.github.linsminecraftstudio.polymer.gui;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
 import net.kyori.adventure.text.Component;

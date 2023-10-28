@@ -16,6 +16,7 @@ Value:
 Info:
   Plugin: "&aRunning Polymer version %1$s by %2$s. Server MC version: %3$s."
   ReloadSuccess: "&aReloaded successfully!"
+  InputQuit: "&e(Type '##QUIT' to cancel)"
   List:
     Head: "&a-----------------&ePage %d&a-----------------"
     ListEmpty: "&4There aren't any elements in the list."
@@ -25,3 +26,8 @@ Info:
     Next: "&eNext &a->"
     PrevUnavailable: "&8&l<- Prev"
     NextUnavailable: "&8&lNext ->"
+GUI:
+  Previous: "&aPrevious page"
+  Next: "&aNext page"
+  Close: "&cClose"
+  DataEmpty: "&4There is no any data to display."

@@ -1,6 +1,5 @@
 package io.github.linsminecraftstudio.polymer.command.presets;
 
-import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.command.SubCommand;
 import io.github.linsminecraftstudio.polymer.objects.MapBuilder;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
@@ -35,7 +34,7 @@ public class SubReloadCommand extends SubCommand {
     public void execute(CommandSender sender, String alias) {
         if (hasPermission()) {
             plugin.reload();
-            Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Info.ReloadSuccess");
+            sendPolymerMessage(sender, "Info.ReloadSuccess");
         }
     }
 }

@@ -5,6 +5,8 @@ import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.utils.FileUtil;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
+import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -27,6 +29,8 @@ import java.util.jar.JarFile;
 public final class PolymerMessageHandler {
     private final PolymerPlugin plugin;
     private final Map<String, YamlConfiguration> configurations = new HashMap<>();
+
+    private @Getter @Setter boolean autoDetectClientLanguage = true;
 
     /**
      * Creates a new message handler
@@ -220,15 +224,14 @@ public final class PolymerMessageHandler {
     }
 
     private YamlConfiguration getConfig(CommandSender cs){
-        return configurations.computeIfAbsent(getLocale(cs), y -> configurations.get("en-US"));
-    }
-
-    private String getLocale(CommandSender sender) {
-        if (sender != null) {
-            if (sender instanceof Player p) {
-                return p.locale().toLanguageTag();
+        String tag = "en-US";
+        if (autoDetectClientLanguage && cs != null) {
+            if (cs instanceof Player p) {
+                tag = p.locale().toLanguageTag();
             }
+        } else {
+            tag = OtherUtils.convertToRightLangCode(plugin.getConfig().getString("language", ""));
         }
-        return OtherUtils.convertToRightLangCode(plugin.getConfig().getString("language",""));
+        return configurations.computeIfAbsent(tag, y -> configurations.get("en-US"));
     }
 }

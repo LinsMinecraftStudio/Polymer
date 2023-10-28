@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 public class ObjectConverter {
+    public static LegacyComponentSerializer serializer = LegacyComponentSerializer.legacyAmpersand();
+
     public static String replaceLegacyColorsToMiniMessageFormat(String text){
         MiniMessage miniMessage = MiniMessage.miniMessage();
         LegacyComponentSerializer legacyComponentSerializer = LegacyComponentSerializer.legacyAmpersand();

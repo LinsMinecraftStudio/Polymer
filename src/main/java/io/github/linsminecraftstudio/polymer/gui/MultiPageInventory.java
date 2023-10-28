@@ -1,4 +1,4 @@
-package io.github.linsminecraftstudio.polymer.inventory;
+package io.github.linsminecraftstudio.polymer.gui;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -7,6 +7,7 @@ import io.github.linsminecraftstudio.polymer.itemstack.ItemStackBuilder;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -28,19 +29,19 @@ public abstract class MultiPageInventory<T> {
     @RegExp
     public static String MAX_PAGE_VAR = "%max%";
 
-    @Setter
-    private List<T> data;
+    private @Setter List<T> data;
     private List<Inventory> inventoryCache = new ArrayList<>();
 
+    ///Implements
     public abstract Component title();
-    public abstract void buttonHandle(Player p, int slot, ItemStack button);
+    public abstract void buttonHandle(Player p, int slot, T data);
     public abstract ItemStack getItemStackButton(Player p, int slot, T data);
+    ///
 
     private final Map<UUID, Integer> map = new HashMap<>();
 
     public MultiPageInventory(List<T> data) {
         Preconditions.checkNotNull(data, "data shouldn't be null");
-        Preconditions.checkState(!data.isEmpty(), "data shouldn't be empty");
         this.data = data;
     }
 
@@ -59,9 +60,18 @@ public abstract class MultiPageInventory<T> {
 
         List<Inventory> inventories = getOrGenerateInventories(p);
         Inventory inventory = inventories.get(page - 1);
-        Bukkit.getPluginManager().registerEvents(new Listener(), Polymer.INSTANCE);
-        map.put(p.getUniqueId(), page);
-        p.openInventory(inventory);
+        if (inventory == null) {
+            Inventory first = inventories.get(0);
+            if (first == null) {
+                Polymer.INSTANCE.getMessageHandler().sendMessage(p, "GUI.DataEmpty");
+                return;
+            }
+            p.openInventory(first);
+        } else {
+            Bukkit.getPluginManager().registerEvents(new Listener(), Polymer.INSTANCE);
+            map.put(p.getUniqueId(), page);
+            p.openInventory(inventory);
+        }
     }
 
     public int getPage(UUID u) {
@@ -84,7 +94,7 @@ public abstract class MultiPageInventory<T> {
     }
 
     private List<Inventory> generateInventories(Player p) {
-        List<List<T>> partedData = Lists.partition(data, 51 - BOARDER_SLOTS.length);
+        List<List<T>> partedData = Lists.partition(data, 28);
         List<Inventory> inventories = new ArrayList<>();
         for (int i = 0; i < partedData.size(); i++) {
             List<T> data = partedData.get(i);
@@ -104,12 +114,12 @@ public abstract class MultiPageInventory<T> {
 
             ItemStackBuilder prev = new ItemStackBuilder(Material.PLAYER_HEAD, 1);
             prev.name(Polymer.INSTANCE.getMessageHandler().getColored(p, "GUI.Previous"));
-            prev.head("MHF_ArrowLeft");
+            prev.head("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
             ItemStack prevButton = prev.build();
 
             ItemStackBuilder next = new ItemStackBuilder(Material.PLAYER_HEAD, 1);
             next.name(Polymer.INSTANCE.getMessageHandler().getColored(p, "GUI.Next"));
-            next.head("MHF_ArrowRight");
+            next.head("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19");
             ItemStack nextButton = next.build();
 
             inventory.setItem(PREV_PAGE_SLOT, prevButton);
@@ -174,7 +184,12 @@ public abstract class MultiPageInventory<T> {
                 } else if (Arrays.stream(BOARDER_SLOTS).anyMatch(i -> i == slot)){
                     e.setCancelled(true);
                 } else {
-                    buttonHandle(player, e.getRawSlot(), e.getCurrentItem());
+                    int index = getPage(uuid) == 1 ? ArrayUtils.indexOf(BOARDER_SLOTS, slot) :
+                            (CONTENTS_SLOTS.length * getPage(uuid)) + ArrayUtils.indexOf(BOARDER_SLOTS, slot);
+                    T t = data.get(index);
+                    if (t != null) {
+                        buttonHandle(player, e.getRawSlot(), t);
+                    }
                     e.setCancelled(true);
                 }
             }

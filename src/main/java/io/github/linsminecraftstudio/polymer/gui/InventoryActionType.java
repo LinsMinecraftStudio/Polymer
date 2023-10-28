@@ -1,4 +1,4 @@
-package io.github.linsminecraftstudio.polymer.inventory;
+package io.github.linsminecraftstudio.polymer.gui;
 
 public enum InventoryActionType {
     CLOSE,
