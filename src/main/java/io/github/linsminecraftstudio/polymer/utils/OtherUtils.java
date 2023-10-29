@@ -81,7 +81,6 @@ public class OtherUtils {
             }).completeOnTimeout(null, 5, TimeUnit.SECONDS);
             String ver;
             try {
-                future.join();
                 ver = future.join();
             } catch (Exception e) {
                 if (Polymer.isDebug()) e.printStackTrace();

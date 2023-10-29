@@ -10,13 +10,23 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class UserInputGetter {
     public static @Nullable String getUserInput(Component message, Player p) {
         AtomicReference<String> str = new AtomicReference<>(null);
-        new InputListener(message, p, str::set);
+        CountDownLatch latch = new CountDownLatch(1);
+        new InputListener(message, p, (input) -> {
+            str.set(input);
+            latch.countDown();
+        });
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return str.get();
     }
 
@@ -27,6 +37,7 @@ public class UserInputGetter {
            this.player = player;
            this.handler = handler;
            Bukkit.getPluginManager().registerEvents(this, Polymer.INSTANCE);
+           player.sendMessage(this.message);
        }
 
        @EventHandler
@@ -35,8 +46,9 @@ public class UserInputGetter {
           if (player.getUniqueId().equals(p.getUniqueId())) {
               String input = ObjectConverter.serializer.serialize(e.message());
               if (!input.equals("##QUIT")) {
-                  handler.accept(input);
                   e.setCancelled(true);
+                  HandlerList.unregisterAll(this);
+                  handler.accept(input);
                   return;
               }
               e.setCancelled(true);

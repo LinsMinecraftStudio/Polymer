@@ -11,8 +11,7 @@ public class ObjectConverter {
 
     public static String replaceLegacyColorsToMiniMessageFormat(String text){
         MiniMessage miniMessage = MiniMessage.miniMessage();
-        LegacyComponentSerializer legacyComponentSerializer = LegacyComponentSerializer.legacyAmpersand();
-        return miniMessage.serialize(legacyComponentSerializer.deserialize(text));
+        return miniMessage.serialize(serializer.deserialize(text));
     }
 
     public static Component toComponent(String text){

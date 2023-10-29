@@ -12,7 +12,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -23,7 +22,7 @@ import java.util.*;
 
 import static io.github.linsminecraftstudio.polymer.objects.PolymerConstants.*;
 
-public abstract class MultiPageInventory<T> {
+public abstract class MultiPageInventoryHandler<T> {
     @RegExp
     public static String CURRENT_PAGE_VAR = "%page%";
     @RegExp
@@ -40,17 +39,13 @@ public abstract class MultiPageInventory<T> {
 
     private final Map<UUID, Integer> map = new HashMap<>();
 
-    public MultiPageInventory(List<T> data) {
+    public MultiPageInventoryHandler(List<T> data) {
         Preconditions.checkNotNull(data, "data shouldn't be null");
         this.data = data;
     }
 
     public final void openInventory(Player p) {
-        int page = 1;
-        if (map.containsKey(p.getUniqueId())) {
-            page = map.get(p.getUniqueId());
-        }
-        openInventory(p, page);
+        openInventory(p, getPage(p.getUniqueId()));
     }
 
     public final void openInventory(Player p, int page) {
@@ -98,8 +93,7 @@ public abstract class MultiPageInventory<T> {
         List<Inventory> inventories = new ArrayList<>();
         for (int i = 0; i < partedData.size(); i++) {
             List<T> data = partedData.get(i);
-            ItemStackBuilder builder = new ItemStackBuilder(Material.BLACK_STAINED_GLASS_PANE, 1);
-            builder.name(Component.empty());
+            ItemStackBuilder builder = new ItemStackBuilder(Material.BLACK_STAINED_GLASS_PANE, 1).name(Component.empty());
             ItemStack boarder = builder.build();
             Inventory inventory = Bukkit.createInventory(null, 54, doParse(i+1));
 
@@ -107,21 +101,21 @@ public abstract class MultiPageInventory<T> {
                 inventory.setItem(sl, boarder);
             }
 
-            ItemStackBuilder close = new ItemStackBuilder(Material.BARRIER, 1);
-            close.name(Polymer.INSTANCE.getMessageHandler().getColored(p, "GUI.Close"));
+            ItemStackBuilder close = new ItemStackBuilder(Material.BARRIER, 1)
+            .name(Polymer.INSTANCE.getMessageHandler().getColored(p, "GUI.Close"));
             ItemStack closeButton = close.build();
-            inventory.setItem(CLOSE_BUTTON_SLOT, closeButton);
 
-            ItemStackBuilder prev = new ItemStackBuilder(Material.PLAYER_HEAD, 1);
-            prev.name(Polymer.INSTANCE.getMessageHandler().getColored(p, "GUI.Previous"));
-            prev.head("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmQ2OWUwNmU1ZGFkZmQ4NGU1ZjNkMWMyMTA2M2YyNTUzYjJmYTk0NWVlMWQ0ZDcxNTJmZGM1NDI1YmMxMmE5In19fQ==");
+            ItemStackBuilder prev = new ItemStackBuilder(Material.PLAYER_HEAD, 1)
+                    .name(Polymer.INSTANCE.getMessageHandler().getColored(p, "GUI.Previous"))
+                    .head("http://textures.minecraft.net/texture/bd69e06e5dadfd84e5f3d1c21063f2553b2fa945ee1d4d7152fdc5425bc12a9");
             ItemStack prevButton = prev.build();
 
-            ItemStackBuilder next = new ItemStackBuilder(Material.PLAYER_HEAD, 1);
-            next.name(Polymer.INSTANCE.getMessageHandler().getColored(p, "GUI.Next"));
-            next.head("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTliZjMyOTJlMTI2YTEwNWI1NGViYTcxM2FhMWIxNTJkNTQxYTFkODkzODgyOWM1NjM2NGQxNzhlZDIyYmYifX19");
+            ItemStackBuilder next = new ItemStackBuilder(Material.PLAYER_HEAD, 1)
+                    .name(Polymer.INSTANCE.getMessageHandler().getColored(p, "GUI.Next"))
+                    .head("http://textures.minecraft.net/texture/19bf3292e126a105b54eba713aa1b152d541a1d8938829c56364d178ed22bf");
             ItemStack nextButton = next.build();
 
+            inventory.setItem(CLOSE_BUTTON_SLOT, closeButton);
             inventory.setItem(PREV_PAGE_SLOT, prevButton);
             inventory.setItem(NEXT_PAGE_SLOT, nextButton);
 
@@ -161,7 +155,7 @@ public abstract class MultiPageInventory<T> {
                 if (slot == next) {
                     int p = getPage(uuid);
                     e.setCancelled(true);
-                    if (inventories.size() == getPage(uuid)) {
+                    if (inventories.size() == p) {
                         return;
                     }
                     p += 1;
@@ -179,17 +173,19 @@ public abstract class MultiPageInventory<T> {
                     e.setCancelled(true);
                 } else if (slot == close) {
                     e.setCancelled(true);
-                    HandlerList.unregisterAll(this);
                     player.closeInventory();
                 } else if (Arrays.stream(BOARDER_SLOTS).anyMatch(i -> i == slot)){
                     e.setCancelled(true);
                 } else {
-                    int index = getPage(uuid) == 1 ? ArrayUtils.indexOf(BOARDER_SLOTS, slot) :
-                            (CONTENTS_SLOTS.length * getPage(uuid)) + ArrayUtils.indexOf(BOARDER_SLOTS, slot);
-                    T t = data.get(index);
-                    if (t != null) {
-                        buttonHandle(player, e.getRawSlot(), t);
-                    }
+                    int page = getPage(uuid);
+                    int index = (CONTENTS_SLOTS.length * (page - 1)) + ArrayUtils.indexOf(CONTENTS_SLOTS, slot);
+                    try {
+                        T t = data.get(index);
+                        if (t != null && e.getCurrentItem() != null) {
+                            buttonHandle(player, e.getRawSlot(), t);
+                        }
+                        e.setCancelled(true);
+                    } catch (IndexOutOfBoundsException ignored) {}
                     e.setCancelled(true);
                 }
             }
@@ -201,8 +197,8 @@ public abstract class MultiPageInventory<T> {
             UUID uuid = player.getUniqueId();
             if (e.getView().title().equals(doParse(getPage(uuid)))) {
                 map.put(uuid, getPage(uuid));
-                HandlerList.unregisterAll(this);
             }
+            player.sendMessage(String.valueOf(getPage(uuid)));
         }
     }
 }

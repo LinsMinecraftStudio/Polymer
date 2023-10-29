@@ -1,19 +1,21 @@
 package io.github.linsminecraftstudio.polymer.itemstack;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
-import com.destroystokyo.paper.profile.ProfileProperty;
+import com.google.common.base.Preconditions;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.profile.PlayerTextures;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -41,72 +43,82 @@ public class ItemStackBuilder {
     }
 
 
-    public void name(Component itemName){
-        itemMeta.displayName(itemName);
+    public ItemStackBuilder name(Component itemName){
+        return name(itemName, false);
     }
 
-    public void lore(List<Component> lore){
+    public ItemStackBuilder name(Component itemName, boolean allowItalic){
+        itemMeta.displayName(itemName.decoration(TextDecoration.ITALIC, allowItalic));
+        return this;
+    }
+
+    public ItemStackBuilder lore(List<Component> lore){
         itemMeta.lore(lore);
+        return this;
     }
 
-    public void lore(Component... lore){
+    public ItemStackBuilder lore(Component... lore){
         itemMeta.lore(Arrays.stream(lore).toList());
+        return this;
     }
 
-    public void unbreakable(boolean unbreakable){
+    public ItemStackBuilder unbreakable(boolean unbreakable){
         itemMeta.setUnbreakable(unbreakable);
+        return this;
     }
 
-    public void enchantment(Enchantment enchantment, int lvl){
+    public ItemStackBuilder enchantment(Enchantment enchantment, int lvl){
         enchantments.put(enchantment, lvl);
+        return this;
     }
 
-    public void amount(int amount){
+    public ItemStackBuilder amount(int amount){
         this.amount = amount;
+        return this;
     }
 
-    public void flag(ItemFlag... flags){
+    public ItemStackBuilder flag(ItemFlag... flags){
         itemMeta.addItemFlags(flags);
+        return this;
     }
 
-    public void customModelData(int customModelData){
+    public ItemStackBuilder customModelData(int customModelData){
         itemMeta.setCustomModelData(customModelData);
+        return this;
     }
 
-    public <X,Z> void persistentData(NamespacedKey key, PersistentDataType<X,Z> dataType, Z object) {
-        itemMeta.getPersistentDataContainer().set(key, dataType, object);
-    }
-
-    public void nbt(String key, String value){
+    public ItemStackBuilder nbt(String key, String value){
         nbtItem.setString(key, value);
+        return this;
     }
 
-    public void nbt(String key, int value){
+    public ItemStackBuilder nbt(String key, int value){
         nbtItem.setInteger(key, value);
+        return this;
     }
 
-    public void nbt(String key, double value){
+    public ItemStackBuilder nbt(String key, double value){
         nbtItem.setDouble(key, value);
+        return this;
     }
 
-    public void nbt(String key, boolean value){
+    public ItemStackBuilder nbt(String key, boolean value){
         nbtItem.setBoolean(key, value);
+        return this;
     }
 
-    public void nbt(String key, long value){
+    public ItemStackBuilder nbt(String key, long value){
         nbtItem.setLong(key, value);
+        return this;
     }
-
-    public void nbt(String key, float value){
-        nbtItem.setFloat(key, value);
-    }
-
-    public void removeNbt(String key){
+    public ItemStackBuilder removeNbt(String key){
         nbtItem.removeKey(key);
+        return this;
     }
 
-    public void head(String owner){
-        this.skull = owner;
+    public ItemStackBuilder head(String url){
+        this.skull = url;
+        return this;
     }
 
     /**
@@ -115,18 +127,46 @@ public class ItemStackBuilder {
      */
     public ItemStack build() {
         ItemStack stack = nbtItem.getItem();
+        stack.setItemMeta(itemMeta);
+
         if (skull != null) {
             stack.setType(Material.PLAYER_HEAD);
             SkullMeta meta = (SkullMeta) stack.getItemMeta();
 
-            PlayerProfile profile = meta.getPlayerProfile();
-            assert profile != null;
-            profile.setProperty(new ProfileProperty("textures", skull));
+            PlayerProfile profile = Bukkit.createProfileExact(UUID.randomUUID(), "fake");
+            PlayerTextures textures = profile.getTextures();
+            try {
+                textures.setSkin(new URL(skull));
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+            profile.setTextures(textures);
+            meta.setOwnerProfile(profile);
+
+            syncMetaProperties(meta);
+
             stack.setItemMeta(meta);
         }
+
         stack.setAmount(amount);
         stack.addUnsafeEnchantments(enchantments);
-        stack.setItemMeta(itemMeta);
         return stack;
+    }
+
+    private void syncMetaProperties(ItemMeta newMeta) {
+        Preconditions.checkNotNull(newMeta, "new meta cannot be null");
+        newMeta.setUnbreakable(itemMeta.isUnbreakable());
+        if (itemMeta.hasDisplayName()) {
+            newMeta.displayName(itemMeta.displayName());
+        }
+        if (itemMeta.hasLore()) {
+            newMeta.lore(itemMeta.lore());
+        }
+        if (!itemMeta.getItemFlags().isEmpty()) {
+            newMeta.addItemFlags(itemMeta.getItemFlags().toArray(new ItemFlag[]{}));
+        }
+        if (itemMeta.hasCustomModelData()) {
+            newMeta.setCustomModelData(itemMeta.getCustomModelData());
+        }
     }
 }
