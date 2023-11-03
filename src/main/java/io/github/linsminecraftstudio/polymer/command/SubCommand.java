@@ -1,5 +1,6 @@
 package io.github.linsminecraftstudio.polymer.command;
 
+import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
 import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import net.kyori.adventure.text.Component;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class SubCommand implements ICommand{
+public abstract class SubCommand implements ICommand {
     private final String name;
     private CommandSender sender;
     private SimpleTypeArray<String> args;

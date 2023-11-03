@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
  * A scheduler for compatible with Folia (A fork of paper).
  */
 public class BFScheduler {
-    private PolymerPlugin plugin;
+    private final PolymerPlugin plugin;
     private boolean modern;
 
     public BFScheduler(PolymerPlugin plugin) {

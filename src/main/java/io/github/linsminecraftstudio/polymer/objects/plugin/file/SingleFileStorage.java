@@ -35,10 +35,10 @@ public class SingleFileStorage {
         return YamlConfiguration.loadConfiguration(file);
     }
 
-    protected void reload() {
+    protected void reload(YamlConfiguration refresh) {
         try {
+            configuration = refresh;
             configuration.save(file);
-            configuration = handleConfig(file);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

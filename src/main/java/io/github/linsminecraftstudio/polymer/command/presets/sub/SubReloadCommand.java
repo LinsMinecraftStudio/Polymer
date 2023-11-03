@@ -1,4 +1,4 @@
-package io.github.linsminecraftstudio.polymer.command.presets;
+package io.github.linsminecraftstudio.polymer.command.presets.sub;
 
 import io.github.linsminecraftstudio.polymer.command.SubCommand;
 import io.github.linsminecraftstudio.polymer.objects.MapBuilder;

@@ -1,4 +1,4 @@
-package io.github.linsminecraftstudio.polymer.command;
+package io.github.linsminecraftstudio.polymer.command.interfaces;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;

@@ -16,7 +16,7 @@ Value:
 Info:
   Plugin: "&aRunning Polymer version %1$s by %2$s. Server MC version: %3$s."
   ReloadSuccess: "&aReloaded successfully!"
-  InputQuit: "&e(Type '##QUIT' to cancel)"
+  InputQuit: "&e(Type '%s' to cancel)"
   List:
     Head: "&a-----------------&ePage %d&a-----------------"
     ListEmpty: "&4There aren't any elements in the list."
@@ -31,3 +31,6 @@ GUI:
   Next: "&aNext page"
   Close: "&cClose"
   DataEmpty: "&4There is no any data to display."
+  SearchResultTitle: "&6&lSearch result (%page%/%max%)"
+  SearchNoResult: "&4No result found."
+  SearchNoResultSub: "&aYou will back to the main inventory in 5 sec."

@@ -1,14 +1,14 @@
-package io.github.linsminecraftstudio.polymer.command.plugin;
+package io.github.linsminecraftstudio.polymer.command.FOR_POLYMER_ONLY;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
-import io.github.linsminecraftstudio.polymer.command.presets.SubReloadCommand;
+import io.github.linsminecraftstudio.polymer.command.presets.sub.SubReloadCommand;
 import io.github.linsminecraftstudio.polymer.utils.ListUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class MainCmd extends PolymerCommand {
+public final class MainCmd extends PolymerCommand {
     public MainCmd(@NotNull String name) {
         super(name);
         this.registerSubCommand(new SubReloadCommand(Polymer.INSTANCE));

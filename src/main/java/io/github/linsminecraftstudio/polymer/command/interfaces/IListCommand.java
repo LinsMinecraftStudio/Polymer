@@ -1,7 +1,8 @@
-package io.github.linsminecraftstudio.polymer.command;
+package io.github.linsminecraftstudio.polymer.command.interfaces;
 
 import com.google.common.collect.Lists;
 import io.github.linsminecraftstudio.polymer.Polymer;
+import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
 import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public interface IListCommand<T> extends ICommand{
+public interface IListCommand<T> extends ICommand {
     List<T> list(CommandSender sender);
     void sendLineMessage(CommandSender sender, int number, T object);
     String name();

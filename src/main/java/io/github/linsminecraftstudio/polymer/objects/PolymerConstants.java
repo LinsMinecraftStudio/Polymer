@@ -5,6 +5,7 @@ public class PolymerConstants {
     public static int API_VERSION = 2;
 
     //For inventories
+    public static int SEARCH_BUTTON_SLOT = 4;
     public static int CLOSE_BUTTON_SLOT = 49;
     public static int PREV_PAGE_SLOT = 47;
     public static int NEXT_PAGE_SLOT = 51;

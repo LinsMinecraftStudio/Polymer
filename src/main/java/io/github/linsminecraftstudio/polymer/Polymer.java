@@ -1,7 +1,7 @@
 package io.github.linsminecraftstudio.polymer;
 
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
-import io.github.linsminecraftstudio.polymer.command.plugin.MainCmd;
+import io.github.linsminecraftstudio.polymer.command.FOR_POLYMER_ONLY.MainCmd;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import org.bukkit.event.Listener;

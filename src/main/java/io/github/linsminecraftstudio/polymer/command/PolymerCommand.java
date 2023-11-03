@@ -1,6 +1,6 @@
 package io.github.linsminecraftstudio.polymer.command;
 
-import io.github.linsminecraftstudio.polymer.Polymer;
+import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
 import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public abstract class PolymerCommand extends Command implements ICommand{
+public abstract class PolymerCommand extends Command implements ICommand {
     protected PolymerPlugin pluginInstance;
     protected SimpleTypeArray<String> arguments;
     private CommandSender sender;

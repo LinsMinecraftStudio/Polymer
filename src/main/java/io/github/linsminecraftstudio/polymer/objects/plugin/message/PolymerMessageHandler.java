@@ -1,5 +1,6 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin.message;
 
+import com.destroystokyo.paper.Title;
 import io.github.linsminecraftstudio.polymer.objects.array.ObjectArray;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.utils.FileUtil;
@@ -7,7 +8,10 @@ import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.Audiences;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -162,6 +166,12 @@ public final class PolymerMessageHandler {
         return main;
     }
 
+    /**
+     * send a message
+     * @param cs the sender
+     * @param node the key
+     * @param args the replacements
+     */
     public void sendMessage(CommandSender cs,String node,Object... args) {
         if (!get(cs, node).isBlank()) {
             cs.sendMessage(getColored(cs, node, args));
@@ -169,6 +179,7 @@ public final class PolymerMessageHandler {
     }
 
     /**
+     * send messages
      * @param cs the sender
      * @param node the key
      * @param arguments replacements
@@ -177,6 +188,18 @@ public final class PolymerMessageHandler {
         for (Component c : getColoredMessages(cs, node, arguments)) {
             cs.sendMessage(c);
         }
+    }
+
+    public void sendTitle(Player p, String node, Object... args) {
+        p.sendTitlePart(TitlePart.TITLE,  getColored(p, node, args));
+    }
+
+    public void sendSubTitle(Player p, String node, Object... args) {
+        p.sendTitlePart(TitlePart.SUBTITLE, getColored(p, node, args));
+    }
+
+    public void sendActionBar(Player p, String node, Object... args) {
+        p.sendActionBar(getColored(p, node, args));
     }
 
     public void broadcastMessage(String node,Object... args){

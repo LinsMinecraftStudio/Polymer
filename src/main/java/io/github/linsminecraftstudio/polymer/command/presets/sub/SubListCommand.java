@@ -1,7 +1,7 @@
-package io.github.linsminecraftstudio.polymer.command.presets;
+package io.github.linsminecraftstudio.polymer.command.presets.sub;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
-import io.github.linsminecraftstudio.polymer.command.IListCommand;
+import io.github.linsminecraftstudio.polymer.command.interfaces.IListCommand;
 import io.github.linsminecraftstudio.polymer.command.SubCommand;
 import io.github.linsminecraftstudio.polymer.objects.MapBuilder;
 import org.bukkit.command.CommandSender;
