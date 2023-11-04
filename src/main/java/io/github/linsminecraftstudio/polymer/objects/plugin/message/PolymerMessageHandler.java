@@ -134,7 +134,7 @@ public final class PolymerMessageHandler {
      * @param replacements the args you want to replace
      * @return components
      */
-    private List<Component> getColoredMessages(@Nullable CommandSender cs, String node, ObjectArray... replacements){
+    public List<Component> getColoredMessages(@Nullable CommandSender cs, String node, ObjectArray... replacements){
         List<String> s = getConfig(cs).getStringList(node);
         List<Component> new_s = new ArrayList<>();
         for (int j = 0; j < replacements.length; j++) {
