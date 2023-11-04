@@ -65,6 +65,6 @@ public final class ListUtil {
     }
 
     public static String asString(List<?> list) {
-        return list.toString().replaceAll("\\[", "").replaceAll("]", "");
+        return list.toString().substring(1, list.toString().length() - 1);
     }
 }

@@ -140,11 +140,11 @@ public abstract class PolymerCommand extends Command implements ICommand {
         return toPlayer(false);
     }
 
-    protected Player toPlayer(boolean NoMsg){
+    protected Player toPlayer(boolean noMsg){
         if (sender instanceof Player p){
             return p;
         }else {
-            if (!NoMsg) {
+            if (!noMsg) {
                 sendPolymerMessage(sender, "Command.RunAsConsole");
             }
             return null;

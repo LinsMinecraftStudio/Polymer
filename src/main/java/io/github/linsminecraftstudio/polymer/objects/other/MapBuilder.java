@@ -1,4 +1,4 @@
-package io.github.linsminecraftstudio.polymer.objects;
+package io.github.linsminecraftstudio.polymer.objects.other;
 
 import java.util.HashMap;
 import java.util.Map;

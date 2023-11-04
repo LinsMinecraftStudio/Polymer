@@ -27,10 +27,11 @@ Info:
     PrevUnavailable: "&8&l<- 上一页"
     NextUnavailable: "&8&l下一页 ->"
 GUI:
+  Search: "&d搜索"
   Previous: "&a上一页"
   Next: "&a下一页"
   Close: "&c关闭"
   DataEmpty: "&4这没有任何数据可以展示！"
   SearchResultTitle: "&6&l搜索结果 (%page%/%max%)"
-  SearchNoResult: "&4没有找到任何结果。"
-  SearchNoResultSub: "&a您将在5秒内返回到主界面。"
+  SearchNoResult: "&4&l没有找到任何结果"
+  SearchNoResultSub: "&a您将会返回到主界面。"

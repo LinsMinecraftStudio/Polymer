@@ -26,7 +26,7 @@ public abstract class ListCommand<T> extends PolymerCommand implements IListComm
 
     @Override
     public final @NotNull List<String> tabComplete(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String[] args){
-        return super.tabComplete(commandSender, s, args);
+        return tabCompletes(commandSender);
     }
 
     @Override

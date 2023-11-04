@@ -2,16 +2,13 @@ package io.github.linsminecraftstudio.polymer.command.interfaces;
 
 import com.google.common.collect.Lists;
 import io.github.linsminecraftstudio.polymer.Polymer;
-import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
 import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public interface IListCommand<T> extends ICommand {
@@ -20,14 +17,10 @@ public interface IListCommand<T> extends ICommand {
     String name();
 
 
-    default @NotNull List<String> tabComplete(@NotNull CommandSender commandSender){
-        if (argSize()==1) {
-            List<String> argList = IntStream.rangeClosed(1, list(commandSender).size() / 10)
-                    .mapToObj(String::valueOf)
-                    .collect(Collectors.toList());
-            return copyPartialMatches(getArg(0), argList);
-        }
-        return new ArrayList<>();
+    default @NotNull List<String> tabCompletes(@NotNull CommandSender commandSender){
+        List<List<T>> part = Lists.partition(list(commandSender), 10);
+        List<String> intList = IntStream.rangeClosed(0, part.size() - 1).mapToObj(String::valueOf).toList();
+        return copyPartialMatches(getArg(0), intList);
     }
 
      default void sendMessages(CommandSender sender, int page){

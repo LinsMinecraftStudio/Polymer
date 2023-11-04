@@ -2,60 +2,53 @@ package io.github.linsminecraftstudio.polymer.gui;
 
 import com.google.common.collect.Lists;
 import io.github.linsminecraftstudio.polymer.Polymer;
+import io.github.linsminecraftstudio.polymer.objects.other.LockableValue;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
-import static io.github.linsminecraftstudio.polymer.objects.PolymerConstants.CONTENTS_SLOTS;
-import static io.github.linsminecraftstudio.polymer.objects.PolymerConstants.SEARCH_BUTTON_SLOT;
+import static io.github.linsminecraftstudio.polymer.objects.PolymerConstants.*;
 
-public class SearchMultiPageInventory<T> extends MultiPageInventoryHandler<T> {
+class SearchMultiPageInventory<T> extends MultiPageInventoryHandler<T> {
     private final String input;
     private final MultiPageInventoryHandler<T> instance;
-    private Player p;
+    private final LockableValue<Player> lockableValue;
+    private int page = 1;
+
 
     public SearchMultiPageInventory(List<T> data, MultiPageInventoryHandler<T> instance, String input) {
         super(data);
         this.instance = instance;
         this.input = input;
-
+        this.lockableValue = new LockableValue<>();
     }
 
     @Override
     public void openInventory(Player p, int page) {
-        if (this.p == null) {
-            this.p = p;
-        } else {
-            if (this.p != p) {
-                throw new IllegalArgumentException("Player is not the same as the one this inventory was opened for, and it only support one player to open the inventory");
-            }
-        }
+        lockableValue.set(p);
+        lockableValue.lock();
         List<Inventory> inventories = generateInventories(p);
-        Inventory inventory = inventories.get(0);
-        if (inventory == null) {
+        if (inventories.isEmpty()) {
             Polymer.INSTANCE.getMessageHandler().sendTitle(p, "GUI.SearchNoResult");
             Polymer.INSTANCE.getMessageHandler().sendSubTitle(p, "GUI.SearchNoResultSub");
-            CountDownLatch latch = new CountDownLatch(5);
-            latch.countDown();
-            try {
-                latch.await();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            instance.openInventory(p);
+
+            Polymer.INSTANCE.getScheduler().scheduleDelay(() -> instance.openInventory(p), 5 * 20L);
         }else {
+            Inventory inventory = inventories.get(0);
+            Bukkit.getPluginManager().registerEvents(new Listener(), Polymer.INSTANCE);
             p.openInventory(inventory);
-            Bukkit.getPluginManager().registerEvents(new MultiPageInventoryHandler.Listener(), Polymer.INSTANCE);
-            Bukkit.getPluginManager().registerEvents(new SearchMultiPageInventory.Listener(), Polymer.INSTANCE);
         }
     }
 
@@ -63,6 +56,10 @@ public class SearchMultiPageInventory<T> extends MultiPageInventoryHandler<T> {
     List<Inventory> generateInventories(Player p) {
         List<List<T>> partedData = Lists.partition(find(), 28);
         List<Inventory> inventories = new ArrayList<>();
+
+        if (partedData.isEmpty()) {
+            return inventories;
+        }
 
         for (int i = 0; i < partedData.size(); i++) {
             List<T> data = partedData.get(i);
@@ -130,17 +127,73 @@ public class SearchMultiPageInventory<T> extends MultiPageInventoryHandler<T> {
         return find;
     }
 
+    private Component doParse(Component msg, int current) {
+        int max = Lists.partition(find(), 28).size();
+        return msg.replaceText(TextReplacementConfig.builder().match(CURRENT_PAGE_VAR).replacement(String.valueOf(current)).build())
+                .replaceText(TextReplacementConfig.builder().match(MAX_PAGE_VAR).replacement(String.valueOf(max)).build());
+    }
 
     private class Listener implements org.bukkit.event.Listener {
         @EventHandler
         public void overListen(InventoryClickEvent e) {
-            Player p = (Player) e.getWhoClicked();
+            Player pl = (Player) e.getWhoClicked();
             Component title = e.getView().title();
-            if (title == doParse(title(p), getPage(p.getUniqueId()))) {
-                if (e.getRawSlot() == SEARCH_BUTTON_SLOT) {
-                    doSearch(p);
-                    HandlerList.unregisterAll(this);
+            List<Inventory> inventories = generateInventories(pl);
+            List<T> data = find();
+            if (title.equals(doParse(title(pl), page))) {
+                handleClick(pl, e, inventories, data);
+            }
+        }
+
+        private void handleClick(Player pl, InventoryClickEvent e, List<Inventory> inventories, List<T> data) {
+            int slot = e.getRawSlot();
+            if (e.getRawSlot() == SEARCH_BUTTON_SLOT) {
+                e.setCancelled(true);
+                doSearch(pl);
+            } else if (slot == NEXT_PAGE_SLOT) {
+                int p = page;
+                e.setCancelled(true);
+                if (inventories.size() == p) {
+                    return;
                 }
+                p += 1;
+                pl.closeInventory();
+                pl.openInventory(inventories.get(p - 1));
+                page = p;
+            } else if (slot == PREV_PAGE_SLOT) {
+                int p = page;
+                if (p > 1) {
+                    p -= 1;
+                    pl.closeInventory();
+                    pl.openInventory(inventories.get(p - 1));
+                    page = p;
+                }
+                e.setCancelled(true);
+            } else if (slot == CLOSE_BUTTON_SLOT) {
+                e.setCancelled(true);
+                pl.closeInventory();
+                HandlerList.unregisterAll(this);
+            } else if (Arrays.stream(BOARDER_SLOTS).anyMatch(i -> i == slot)) {
+                e.setCancelled(true);
+            } else {
+                int index = (CONTENTS_SLOTS.length * (page - 1)) + ArrayUtils.indexOf(CONTENTS_SLOTS, slot);
+                try {
+                    T t = data.get(index);
+                    if (t != null && e.getCurrentItem() != null) {
+                        buttonHandle(pl, e.getRawSlot(), t);
+                    }
+                    e.setCancelled(true);
+                } catch (IndexOutOfBoundsException ignored) {}
+                e.setCancelled(true);
+            }
+        }
+
+        @EventHandler
+        public void onClose(InventoryCloseEvent e) {
+            Player pl = (Player) e.getPlayer();
+            Component title = e.getView().title();
+            if (title.equals(doParse(title(pl), page))) {
+                HandlerList.unregisterAll(this);
             }
         }
     }

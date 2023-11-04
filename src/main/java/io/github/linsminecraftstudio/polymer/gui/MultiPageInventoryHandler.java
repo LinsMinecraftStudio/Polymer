@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -116,7 +117,7 @@ public abstract class MultiPageInventoryHandler<T> {
         return inventories;
     }
 
-    Component doParse(Component msg, int current) {
+    private Component doParse(Component msg, int current) {
         int max = Lists.partition(data, 28).size();
         return msg.replaceText(TextReplacementConfig.builder().match(CURRENT_PAGE_VAR).replacement(String.valueOf(current)).build())
                 .replaceText(TextReplacementConfig.builder().match(MAX_PAGE_VAR).replacement(String.valueOf(max)).build());
@@ -143,6 +144,7 @@ public abstract class MultiPageInventoryHandler<T> {
                 } else if (slot == SEARCH_BUTTON_SLOT) {
                     e.setCancelled(true);
                     doSearch(player);
+                    HandlerList.unregisterAll(this);
                 } else if (slot == PREV_PAGE_SLOT){
                     int p = getPage(uuid);
                     if (p > 1) {
@@ -179,7 +181,6 @@ public abstract class MultiPageInventoryHandler<T> {
             if (e.getView().title().equals(doParse(title(player), getPage(uuid)))) {
                 map.put(uuid, getPage(uuid));
             }
-            player.sendMessage(String.valueOf(getPage(uuid)));
         }
     }
 

@@ -3,7 +3,7 @@ package io.github.linsminecraftstudio.polymer.command.presets.sub;
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.command.interfaces.IListCommand;
 import io.github.linsminecraftstudio.polymer.command.SubCommand;
-import io.github.linsminecraftstudio.polymer.objects.MapBuilder;
+import io.github.linsminecraftstudio.polymer.objects.other.MapBuilder;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +25,7 @@ public abstract class SubListCommand<T> extends SubCommand implements IListComma
     @Override
     public final Map<Integer, List<String>> tabCompletion(@NotNull CommandSender commandSender){
         return new MapBuilder<Integer, List<String>>()
-                .put(0, tabComplete(commandSender))
+                .put(0, tabCompletes(commandSender))
                 .build();
     }
 

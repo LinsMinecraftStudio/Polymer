@@ -1,4 +1,4 @@
-package io.github.linsminecraftstudio.polymer.objects;
+package io.github.linsminecraftstudio.polymer.objects.other;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
