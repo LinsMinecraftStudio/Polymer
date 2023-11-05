@@ -18,11 +18,6 @@ public abstract class SubListCommand<T> extends SubCommand implements IListComma
     private CommandSender sender;
 
     @Override
-    public String name() {
-        return getName();
-    }
-
-    @Override
     public final Map<Integer, List<String>> tabCompletion(@NotNull CommandSender commandSender){
         return new MapBuilder<Integer, List<String>>()
                 .put(0, tabCompletes(commandSender))
