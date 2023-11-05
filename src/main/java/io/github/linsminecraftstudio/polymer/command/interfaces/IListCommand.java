@@ -14,8 +14,6 @@ import java.util.stream.IntStream;
 public interface IListCommand<T> extends ICommand {
     List<T> list(CommandSender sender);
     void sendLineMessage(CommandSender sender, int number, T object);
-    String name();
-
 
     default @NotNull List<String> tabCompletes(@NotNull CommandSender commandSender){
         List<List<T>> part = Lists.partition(list(commandSender), 10);
@@ -59,8 +57,8 @@ public interface IListCommand<T> extends ICommand {
         Component prev = Polymer.INSTANCE.getMessageHandler().getColored(sender, "Info.List.Prev");
         Component next = Polymer.INSTANCE.getMessageHandler().getColored(sender, "Info.List.Next");
 
-        ClickEvent prevClick = ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/" + name() + " " + (page-1));
-        ClickEvent nextClick = ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/" + name() + " " + (page+1));
+        ClickEvent prevClick = ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getName() + " " + (page-1));
+        ClickEvent nextClick = ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getName() + " " + (page+1));
 
         if (page == 1) {
             prev = Polymer.INSTANCE.getMessageHandler().getColored(sender, "Info.List.PrevUnavailable");

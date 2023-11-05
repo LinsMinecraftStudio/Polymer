@@ -115,6 +115,10 @@ public abstract class SubCommand implements ICommand {
         return args.isEmpty();
     }
 
+    protected SimpleTypeArray<String> getArgs() {
+        return args;
+    }
+
     public int argSize() {
         return args.size();
     }

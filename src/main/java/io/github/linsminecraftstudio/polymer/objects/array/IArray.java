@@ -4,7 +4,7 @@ import java.util.stream.Stream;
 
 public interface IArray<T> {
     boolean isEmpty();
-    Stream<Object> getStream();
+    Stream<T> getStream();
     T get(int index);
     int size();
 }

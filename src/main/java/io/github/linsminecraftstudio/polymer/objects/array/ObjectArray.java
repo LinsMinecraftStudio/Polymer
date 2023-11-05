@@ -1,11 +1,16 @@
 package io.github.linsminecraftstudio.polymer.objects.array;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
 
 
-public record ObjectArray(Object... args) implements IArray<Object>{
+public record ObjectArray(Object... args) implements IArray<Object>, Iterable<Object>{
     @ParametersAreNonnullByDefault
     public ObjectArray {}
 
@@ -25,5 +30,11 @@ public record ObjectArray(Object... args) implements IArray<Object>{
     @Override
     public int size() {
         return args.length;
+    }
+
+    @NotNull
+    @Override
+    public Iterator<Object> iterator() {
+        return getStream().iterator();
     }
 }

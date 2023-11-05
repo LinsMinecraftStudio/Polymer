@@ -2,12 +2,14 @@ package io.github.linsminecraftstudio.polymer.command.interfaces;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
+import io.github.linsminecraftstudio.polymer.objects.other.CooldownMap;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import javax.annotation.Nonnull;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +18,10 @@ public interface ICommand {
      * DON'T TRY TO INVOKE IT DIRECTLY
      */
     void execute(CommandSender sender, String alias);
-
     String getArg(int index);
-
     int argSize();
-
     void sendMessage(CommandSender sender, String key, Object... args);
+    String getName();
 
     default void sendPolymerMessage(CommandSender sender, String key, Object... args){
         Polymer.INSTANCE.getMessageHandler().sendMessage(sender, key, args);
@@ -56,6 +56,22 @@ public interface ICommand {
         }catch (NumberFormatException e){
             sendPolymerMessage(sender, isInt ? "Value.NotInt" : "Value.NotDouble", index+1);
             return PolymerConstants.ERROR_CODE;
+        }
+    }
+
+    interface IAppendableArgumentsCommand extends ICommand {
+        boolean containsArgument(String token);
+    }
+
+    interface INeedsCooldownCommand<K> extends ICommand{
+        CooldownMap<K> getCooldownMap();
+
+        default Duration getRemaining(K key) {
+            return getCooldownMap().remaining(key);
+        }
+
+        default boolean hasCooldown(K key) {
+            return getCooldownMap().containsKey(key);
         }
     }
 }

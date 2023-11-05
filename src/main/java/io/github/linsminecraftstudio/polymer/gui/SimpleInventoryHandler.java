@@ -18,7 +18,7 @@ public abstract class SimpleInventoryHandler {
     public static int[] BOARDER_SLOTS = new int[]{0,1,2,3,4,5,6,7,8,9,17,18,26,27,35,36,44,45,46,47,48,50,51,52,53};
 
     public abstract void placeButtons(Player p, Inventory inv);
-    public abstract Component title();
+    public abstract Component title(Player p);
     public abstract void doListen(InventoryActionType type, Player p, int slot, Inventory inventory);
 
     public SimpleInventoryHandler() {
@@ -26,7 +26,7 @@ public abstract class SimpleInventoryHandler {
     }
 
     public final void open(Player p) {
-        Inventory inventory = Bukkit.createInventory(null, 54, title());
+        Inventory inventory = Bukkit.createInventory(null, 54, title(p));
         placeRequired(p, inventory);
         placeButtons(p, inventory);
         p.openInventory(inventory);
@@ -35,9 +35,10 @@ public abstract class SimpleInventoryHandler {
     private class Listener implements org.bukkit.event.Listener {
         @EventHandler
         public void onInventoryClick(InventoryClickEvent event) {
-            if (event.getView().title().equals(title())) {
+            Player p = (Player) event.getWhoClicked();
+            if (event.getView().title().equals(title(p))) {
                 if (event.getRawSlot() >= 0) {
-                    doListen(InventoryActionType.CLICK, (Player) event.getWhoClicked(), event.getRawSlot(), event.getInventory());
+                    doListen(InventoryActionType.CLICK, p, event.getRawSlot(), event.getInventory());
                     event.setCancelled(true);
                 }
             }
@@ -45,8 +46,9 @@ public abstract class SimpleInventoryHandler {
 
         @EventHandler
         public void onInventoryClose(InventoryCloseEvent event) {
-            if (event.getView().title().equals(title())) {
-                doListen(InventoryActionType.CLOSE, (Player) event.getPlayer(), -1, event.getInventory());
+            Player p = (Player) event.getPlayer();
+            if (event.getView().title().equals(title(p))) {
+                doListen(InventoryActionType.CLOSE, p, -1, event.getInventory());
             }
         }
     }
@@ -58,6 +60,10 @@ public abstract class SimpleInventoryHandler {
         for (int sl : BOARDER_SLOTS) {
             inventory.setItem(sl, boarder);
         }
+
+        inventory.setItem(PREV_PAGE_SLOT, boarder);
+        inventory.setItem(NEXT_PAGE_SLOT, boarder);
+        inventory.setItem(SEARCH_BUTTON_SLOT, boarder);
 
         ItemStackBuilder close = new ItemStackBuilder(Material.BARRIER, 1)
                 .name(Polymer.INSTANCE.getMessageHandler().getColored(p, "GUI.Close"));
