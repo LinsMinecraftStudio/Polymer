@@ -1,6 +1,7 @@
 package io.github.linsminecraftstudio.polymer.utils;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
@@ -8,6 +9,7 @@ import org.bukkit.Location;
 
 public class ObjectConverter {
     public static LegacyComponentSerializer serializer = LegacyComponentSerializer.legacyAmpersand();
+    public static MiniMessage miniMessage = MiniMessage.miniMessage();
 
     public static String replaceLegacyColorsToMiniMessageFormat(String text){
         MiniMessage miniMessage = MiniMessage.miniMessage();
@@ -15,7 +17,7 @@ public class ObjectConverter {
     }
 
     public static Component toComponent(String text){
-        return MiniMessage.miniMessage().deserialize(replaceLegacyColorsToMiniMessageFormat(text));
+        return miniMessage.deserialize(replaceLegacyColorsToMiniMessageFormat(text)).decoration(TextDecoration.ITALIC, false);
     }
 
     public static Location toLocation(String singleString) {
