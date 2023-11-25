@@ -23,7 +23,7 @@ import java.util.logging.Level;
 public abstract class PolymerPlugin extends JavaPlugin {
     private Metrics metrics;
 
-    private volatile @Getter PolymerMessageHandler messageHandler;
+    private @Getter PolymerMessageHandler messageHandler;
 
     private @Getter BFScheduler scheduler;
 

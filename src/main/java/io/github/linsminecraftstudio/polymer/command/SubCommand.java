@@ -1,10 +1,12 @@
 package io.github.linsminecraftstudio.polymer.command;
 
+import com.google.errorprone.annotations.ForOverride;
 import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
 import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -32,11 +34,24 @@ public abstract class SubCommand implements ICommand {
         this.sender = sender;
         this.args = new SimpleTypeArray<>(args);
         this.instance = instance;
+
+        beforeExecute();
+
         if (enabled()) {
             execute(sender, "");
         } else {
             sender.sendMessage(noEnabledMsg());
         }
+
+        afterExecute();
+    }
+
+    @ForOverride
+    public void beforeExecute() {
+    }
+
+    @ForOverride
+    public void afterExecute() {
     }
 
     public final void sendMessage(String key, Object... args) {
@@ -86,7 +101,7 @@ public abstract class SubCommand implements ICommand {
         return args.get(index);
     }
 
-    protected double getArgAsDoubleOrInt(int index, boolean isInt, boolean allowNegative) {
+    protected Pair<Boolean, Double> getArgAsDoubleOrInt(int index, boolean isInt, boolean allowNegative) {
         return getArgAsDoubleOrInt(sender, index, isInt, allowNegative);
     }
 

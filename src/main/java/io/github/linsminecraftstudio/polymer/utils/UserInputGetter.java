@@ -13,7 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -23,18 +24,25 @@ public class UserInputGetter {
     }
 
     public static @Nullable String getUserInput(Component message, Player p, String quit) {
-        AtomicReference<String> str = new AtomicReference<>(null);
-        CountDownLatch latch = new CountDownLatch(1);
-        new InputListener(message, p, (input) -> {
-            str.set(input);
-            latch.countDown();
-        }, quit);
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            AtomicReference<String> str = new AtomicReference<>(null);
+            InputListener inputListener = new InputListener(message, p, str::set, quit);
+            synchronized (inputListener) {
+                while (!inputListener.getResult()) {
+                    try {
+                        inputListener.wait();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            return str.get();
+        });
         try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
         }
-        return str.get();
     }
 
     public static @NotNull List<String> getUserInputMultiply(Component message, Player p, String quit) {
@@ -50,32 +58,40 @@ public class UserInputGetter {
     }
 
     private record InputListener(Component message, Player player, Consumer<String> handler, String quitMsg) implements Listener {
-       private InputListener(Component message, Player player, Consumer<String> handler, String quitMsg) {
-           this.quitMsg = quitMsg;
-           this.message = message.appendNewline().append(
-                   Polymer.INSTANCE.getMessageHandler().getColored(player, "Info.InputQuit").replaceText(builder ->
-                           builder.match("%s").replacement(this.quitMsg)));
-           this.player = player;
-           this.handler = handler;
+        private static boolean result = false;
 
-           Bukkit.getPluginManager().registerEvents(this, Polymer.INSTANCE);
-           player.sendMessage(this.message);
-       }
+        private InputListener(Component message, Player player, Consumer<String> handler, String quitMsg) {
+            this.quitMsg = quitMsg;
+            this.message = message.appendNewline().append(
+                    Polymer.INSTANCE.getMessageHandler().getColored(player, "Info.InputQuit").replaceText(builder ->
+                            builder.match("%s").replacement(this.quitMsg)));
+            this.player = player;
+            this.handler = handler;
 
-       @EventHandler
-       public void chatEvent(AsyncChatEvent e) {
-          Player p = e.getPlayer();
-          if (player.getUniqueId().equals(p.getUniqueId())) {
-              String input = ObjectConverter.serializer.serialize(e.message());
-              if (!input.equals(quitMsg)) {
-                  e.setCancelled(true);
-                  HandlerList.unregisterAll(this);
-                  handler.accept(input);
-                  return;
-              }
-              e.setCancelled(true);
-              HandlerList.unregisterAll(this);
-          }
-       }
+            Bukkit.getPluginManager().registerEvents(this, Polymer.INSTANCE);
+            player.sendMessage(this.message);
+        }
+
+        @EventHandler
+        public void chatEvent(AsyncChatEvent e) {
+            Player p = e.getPlayer();
+            if (player.getUniqueId().equals(p.getUniqueId())) {
+                String input = ObjectConverter.serializer.serialize(e.message());
+                if (!input.equals(quitMsg)) {
+                    handler.accept(input);
+                }
+                result = true;
+                e.setCancelled(true);
+                HandlerList.unregisterAll(this);
+
+                synchronized (this) {
+                    this.notifyAll();
+                }
+            }
+        }
+
+        public boolean getResult() {
+            return result;
+        }
     }
 }

@@ -42,6 +42,21 @@ public final class ListUtil {
         return tList;
     }
 
+    @Nonnull
+    @ParametersAreNonnullByDefault
+    public static <T> List<T> getAllMatches(Iterable<T> iterable, Predicate<T> filter, int limit){
+        List<T> tList = new ArrayList<>();
+        int i = 0;
+        for (T item : iterable) {
+            if (filter.test(item)) {
+                tList.add(item);
+                i++;
+                if (i == limit) break;
+            }
+        }
+        return tList;
+    }
+
     /**
      * To components
      * @param stringList the strings you want to convert

@@ -1,9 +1,11 @@
 package io.github.linsminecraftstudio.polymer.command;
 
+import com.google.errorprone.annotations.ForOverride;
 import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
 import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -68,7 +70,24 @@ public abstract class PolymerCommand extends Command implements ICommand {
                 execute(commandSender, s);
             }
         }
+
+        afterAllExecute();
         return true;
+    }
+
+    /**
+     * run it before execute the command
+     */
+    @ForOverride
+    public void beforeAllExecute() {
+    }
+
+
+    /**
+     * run it after execute the command
+     */
+    @ForOverride
+    public void afterAllExecute() {
     }
 
     public final void sendMessage(String key, Object... args) {
@@ -176,7 +195,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
         return arguments.size();
     }
 
-    protected double getArgAsDoubleOrInt(int index, boolean isInt, boolean allowNegative) {
+    protected Pair<Boolean, Double> getArgAsDoubleOrInt(int index, boolean isInt, boolean allowNegative) {
         return getArgAsDoubleOrInt(sender, index, isInt, allowNegative);
     }
 }

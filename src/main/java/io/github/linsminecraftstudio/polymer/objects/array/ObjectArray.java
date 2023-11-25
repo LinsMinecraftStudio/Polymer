@@ -3,10 +3,8 @@ package io.github.linsminecraftstudio.polymer.objects.array;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.stream.Stream;
 
 

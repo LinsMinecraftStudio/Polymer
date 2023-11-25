@@ -1,14 +1,16 @@
 package io.github.linsminecraftstudio.polymer.command.interfaces;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
-import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
 import io.github.linsminecraftstudio.polymer.objects.other.CooldownMap;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,25 +44,30 @@ public interface ICommand {
         return list;
     }
 
-    default double getArgAsDoubleOrInt(CommandSender sender, int index, boolean isInt, boolean allowNegative) {
+    default Pair<Boolean, Double> getArgAsDoubleOrInt(CommandSender sender, int index, boolean isInt, boolean allowNegative) {
         String s = getArg(index);
         try {
             double d = isInt ? Integer.parseInt(s) : Double.parseDouble(s);
             if (!allowNegative) {
                 if ((isInt && d < 0) || (!isInt && d < 0.01)) {
                     sendPolymerMessage(sender, "Value.TooLow", index + 1);
-                    return PolymerConstants.ERROR_CODE;
+                    return ImmutablePair.of(false, null);
                 }
             }
-            return d;
+            return ImmutablePair.of(true, d);
         }catch (NumberFormatException e){
             sendPolymerMessage(sender, isInt ? "Value.NotInt" : "Value.NotDouble", index+1);
-            return PolymerConstants.ERROR_CODE;
+            return ImmutablePair.of(false, null);
         }
     }
 
-    interface IAppendableArgumentsCommand extends ICommand {
-        boolean containsArgument(String token);
+    interface IOptionCommand extends ICommand {
+        String tokenHead = "-O:";
+
+        boolean containsOption(String token);
+
+        @Nullable
+        String getOptionValue(String token);
     }
 
     interface INeedsCooldownCommand<K> extends ICommand{

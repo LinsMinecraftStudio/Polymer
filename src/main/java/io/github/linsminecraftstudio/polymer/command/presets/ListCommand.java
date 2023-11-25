@@ -36,7 +36,7 @@ public abstract class ListCommand<T> extends PolymerCommand implements IListComm
             if (isArgEmpty()){
                 sendMessages(1);
             } else if (argSize() == 1){
-                sendMessages((int) getArgAsDoubleOrInt(0, true, false));
+                sendMessages(getArgAsDoubleOrInt(0, true, false).getRight().intValue());
             } else {
                 sendPolymerMessage(sender,"Command.ArgError");
             }
