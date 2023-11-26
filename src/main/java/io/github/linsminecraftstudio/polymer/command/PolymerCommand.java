@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,6 +55,8 @@ public abstract class PolymerCommand extends Command implements ICommand {
     public final boolean execute(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String[] strings) {
         this.arguments = new SimpleTypeArray<>(strings);
         this.sender = commandSender;
+        beforeAllExecute();
+
         if (strings.length == 0) {
             execute(commandSender, s);
         } else {
@@ -132,6 +135,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
     }
 
     public abstract String requirePlugin();
+
     public abstract void execute(CommandSender sender, String alias);
 
     protected boolean hasPermission(){

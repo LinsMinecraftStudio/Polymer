@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.stream.Stream;
 
 public record SimpleTypeArray<T> (T... args) implements IArray<T>, Iterable<T> {

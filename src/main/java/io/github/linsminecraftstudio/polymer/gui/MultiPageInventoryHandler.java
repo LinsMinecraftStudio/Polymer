@@ -2,6 +2,7 @@ package io.github.linsminecraftstudio.polymer.gui;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.errorprone.annotations.ForOverride;
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.itemstack.ItemStackBuilder;
 import io.github.linsminecraftstudio.polymer.utils.UserInputGetter;
@@ -16,9 +17,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.intellij.lang.annotations.RegExp;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
 
@@ -125,6 +128,11 @@ public abstract class MultiPageInventoryHandler<T> {
 
     class Listener implements org.bukkit.event.Listener {
         @EventHandler
+        public void onOpen(InventoryOpenEvent e) {
+            handleOpen(e);
+        }
+
+        @EventHandler
         public void onClick(InventoryClickEvent e) {
             Player player = (Player) e.getWhoClicked();
             UUID uuid = player.getUniqueId();
@@ -182,6 +190,10 @@ public abstract class MultiPageInventoryHandler<T> {
                 map.put(uuid, getPage(uuid));
             }
         }
+    }
+
+    @ApiStatus.OverrideOnly
+    public void handleOpen(InventoryOpenEvent e) {
     }
 
     void placeItems(Player p, Inventory inventory) {
