@@ -3,6 +3,7 @@ package io.github.linsminecraftstudio.polymer.schedule;
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.objects.other.LockableValue;
 import io.github.linsminecraftstudio.polymer.objects.other.StoreableConsumer;
+import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -21,6 +22,10 @@ public abstract class BFRunnable {
         }
         this.runnable = new LockableValue<>(bukkitRunnable);
         this.runnable.lock();
+    }
+
+    public BFRunnable(@NotNull Consumer<ScheduledTask> paper) {
+        this(OtherUtils.toStoreableConsumer(paper));
     }
 
     public BFRunnable(@NotNull StoreableConsumer<ScheduledTask> paper) {
@@ -81,7 +86,9 @@ public abstract class BFRunnable {
             }
         } else {
             BukkitRunnable runnable1 = runnable.getValue();
-            runnable1.cancel();
+            if (runnable1 != null) {
+                runnable1.cancel();
+            }
         }
     }
 }

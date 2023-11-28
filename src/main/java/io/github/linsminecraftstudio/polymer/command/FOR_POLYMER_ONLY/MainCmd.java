@@ -21,7 +21,7 @@ public final class MainCmd extends PolymerCommand {
 
     @Override
     public void execute(CommandSender sender, String alias) {
-        sendMessage("Info.Plugin", Polymer.INSTANCE.getPluginMeta().getVersion(),
+        sendMessage("Info.Plugin", Polymer.INSTANCE.getPluginVersion(),
                 IterableUtil.asString(Polymer.INSTANCE.getPluginMeta().getAuthors()),
                 Bukkit.getMinecraftVersion());
     }

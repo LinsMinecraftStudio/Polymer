@@ -9,7 +9,7 @@ import org.bukkit.Location;
 
 public class ObjectConverter {
     public static LegacyComponentSerializer serializer = LegacyComponentSerializer.legacyAmpersand();
-    public static MiniMessage miniMessage = APICompatibility.getMiniMessage();
+    public static MiniMessage miniMessage = MiniMessage.miniMessage();
 
     public static String replaceLegacyColorsToMiniMessageFormat(String text){
         return miniMessage.serialize(serializer.deserialize(text));

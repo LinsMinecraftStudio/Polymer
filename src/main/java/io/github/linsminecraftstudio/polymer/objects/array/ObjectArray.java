@@ -2,15 +2,12 @@ package io.github.linsminecraftstudio.polymer.objects.array;
 
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
 
-public record ObjectArray(Object... args) implements IArray<Object>, Iterable<Object>{
-    @ParametersAreNonnullByDefault
-    public ObjectArray {}
+public record ObjectArray(@NotNull Object... args) implements IArray<Object>, Iterable<Object>{
 
     public boolean isEmpty() {
         return args.length == 0;

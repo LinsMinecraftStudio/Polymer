@@ -2,6 +2,7 @@ package io.github.linsminecraftstudio.polymer.objects.plugin.message;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.objects.array.ObjectArray;
+import io.github.linsminecraftstudio.polymer.objects.other.TuplePair;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.utils.FileUtil;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
@@ -10,7 +11,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.TitlePart;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -104,16 +104,16 @@ public final class PolymerMessageHandler {
 
     /**
      * Obtain color messages and format them with messages.
-     * You can see {@link #getMessageObjects(CommandSender, Pair[])} for how to get message objects.
+     * You can see {@link #getMessageObjects(CommandSender, TuplePair[])} for how to get message objects.
      * @param node the node
      * @param keys message nodes
      * @return the message
      */
     @SafeVarargs
-    public final Component getColoredFormatToOtherMessages(@Nullable CommandSender cs, String node, Pair<String, ObjectArray>... keys){
+    public final Component getColoredFormatToOtherMessages(@Nullable CommandSender cs, String node, TuplePair<String, ObjectArray>... keys){
         try {return ObjectConverter.toComponent(String.format(get(cs, node), getMessageObjects(cs, keys)));
         } catch (Exception e) {
-            Polymer.debug("Failed to format messages from" + plugin.getPluginMeta().getName(), e);
+            Polymer.debug("Failed to format messages from" + plugin.getPluginName(), e);
             return ObjectConverter.toComponent(get(cs, node));
         }
     }
@@ -124,10 +124,10 @@ public final class PolymerMessageHandler {
      * @return the message objects
      */
     @SafeVarargs
-    public final Object[] getMessageObjects(@Nullable CommandSender cs, Pair<String, ObjectArray>... keys){
+    public final Object[] getMessageObjects(@Nullable CommandSender cs, TuplePair<String, ObjectArray>... keys){
         Object[] s = new Object[keys.length];
         for (int i = 0; i < keys.length; i++) {
-            Pair<String, ObjectArray> pair = keys[i];
+            TuplePair<String, ObjectArray> pair = keys[i];
             String raw = get(cs, pair.getKey());
             if (pair.getRight() != null && !pair.getRight().isEmpty()) {
                 raw = String.format(raw, pair.getValue().args());
@@ -169,7 +169,7 @@ public final class PolymerMessageHandler {
         for (Component c : components){
             main = main.append(c);
             if (components.indexOf(c) != components.size() - 1) {
-                main = main.appendNewline();
+                main = main.append(Component.newline());
             }
         }
         return main;

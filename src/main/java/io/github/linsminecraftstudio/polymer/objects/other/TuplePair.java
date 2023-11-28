@@ -22,4 +22,20 @@ public class TuplePair<A, B> {
     public static <A, B> TuplePair<A, B> right(B b) {
         return new TuplePair<>(null, b);
     }
+
+    public A getKey() {
+        return getA();
+    }
+
+    public B getValue() {
+        return getB();
+    }
+
+    public A getLeft() {
+        return getA();
+    }
+
+    public B getRight() {
+        return getB();
+    }
 }

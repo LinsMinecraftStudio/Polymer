@@ -5,7 +5,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConfigurationOptions;
 import org.bukkit.plugin.Plugin;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -20,7 +19,6 @@ public final class FileUtil {
      * @param plugin plugin instance
      * @param resourceFile the resource file you want to complete
      */
-    @ParametersAreNonnullByDefault
     public static void completeFile(Plugin plugin, String resourceFile, String... notNeedSyncKeys) {
         InputStream stream = plugin.getResource(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);
@@ -61,6 +59,7 @@ public final class FileUtil {
                 }
                 YamlConfigurationOptions options1 = configuration.options();
                 YamlConfigurationOptions options2 = configuration2.options();
+
                 if (!options2.getHeader().equals(options1.getHeader())) {
                     options2.setHeader(options1.getHeader());
                 }
@@ -92,7 +91,6 @@ public final class FileUtil {
      * @param plugin plugin instance
      * @param resourceFile the language file you want to complete
      */
-    @ParametersAreNonnullByDefault
     public static void completeLangFile(Plugin plugin, String resourceFile){
         InputStream stream = plugin.getResource(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);

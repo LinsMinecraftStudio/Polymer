@@ -71,7 +71,7 @@ public final class IterableUtil {
     @NotNull
     public static List<String> componentListToStringList(@NotNull List<Component> componentList){
         if (componentList.isEmpty()) return new ArrayList<>();
-        return componentList.stream().map(APICompatibility.getMiniMessage()::serialize).toList();
+        return componentList.stream().map(ObjectConverter.miniMessage::serialize).toList();
     }
 
     public static String asString(List<?> list) {
