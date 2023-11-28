@@ -2,14 +2,13 @@ package io.github.linsminecraftstudio.polymer.gui;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.errorprone.annotations.ForOverride;
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.itemstack.ItemStackBuilder;
+import io.github.linsminecraftstudio.polymer.utils.IterableUtil;
 import io.github.linsminecraftstudio.polymer.utils.UserInputGetter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
-import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -169,7 +168,7 @@ public abstract class MultiPageInventoryHandler<T> {
                     e.setCancelled(true);
                 } else {
                     int page = getPage(uuid);
-                    int index = (CONTENTS_SLOTS.length * (page - 1)) + ArrayUtils.indexOf(CONTENTS_SLOTS, slot);
+                    int index = (CONTENTS_SLOTS.length * (page - 1)) + IterableUtil.indexOf(CONTENTS_SLOTS, slot);
                     try {
                         T t = data.get(index);
                         if (t != null && e.getCurrentItem() != null) {

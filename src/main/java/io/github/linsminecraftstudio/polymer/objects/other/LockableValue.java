@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 @Getter
 public class LockableValue<T> {
     private boolean locked = false;
-    public @Nullable T value;
+    private @Nullable T value;
 
     public LockableValue() {
         this.value = null;
@@ -35,5 +35,9 @@ public class LockableValue<T> {
 
     public void unlock() {
         this.locked = false;
+    }
+
+    public boolean isValueNull() {
+        return this.value == null;
     }
 }

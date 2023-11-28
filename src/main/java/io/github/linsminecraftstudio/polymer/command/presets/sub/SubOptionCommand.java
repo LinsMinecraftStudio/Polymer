@@ -2,7 +2,7 @@ package io.github.linsminecraftstudio.polymer.command.presets.sub;
 
 import io.github.linsminecraftstudio.polymer.command.SubCommand;
 import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
-import io.github.linsminecraftstudio.polymer.utils.ListUtil;
+import io.github.linsminecraftstudio.polymer.utils.IterableUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +16,7 @@ public abstract class SubOptionCommand extends SubCommand implements ICommand.IO
     @Override
     public boolean containsOption(String token) {
         String finalToken = "-" + token;
-        return ListUtil.getIf(getArgs(), str -> str.equals(finalToken)).isPresent();
+        return IterableUtil.getIf(getArgs(), str -> str.equals(finalToken)).isPresent();
     }
 
     @Override

@@ -7,6 +7,7 @@ import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import org.bukkit.event.Listener;
 
 import java.util.List;
+import java.util.logging.Level;
 
 public final class Polymer extends PolymerPlugin implements Listener {
     public static Polymer INSTANCE;
@@ -30,6 +31,18 @@ public final class Polymer extends PolymerPlugin implements Listener {
                     getLogger().warning("Failed to check update.");
                 }
             });
+        }
+    }
+
+    public static void debug(String message) {
+        if (Polymer.isDebug()) {
+            INSTANCE.getLogger().warning("[DEBUGGER-Polymer] " + message);
+        }
+    }
+
+    public static void debug(String message, Throwable throwable) {
+        if (Polymer.isDebug()) {
+            INSTANCE.getLogger().log(Level.WARNING, "[DEBUGGER-Polymer] " + message, throwable);
         }
     }
 

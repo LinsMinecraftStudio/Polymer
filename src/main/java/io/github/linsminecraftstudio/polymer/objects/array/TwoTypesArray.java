@@ -1,15 +1,14 @@
 package io.github.linsminecraftstudio.polymer.objects.array;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public record TwoTypesArray<T, U>(T[] first, U[] second){
-    @ParametersAreNonnullByDefault
+public record TwoTypesArray<T, U>(@NotNull T[] first,@NotNull U[] second){
     public TwoTypesArray {}
 
-    @ParametersAreNonnullByDefault
-    public TwoTypesArray(SimpleTypeArray<T> first, SimpleTypeArray<U> second) {
+    public TwoTypesArray(@NotNull SimpleTypeArray<T> first,@NotNull SimpleTypeArray<U> second) {
         this(first.args(), second.args());
     }
 

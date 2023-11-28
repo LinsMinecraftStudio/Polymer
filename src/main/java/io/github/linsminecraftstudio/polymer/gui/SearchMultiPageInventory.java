@@ -3,10 +3,9 @@ package io.github.linsminecraftstudio.polymer.gui;
 import com.google.common.collect.Lists;
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.objects.other.LockableValue;
+import io.github.linsminecraftstudio.polymer.utils.IterableUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,8 +15,9 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
-import java.util.concurrent.CountDownLatch;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static io.github.linsminecraftstudio.polymer.objects.PolymerConstants.*;
 
@@ -176,7 +176,7 @@ class SearchMultiPageInventory<T> extends MultiPageInventoryHandler<T> {
             } else if (Arrays.stream(BOARDER_SLOTS).anyMatch(i -> i == slot)) {
                 e.setCancelled(true);
             } else {
-                int index = (CONTENTS_SLOTS.length * (page - 1)) + ArrayUtils.indexOf(CONTENTS_SLOTS, slot);
+                int index = (CONTENTS_SLOTS.length * (page - 1)) + IterableUtil.indexOf(CONTENTS_SLOTS, slot);
                 try {
                     T t = data.get(index);
                     if (t != null && e.getCurrentItem() != null) {

@@ -1,6 +1,7 @@
 package io.github.linsminecraftstudio.polymer.utils;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
+import io.github.linsminecraftstudio.polymer.objects.other.StoreableConsumer;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class OtherUtils {
     public static boolean isPolymerVersionAtLeast(String version) {
@@ -22,7 +24,7 @@ public class OtherUtils {
     }
 
     public static boolean isPolymerVersionAtLeast(int major, int minor, int p) {
-        String[] version = Polymer.INSTANCE.getPluginMeta().getVersion().replaceAll("-SNAPSHOT", "").split("\\.");
+        String[] version = Polymer.INSTANCE.getPluginVersion().replaceAll("-SNAPSHOT", "").split("\\.");
         int polymerMajor = Integer.parseInt(version[0]);
         int polymerMinor = Integer.parseInt(version[1]);
         int polymerPatch = (version.length > 2) ? Integer.parseInt(version[2]) : 0;
@@ -59,6 +61,15 @@ public class OtherUtils {
         return lang.replace(split[1], split[1].toUpperCase());
     }
 
+    public static <T> StoreableConsumer<T> toStoreableConsumer(Consumer<T> consumer) {
+        return new StoreableConsumer<>() {
+            @Override
+            public void handleAccept(T value) {
+                consumer.accept(value);
+            }
+        };
+    }
+
     public static class Updater {
         /**
          * Make a updater
@@ -83,7 +94,7 @@ public class OtherUtils {
             try {
                 ver = future.join();
             } catch (Exception e) {
-                if (Polymer.isDebug()) e.printStackTrace();
+                Polymer.debug("Failed to check a plugin update, resource id: " + resourceId, e);
                 ver = null;
             }
             consumer.accept(ver, ver != null);

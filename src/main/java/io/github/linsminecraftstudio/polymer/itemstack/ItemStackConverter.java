@@ -1,7 +1,7 @@
 package io.github.linsminecraftstudio.polymer.itemstack;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import io.github.linsminecraftstudio.polymer.utils.ListUtil;
+import io.github.linsminecraftstudio.polymer.utils.IterableUtil;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -35,7 +35,7 @@ public final class ItemStackConverter {
             builder.name(ObjectConverter.toComponent(section.getString("displayname", "")));
         }
         if (section.contains("lore")) {
-            builder.lore(ListUtil.stringListToComponentList(section.getStringList("lore")));
+            builder.lore(IterableUtil.stringListToComponentList(section.getStringList("lore")));
         }
         if (section.contains("customModelData")){
             builder.customModelData(section.getInt("customModelData"));

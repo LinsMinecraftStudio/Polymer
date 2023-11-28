@@ -1,6 +1,5 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin;
 
-import com.google.errorprone.annotations.ForOverride;
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
 import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
@@ -36,7 +35,7 @@ public abstract class PolymerPlugin extends JavaPlugin {
                         Plugin %1$s requires Polymer version %2$s.
                         But the version is %3$s instead.
                         It will disable automatically.
-                        """.formatted(getPluginMeta().getName(), requireVersion(), Polymer.INSTANCE.getPluginMeta().getVersion()));
+                        """.formatted(getPluginName(), requireVersion(), Polymer.INSTANCE.getPluginVersion()));
                 Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
@@ -49,7 +48,7 @@ public abstract class PolymerPlugin extends JavaPlugin {
                         But the api version is %3$d instead.
                         It will disable automatically.
                         Try to use newer Polymer version or older Polymer version.
-                        """.formatted(getPluginMeta().getName(), requireApiVersion(), PolymerConstants.API_VERSION));
+                        """.formatted(getPluginName(), requireApiVersion(), PolymerConstants.API_VERSION));
             }
         }
 
@@ -60,16 +59,16 @@ public abstract class PolymerPlugin extends JavaPlugin {
 
         for (PolymerCommand command : registerCommands()) {
             if (Polymer.isDebug()) Polymer.INSTANCE.getLogger().warning("Registering command: "+command.getLabel()+
-                    ", plugin: " + getPluginMeta().getName());
+                    ", plugin: " + getPluginName());
             if (command.requirePlugin() != null && !command.requirePlugin().isBlank()) {
                 if (Bukkit.getPluginManager().isPluginEnabled(command.requirePlugin())){
-                    Bukkit.getCommandMap().register(getPluginMeta().getName(), command);
+                    Bukkit.getCommandMap().register(getPluginName(), command);
                 }
             }else {
                 if (Bukkit.getCommandMap().getCommand(command.getLabel()) != null) {
                     Bukkit.getCommandMap().getKnownCommands().remove(command.getLabel());
                 }
-                Bukkit.getCommandMap().register(getPluginMeta().getName(), command);
+                Bukkit.getCommandMap().register(getPluginName(), command);
             }
         }
     }
@@ -80,7 +79,29 @@ public abstract class PolymerPlugin extends JavaPlugin {
             metrics.shutdown();
         }
         onPlDisable();
-        Polymer.INSTANCE.getLogger().info("Disabled plugin "+getPluginMeta().getName());
+        Polymer.INSTANCE.getLogger().info("Disabled plugin "+getPluginName());
+    }
+
+    /**
+     * Makes old api compatibility
+     * @return the plugin name
+     */
+    public String getPluginName() {
+        try {
+            Object pluginMeta = this.getClass().getMethod("getPluginMeta").invoke(this);
+            return pluginMeta.getClass().getMethod("getName").invoke(pluginMeta).toString();
+        } catch (Exception e) {
+            return getDescription().getName();
+        }
+    }
+
+    public String getPluginVersion() {
+        try {
+            Object pluginMeta = this.getClass().getMethod("getPluginMeta").invoke(this);
+            return pluginMeta.getClass().getMethod("getVersion").invoke(pluginMeta).toString();
+        } catch (Exception e) {
+            return getDescription().getVersion();
+        }
     }
 
     protected final void startMetrics(int pluginId) {
@@ -128,7 +149,7 @@ public abstract class PolymerPlugin extends JavaPlugin {
                      
                      Download Spark plugin @ https://spark.lucko.me/
                     ============================================================
-                    """, getPluginMeta().getName());
+                    """, getPluginName());
         }
     }
 
@@ -136,7 +157,6 @@ public abstract class PolymerPlugin extends JavaPlugin {
         FileUtil.completeFile(this, "config.yml");
     }
 
-    @ForOverride
     public void reload() {
         reloadConfig();
         completeDefaultConfig();

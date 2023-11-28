@@ -1,12 +1,11 @@
 package io.github.linsminecraftstudio.polymer.command;
 
-import com.google.errorprone.annotations.ForOverride;
 import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
 import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
+import io.github.linsminecraftstudio.polymer.objects.other.TuplePair;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -45,12 +44,10 @@ public abstract class SubCommand implements ICommand {
 
         afterExecute();
     }
-
-    @ForOverride
+    
     public void beforeExecute() {
     }
-
-    @ForOverride
+    
     public void afterExecute() {
     }
 
@@ -101,7 +98,7 @@ public abstract class SubCommand implements ICommand {
         return args.get(index);
     }
 
-    protected Pair<Boolean, Double> getArgAsDoubleOrInt(int index, boolean isInt, boolean allowNegative) {
+    protected TuplePair<Boolean, Double> getArgAsDoubleOrInt(int index, boolean isInt, boolean allowNegative) {
         return getArgAsDoubleOrInt(sender, index, isInt, allowNegative);
     }
 
@@ -111,7 +108,7 @@ public abstract class SubCommand implements ICommand {
 
     protected boolean hasSubPermission(CommandSender cs,String... subs){
         List<String> subList = new ArrayList<>(List.of(subs));
-        subList.add(0, instance.getPluginMeta().getName().toLowerCase());
+        subList.add(0, instance.getPluginName().toLowerCase());
         subList.add(1, "command");
         subList.add(2, this.getName());
         return hasCustomPermission(cs, String.join(".", subList));
@@ -119,7 +116,7 @@ public abstract class SubCommand implements ICommand {
 
     protected boolean hasCustomPermission(CommandSender cs,String perm){
         if (cs == null) return true;
-        if (!cs.hasPermission(instance.getPluginMeta().getName().toLowerCase()+"."+perm)){
+        if (!cs.hasPermission(instance.getPluginName().toLowerCase()+"."+perm)){
             sendPolymerMessage(cs,"Command.NoPermission");
             return false;
         }

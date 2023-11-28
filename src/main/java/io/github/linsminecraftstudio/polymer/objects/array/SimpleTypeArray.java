@@ -2,14 +2,12 @@ package io.github.linsminecraftstudio.polymer.objects.array;
 
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
-public record SimpleTypeArray<T> (T... args) implements IArray<T>, Iterable<T> {
+public record SimpleTypeArray<T> (@NotNull T... args) implements IArray<T>, Iterable<T> {
     @SafeVarargs
-    @ParametersAreNonnullByDefault
     public SimpleTypeArray {}
 
     public boolean isEmpty() {

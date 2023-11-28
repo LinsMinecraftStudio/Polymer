@@ -3,5 +3,6 @@ version: '${project.version}'
 main: io.github.linsminecraftstudio.polymer.Polymer
 api-version: 1.19
 author: "lijinhong11"
+folia-supported: true
 
 build_number: '${buildNumber}'

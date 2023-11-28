@@ -1,8 +1,8 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin.file;
 
+import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,11 +10,11 @@ import java.io.InputStream;
 
 @Getter
 public class SingleFileStorage {
-    private final Plugin plugin;
+    private final PolymerPlugin plugin;
     private final File file;
     private YamlConfiguration configuration;
 
-    public SingleFileStorage(Plugin plugin, File file){
+    public SingleFileStorage(PolymerPlugin plugin, File file){
         this.plugin = plugin;
         this.file = file;
         this.configuration = handleConfig(file);
@@ -36,11 +36,14 @@ public class SingleFileStorage {
     }
 
     protected void reload(YamlConfiguration refresh) {
-        try {
-            configuration = refresh;
-            configuration.save(file);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        configuration = refresh;
+        plugin.getScheduler().scheduleAsync(() -> {
+                    try {
+                        configuration.save(file);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
     }
 }

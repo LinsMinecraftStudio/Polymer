@@ -2,15 +2,14 @@ package io.github.linsminecraftstudio.polymer.command.interfaces;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.objects.other.CooldownMap;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import io.github.linsminecraftstudio.polymer.objects.other.TuplePair;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +28,7 @@ public interface ICommand {
         Polymer.INSTANCE.getMessageHandler().sendMessage(sender, key, args);
     }
 
-    default List<String> copyPartialMatches(@Nonnull String token, Iterable<String> original){
+    default List<String> copyPartialMatches(@NotNull String token, Iterable<String> original){
         if (original == null) {
             return new ArrayList<>();
         }
@@ -44,20 +43,20 @@ public interface ICommand {
         return list;
     }
 
-    default Pair<Boolean, Double> getArgAsDoubleOrInt(CommandSender sender, int index, boolean isInt, boolean allowNegative) {
+    default TuplePair<Boolean, Double> getArgAsDoubleOrInt(CommandSender sender, int index, boolean isInt, boolean allowNegative) {
         String s = getArg(index);
         try {
             double d = isInt ? Integer.parseInt(s) : Double.parseDouble(s);
             if (!allowNegative) {
                 if ((isInt && d < 0) || (!isInt && d < 0.01)) {
                     sendPolymerMessage(sender, "Value.TooLow", index + 1);
-                    return ImmutablePair.of(false, null);
+                    return TuplePair.of(true, d);
                 }
             }
-            return ImmutablePair.of(true, d);
+            return TuplePair.of(true, d);
         }catch (NumberFormatException e){
             sendPolymerMessage(sender, isInt ? "Value.NotInt" : "Value.NotDouble", index+1);
-            return ImmutablePair.of(false, null);
+            return TuplePair.of(false, null);
         }
     }
 

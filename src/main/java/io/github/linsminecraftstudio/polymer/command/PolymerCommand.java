@@ -1,20 +1,17 @@
 package io.github.linsminecraftstudio.polymer.command;
 
-import com.google.errorprone.annotations.ForOverride;
 import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
 import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
+import io.github.linsminecraftstudio.polymer.objects.other.TuplePair;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 public abstract class PolymerCommand extends Command implements ICommand {
@@ -23,15 +20,23 @@ public abstract class PolymerCommand extends Command implements ICommand {
     private CommandSender sender;
     private final Map<String, SubCommand> subCommands = new HashMap<>();
 
-    public PolymerCommand(@Nonnull String name){
+    public PolymerCommand(@NotNull String name){
         this(name, new ArrayList<>());
     }
-    public PolymerCommand(@Nonnull String name, List<String> aliases) {
+    public PolymerCommand(@NotNull String name, List<String> aliases) {
         super(name, "", "", new ArrayList<>());
         try {
             autoSetCMDInfo(aliases);
         }catch (Exception ignored) {
         }
+    }
+
+    public String getHelpUsage(){
+        return "usage unavailable";
+    }
+
+    public String getHelpDescription(){
+        return "description unavailable";
     }
 
     @Override
@@ -55,6 +60,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
     public final boolean execute(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String[] strings) {
         this.arguments = new SimpleTypeArray<>(strings);
         this.sender = commandSender;
+
         beforeAllExecute();
 
         if (strings.length == 0) {
@@ -81,7 +87,6 @@ public abstract class PolymerCommand extends Command implements ICommand {
     /**
      * run it before execute the command
      */
-    @ForOverride
     public void beforeAllExecute() {
     }
 
@@ -89,7 +94,6 @@ public abstract class PolymerCommand extends Command implements ICommand {
     /**
      * run it after execute the command
      */
-    @ForOverride
     public void afterAllExecute() {
     }
 
@@ -100,7 +104,9 @@ public abstract class PolymerCommand extends Command implements ICommand {
     }
 
     public final void sendMessage(CommandSender sender, String key, Object... args) {
-        pluginInstance.getMessageHandler().sendMessage(sender, key, args);
+        if (pluginInstance != null) {
+            pluginInstance.getMessageHandler().sendMessage(sender, key, args);
+        }
     }
 
     public final void registerSubCommand(SubCommand subCommand) {
@@ -144,7 +150,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
 
     protected boolean hasSubPermission(CommandSender cs,String... subs){
         List<String> subList = new ArrayList<>(List.of(subs));
-        subList.add(0, pluginInstance.getPluginMeta().getName().toLowerCase());
+        subList.add(0, pluginInstance.getPluginName().toLowerCase());
         subList.add(1, "command");
         subList.add(2, this.getName());
         return hasCustomPermission(cs, String.join(".", subList));
@@ -152,7 +158,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
 
     protected boolean hasCustomPermission(CommandSender cs,String perm){
         if (cs == null) return true;
-        if (!cs.hasPermission(pluginInstance.getPluginMeta().getName().toLowerCase()+"."+perm)){
+        if (!cs.hasPermission(pluginInstance.getPluginName().toLowerCase()+"."+perm)){
             sendPolymerMessage(cs,"Command.NoPermission");
             return false;
         }
@@ -199,7 +205,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
         return arguments.size();
     }
 
-    protected Pair<Boolean, Double> getArgAsDoubleOrInt(int index, boolean isInt, boolean allowNegative) {
+    protected TuplePair<Boolean, Double> getArgAsDoubleOrInt(int index, boolean isInt, boolean allowNegative) {
         return getArgAsDoubleOrInt(sender, index, isInt, allowNegative);
     }
 }

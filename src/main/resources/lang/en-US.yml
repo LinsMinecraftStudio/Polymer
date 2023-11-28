@@ -35,3 +35,4 @@ GUI:
   SearchResultTitle: "&6&lSearch result (%page%/%max%)"
   SearchNoResult: "&4&lNo result found"
   SearchNoResultSub: "&aYou will back to the main inventory."
+HelpCmdMsg: "&b%1$d.&a%2$s &e— &6%3$s"

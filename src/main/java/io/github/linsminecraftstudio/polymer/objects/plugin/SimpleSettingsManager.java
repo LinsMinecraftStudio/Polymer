@@ -13,11 +13,12 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class SimpleSettingsManager {
     private YamlConfiguration configuration;
@@ -73,7 +74,7 @@ public class SimpleSettingsManager {
         return configuration.getStringList(key);
     }
 
-    public void set(String key, Object value){
+    public void set(String key,@Nullable Object value){
         if (value instanceof Location loc){
             setLocation(key, loc);
             return;
@@ -88,14 +89,20 @@ public class SimpleSettingsManager {
 
     private void save() {
         try {
-            configuration.save(file);
-        } catch (IOException e) {
+            CompletableFuture.runAsync(() -> {
+                try {
+                    configuration.save(file);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }).get();
+        } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
+
         configuration = YamlConfiguration.loadConfiguration(file);
     }
 
-    @ParametersAreNonnullByDefault
     private void setLocation(String path, Location loc){
         ConfigurationSection cs = configuration.getConfigurationSection(path);
         if (cs == null){

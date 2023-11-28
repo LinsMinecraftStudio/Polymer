@@ -1,5 +1,6 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin.message;
 
+import io.github.linsminecraftstudio.polymer.Polymer;
 import io.github.linsminecraftstudio.polymer.objects.array.ObjectArray;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.utils.FileUtil;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.TitlePart;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -95,21 +97,25 @@ public final class PolymerMessageHandler {
     public Component getColored(@Nullable CommandSender cs, String node, Map<String, Object> argMap, char replacementChar) {
         String original = get(cs, node);
         for (Map.Entry<String, Object> entry : argMap.entrySet()) {
-            original = original.replaceAll(replacementChar+entry.getKey()+replacementChar, (String) entry.getValue());
+            original = original.replaceAll(replacementChar+entry.getKey()+replacementChar, entry.getValue().toString());
         }
         return ObjectConverter.toComponent(original);
     }
 
     /**
      * Obtain color messages and format them with messages.
-     * You can see {@link #getMessageObjects(CommandSender, String...)} for how to get message objects.
+     * You can see {@link #getMessageObjects(CommandSender, Pair[])} for how to get message objects.
      * @param node the node
      * @param keys message nodes
      * @return the message
      */
-    public Component getColoredFormatToOtherMessages(@Nullable CommandSender cs, String node, String... keys){
+    @SafeVarargs
+    public final Component getColoredFormatToOtherMessages(@Nullable CommandSender cs, String node, Pair<String, ObjectArray>... keys){
         try {return ObjectConverter.toComponent(String.format(get(cs, node), getMessageObjects(cs, keys)));
-        } catch (Exception e) {return ObjectConverter.toComponent(get(cs, node));}
+        } catch (Exception e) {
+            Polymer.debug("Failed to format messages from" + plugin.getPluginMeta().getName(), e);
+            return ObjectConverter.toComponent(get(cs, node));
+        }
     }
 
     /**
@@ -117,10 +123,16 @@ public final class PolymerMessageHandler {
      * @param keys message nodes
      * @return the message objects
      */
-    public Object[] getMessageObjects(@Nullable CommandSender cs, String... keys){
+    @SafeVarargs
+    public final Object[] getMessageObjects(@Nullable CommandSender cs, Pair<String, ObjectArray>... keys){
         Object[] s = new Object[keys.length];
         for (int i = 0; i < keys.length; i++) {
-            s[i] = get(cs, keys[i]);
+            Pair<String, ObjectArray> pair = keys[i];
+            String raw = get(cs, pair.getKey());
+            if (pair.getRight() != null && !pair.getRight().isEmpty()) {
+                raw = String.format(raw, pair.getValue().args());
+            }
+            s[i] = raw;
         }
         return s;
     }
@@ -155,10 +167,10 @@ public final class PolymerMessageHandler {
         List<Component> components = getColoredMessages(cs, node, replacements);
         Component main = Component.empty();
         for (Component c : components){
+            main = main.append(c);
             if (components.indexOf(c) != components.size() - 1) {
                 main = main.appendNewline();
             }
-            main = main.append(c);
         }
         return main;
     }
@@ -179,7 +191,7 @@ public final class PolymerMessageHandler {
      * send messages
      * @param cs the sender
      * @param node the key
-     * @param arguments replacements
+     * @param arguments replacements (each for each line)
      */
     public void sendMessages(CommandSender cs, String node, ObjectArray... arguments) {
         for (Component c : getColoredMessages(cs, node, arguments)) {
@@ -243,7 +255,7 @@ public final class PolymerMessageHandler {
         }
     }
 
-    private YamlConfiguration getConfig(CommandSender cs){
+    private YamlConfiguration getConfig(@Nullable CommandSender cs){
         String tag = "en-US";
         if (autoDetectClientLanguage && cs != null) {
             if (cs instanceof Player p) {

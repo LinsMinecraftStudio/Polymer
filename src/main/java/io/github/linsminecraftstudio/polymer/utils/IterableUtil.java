@@ -1,17 +1,15 @@
 package io.github.linsminecraftstudio.polymer.utils;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public final class ListUtil {
+public final class IterableUtil {
     /**
      * Get the object that matches the given filter from the given list
      * @param iterable an iterable list
@@ -19,7 +17,6 @@ public final class ListUtil {
      * @return the object that matches the given filter or null
      * @param <T> type
      */
-    @ParametersAreNonnullByDefault
     public static <T> Optional<T> getIf(Iterable<T> iterable, Predicate<T> filter){
         for (T item : iterable){
             if (filter.test(item)) return Optional.of(item);
@@ -32,8 +29,7 @@ public final class ListUtil {
         return getIf(iterable, filter).orElse(def);
     }
 
-    @Nonnull
-    @ParametersAreNonnullByDefault
+    @NotNull
     public static <T> List<T> getAllMatches(Iterable<T> iterable, Predicate<T> filter){
         List<T> tList = new ArrayList<>();
         for (T item : iterable){
@@ -42,8 +38,7 @@ public final class ListUtil {
         return tList;
     }
 
-    @Nonnull
-    @ParametersAreNonnullByDefault
+    @NotNull
     public static <T> List<T> getAllMatches(Iterable<T> iterable, Predicate<T> filter, int limit){
         List<T> tList = new ArrayList<>();
         int i = 0;
@@ -62,8 +57,8 @@ public final class ListUtil {
      * @param stringList the strings you want to convert
      * @return the components
      */
-    @Nonnull
-    public static List<Component> stringListToComponentList(@Nonnull List<String> stringList){
+    @NotNull
+    public static List<Component> stringListToComponentList(@NotNull List<String> stringList){
         if (stringList.isEmpty()) return new ArrayList<>();
         return stringList.stream().map(ObjectConverter::toComponent).toList();
     }
@@ -73,13 +68,32 @@ public final class ListUtil {
      * @param componentList the components you want to convert
      * @return the strings
      */
-    @Nonnull
-    public static List<String> componentListToStringList(@Nonnull List<Component> componentList){
+    @NotNull
+    public static List<String> componentListToStringList(@NotNull List<Component> componentList){
         if (componentList.isEmpty()) return new ArrayList<>();
-        return componentList.stream().map(MiniMessage.miniMessage()::serialize).toList();
+        return componentList.stream().map(APICompatibility.getMiniMessage()::serialize).toList();
     }
 
     public static String asString(List<?> list) {
         return list.toString().substring(1, list.toString().length() - 1);
+    }
+
+    public static int indexOf(int[] array, int objectToFind) {
+        return indexOf(array, objectToFind, 0);
+    }
+
+    public static int indexOf(int[] array, int valueToFind, int startIndex) {
+        if (array == null) {
+            return -1;
+        }
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+        for (int i = startIndex; i < array.length; i++) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

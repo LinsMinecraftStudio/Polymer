@@ -3,7 +3,7 @@ package io.github.linsminecraftstudio.polymer.command.presets;
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
 import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
 import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
-import io.github.linsminecraftstudio.polymer.utils.ListUtil;
+import io.github.linsminecraftstudio.polymer.utils.IterableUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +17,7 @@ public abstract class OptionCommand extends PolymerCommand implements ICommand.I
     @Override
     public boolean containsOption(String token) {
         String finalToken = tokenHead + token;
-        return ListUtil.getIf(arguments, str -> str.equals(finalToken)).isPresent();
+        return IterableUtil.getIf(arguments, str -> str.equals(finalToken)).isPresent();
     }
 
     @Override
