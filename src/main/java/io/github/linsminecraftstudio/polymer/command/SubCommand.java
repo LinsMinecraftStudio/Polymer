@@ -18,7 +18,7 @@ import java.util.Map;
 public abstract class SubCommand implements ICommand {
     private final String name;
     private CommandSender sender;
-    private SimpleTypeArray<String> args;
+    protected SimpleTypeArray<String> args;
     private PolymerPlugin instance;
 
     public SubCommand(@NotNull String name) {
@@ -114,7 +114,7 @@ public abstract class SubCommand implements ICommand {
         return hasCustomPermission(cs, String.join(".", subList));
     }
 
-    protected boolean hasCustomPermission(CommandSender cs,String perm){
+    protected final boolean hasCustomPermission(CommandSender cs, String perm) {
         if (cs == null) return true;
         if (!cs.hasPermission(instance.getPluginName().toLowerCase()+"."+perm)){
             sendPolymerMessage(cs,"Command.NoPermission");

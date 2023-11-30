@@ -85,7 +85,7 @@ public class UserInputGetter {
                 HandlerList.unregisterAll(this);
 
                 synchronized (this) {
-                    this.notifyAll();
+                    this.notify();
                 }
             }
         }

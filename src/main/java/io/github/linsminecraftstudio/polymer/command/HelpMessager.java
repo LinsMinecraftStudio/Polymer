@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * It lets me write help messages again.
+ * @author lijinhong11(mmmjjkx)
  */
 public class HelpMessager extends ListCommand<PolymerCommand> {
     private final PolymerPlugin plugin;

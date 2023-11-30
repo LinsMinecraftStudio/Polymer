@@ -2,36 +2,48 @@ package io.github.linsminecraftstudio.polymer.command.presets.sub;
 
 import io.github.linsminecraftstudio.polymer.command.SubCommand;
 import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
+import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
 import io.github.linsminecraftstudio.polymer.utils.IterableUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.Optional;
 
 public abstract class SubOptionCommand extends SubCommand implements ICommand.IOptionCommand {
     public SubOptionCommand(@NotNull String name) {
         super(name);
     }
 
+    private SimpleTypeArray<String> pre;
+
     @Override
     public boolean containsOption(String token) {
-        String finalToken = "-" + token;
-        return IterableUtil.getIf(getArgs(), str -> str.equals(finalToken)).isPresent();
+        String finalToken = tokenHead + token;
+        return IterableUtil.getIf(getArgs(), str -> str.startsWith(finalToken)).isPresent();
     }
 
     @Override
     @Nullable
     public String getOptionValue(String token) {
-        String finalToken = "-" + token;
-        List<String> strings = getArgs().getStream().toList();
-        if (!strings.contains(finalToken)) {
+        String finalToken = tokenHead + token;
+        if (containsOption(token)) {
+            Optional<String> value = IterableUtil.getIf(pre, str -> str.startsWith(finalToken));
+            if (value.isPresent()) {
+                String original = value.get();
+                original = original.replaceFirst(finalToken, "");
+                return original.replaceFirst("=", "");
+            }
             return null;
         }
-        int index = strings.indexOf(finalToken) + 1;
-        try {
-            return strings.get(index);
-        } catch (IndexOutOfBoundsException e) {
-            return null;
-        }
+        return null;
+    }
+
+    @Override
+    public void beforeExecute() {
+        this.pre = this.args;
+
+        this.args = new SimpleTypeArray<>(
+                this.args.getStream().filter(str -> !str.startsWith(tokenHead)).toArray(String[]::new)
+        );
     }
 }

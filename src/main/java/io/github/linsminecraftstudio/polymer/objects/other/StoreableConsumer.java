@@ -18,4 +18,8 @@ public abstract class StoreableConsumer<T> implements Consumer<T> {
     public final @Nullable T getValue() {
         return value;
     }
+
+    public Consumer<T> getOriginal() {
+        return this::handleAccept;
+    }
 }

@@ -62,6 +62,10 @@ public class OtherUtils {
     }
 
     public static <T> StoreableConsumer<T> toStoreableConsumer(Consumer<T> consumer) {
+        if (consumer instanceof StoreableConsumer<T> s) {
+            return s;
+        }
+
         return new StoreableConsumer<>() {
             @Override
             public void handleAccept(T value) {

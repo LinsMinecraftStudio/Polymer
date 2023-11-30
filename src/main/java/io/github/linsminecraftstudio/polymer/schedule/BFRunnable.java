@@ -12,9 +12,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public abstract class BFRunnable {
+public class BFRunnable {
     private LockableValue<BukkitRunnable> runnable = new LockableValue<>();
     private LockableValue<StoreableConsumer<ScheduledTask>> task = new LockableValue<>();
+
+    public static BFRunnable of(BukkitRunnable r) {
+        return new BFRunnable(r);
+    }
+
+    public static BFRunnable of(Consumer<ScheduledTask> r) {
+        return new BFRunnable(r);
+    }
 
     public BFRunnable(@NotNull BukkitRunnable bukkitRunnable) {
         if (this.task.isLocked()) {
@@ -41,6 +49,13 @@ public abstract class BFRunnable {
     }
 
     public @Nullable Consumer<ScheduledTask> getPaper() {
+        if (getAdvancedPaper() != null) {
+            return getAdvancedPaper().getOriginal();
+        }
+        return null;
+    }
+
+    public @Nullable StoreableConsumer<ScheduledTask> getAdvancedPaper() {
         return task.getValue();
     }
 

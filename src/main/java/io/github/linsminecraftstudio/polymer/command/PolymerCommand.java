@@ -156,7 +156,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
         return hasCustomPermission(cs, String.join(".", subList));
     }
 
-    protected boolean hasCustomPermission(CommandSender cs,String perm){
+    protected final boolean hasCustomPermission(CommandSender cs, String perm) {
         if (cs == null) return true;
         if (!cs.hasPermission(pluginInstance.getPluginName().toLowerCase()+"."+perm)){
             sendPolymerMessage(cs,"Command.NoPermission");

@@ -50,7 +50,7 @@ public interface ICommand {
             if (!allowNegative) {
                 if ((isInt && d < 0) || (!isInt && d < 0.01)) {
                     sendPolymerMessage(sender, "Value.TooLow", index + 1);
-                    return TuplePair.of(true, d);
+                    return TuplePair.of(false, null);
                 }
             }
             return TuplePair.of(true, d);

@@ -7,37 +7,45 @@ import io.github.linsminecraftstudio.polymer.utils.IterableUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.Optional;
 
+/**
+ * The command preset for add custom options
+ * The format is '-O:THE_TOKEN=THE_VALUE'
+ */
 public abstract class OptionCommand extends PolymerCommand implements ICommand.IOptionCommand {
     public OptionCommand(@NotNull String name) {
         super(name);
     }
 
+    private SimpleTypeArray<String> pre;
+
     @Override
     public boolean containsOption(String token) {
         String finalToken = tokenHead + token;
-        return IterableUtil.getIf(arguments, str -> str.equals(finalToken)).isPresent();
+        return IterableUtil.getIf(pre, str -> str.startsWith(finalToken)).isPresent();
     }
 
     @Override
     @Nullable
     public String getOptionValue(String token) {
         String finalToken = tokenHead + token;
-        List<String> strings = arguments.getStream().toList();
-        if (!strings.contains(finalToken)) {
+        if (containsOption(token)) {
+            Optional<String> value = IterableUtil.getIf(pre, str -> str.startsWith(finalToken));
+            if (value.isPresent()) {
+                String original = value.get();
+                original = original.replaceFirst(finalToken, "");
+                return original.replaceFirst("=", "");
+            }
             return null;
         }
-        int index = strings.indexOf(finalToken) + 1;
-        try {
-            return strings.get(index);
-        } catch (IndexOutOfBoundsException e) {
-            return null;
-        }
+        return null;
     }
 
     @Override
     public final void beforeAllExecute() {
+        pre = this.arguments;
+
         this.arguments = new SimpleTypeArray<>(
                 this.arguments.getStream().filter(str -> !str.startsWith(tokenHead)).toArray(String[]::new)
         );

@@ -1,30 +1,30 @@
 package io.github.linsminecraftstudio.polymer.schedule;
 
 import io.github.linsminecraftstudio.polymer.Polymer;
-import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
  * A scheduler for compatible with Folia (A fork of paper).
+ * Feel free to copy to your project(s) or edit it.
  */
 public class BFScheduler {
-    private final PolymerPlugin plugin;
+    private final JavaPlugin plugin;
     private boolean modern;
 
-    public BFScheduler(PolymerPlugin plugin) {
+    public BFScheduler(JavaPlugin plugin) {
         testClasses();
         this.plugin = plugin;
     }
 
     private void testClasses() {
         try {
-            //for checking legacy paper builds or forks or paper 1.19.3
+            //for checking legacy paper builds or its forks
             Class.forName("io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler");
-            Class.forName("io.papermc.paper.threadedregions.scheduler.ScheduledTask");
-            Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
             modern = true;
         } catch (ClassNotFoundException e) {
             modern = false;
@@ -80,11 +80,7 @@ public class BFScheduler {
     }
 
     public void schedule(BFRunnable runnable) {
-        if (modern) {
-            runnable.run();
-        } else {
-            Objects.requireNonNull(runnable.getBukkit()).runTask(plugin);
-        }
+        runnable.run();
     }
 
     public void scheduleAsync(BFRunnable runnable) {
@@ -120,6 +116,22 @@ public class BFScheduler {
             Bukkit.getAsyncScheduler().runAtFixedRate(plugin, Objects.requireNonNull(runnable.getPaper()), delayMilis, repeatMilis, TimeUnit.MILLISECONDS);
         } else {
             Objects.requireNonNull(runnable.getBukkit()).runTaskTimerAsynchronously(Polymer.INSTANCE, delayTicks, repeatTicks);
+        }
+    }
+
+    public boolean isRunning(BFRunnable runnable) {
+        if (runnable.getTaskType() == TaskType.PAPER) {
+            try {
+                return Objects.requireNonNull(Objects.requireNonNull(runnable.getAdvancedPaper()).getValue())
+                        .getExecutionState() == ScheduledTask.ExecutionState.RUNNING;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        try {
+            return Bukkit.getScheduler().isCurrentlyRunning(Objects.requireNonNull(runnable.getBukkit()).getTaskId());
+        } catch (Exception e) {
+            return false;
         }
     }
 }
