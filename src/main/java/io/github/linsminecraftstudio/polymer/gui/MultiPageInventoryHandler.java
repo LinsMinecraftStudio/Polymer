@@ -60,6 +60,12 @@ public abstract class MultiPageInventoryHandler<T> {
         }
 
         List<Inventory> inventories = getOrGenerateInventories(p);
+
+        if (inventories.isEmpty()) {
+            Polymer.INSTANCE.getMessageHandler().sendMessage(p, "GUI.DataEmpty");
+            return;
+        }
+
         Inventory inventory = inventories.get(page - 1);
         if (inventory == null) {
             Inventory first = inventories.get(0);
