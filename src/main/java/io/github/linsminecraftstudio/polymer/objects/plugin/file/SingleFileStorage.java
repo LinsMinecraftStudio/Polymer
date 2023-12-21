@@ -38,12 +38,11 @@ public class SingleFileStorage {
     protected void reload(YamlConfiguration refresh) {
         configuration = refresh;
         plugin.getScheduler().scheduleAsync(() -> {
-                    try {
-                        configuration.save(file);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-        );
+            try {
+                configuration.save(file);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

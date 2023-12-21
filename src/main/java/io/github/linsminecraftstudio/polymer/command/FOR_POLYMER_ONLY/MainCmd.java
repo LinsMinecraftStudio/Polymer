@@ -6,11 +6,10 @@ import io.github.linsminecraftstudio.polymer.command.presets.sub.SubReloadComman
 import io.github.linsminecraftstudio.polymer.utils.IterableUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
 
 public final class MainCmd extends PolymerCommand {
-    public MainCmd(@NotNull String name) {
-        super(name);
+    public MainCmd() {
+        super("polymer");
         this.registerSubCommand(new SubReloadCommand(Polymer.INSTANCE));
     }
 

@@ -35,8 +35,8 @@ public class UserInputGetter {
                         throw new RuntimeException(e);
                     }
                 }
+                return str.get();
             }
-            return str.get();
         });
         try {
             return future.get();
@@ -58,7 +58,7 @@ public class UserInputGetter {
     }
 
     private record InputListener(Component message, Player player, Consumer<String> handler, String quitMsg) implements Listener {
-        private static boolean result = false;
+        private static boolean result;
 
         private InputListener(Component message, Player player, Consumer<String> handler, String quitMsg) {
             this.quitMsg = quitMsg;
@@ -68,8 +68,9 @@ public class UserInputGetter {
             this.player = player;
             this.handler = handler;
 
-            Bukkit.getPluginManager().registerEvents(this, Polymer.INSTANCE);
             player.sendMessage(this.message);
+            result = false;
+            Bukkit.getPluginManager().registerEvents(this, Polymer.INSTANCE);
         }
 
         @EventHandler

@@ -1,7 +1,7 @@
 package io.github.linsminecraftstudio.polymer;
 
-import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
 import io.github.linsminecraftstudio.polymer.command.FOR_POLYMER_ONLY.MainCmd;
+import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import org.bukkit.event.Listener;
@@ -48,11 +48,12 @@ public final class Polymer extends PolymerPlugin implements Listener {
 
     @Override
     public void onPlDisable() {
+        getLogger().info("Polymer disabled!");
     }
 
     @Override
     public List<PolymerCommand> registerCommands() {
-        return List.of(new MainCmd("polymer"));
+        return List.of(new MainCmd());
     }
 
     @Override
