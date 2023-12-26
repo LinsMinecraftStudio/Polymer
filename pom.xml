@@ -7,11 +7,18 @@
 	<groupId>io.github.linsminecraftstudio</groupId>
 	<artifactId>Polymer</artifactId>
 	<version>1.4.2-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<name>Polymer</name>
 	<description>An API for LMS</description>
 	<url>https://github.com/LinsMinecraftStudio/Polymer</url>
+
+	<modules>
+		<module>core</module>
+		<module>plugin</module>
+		<module>objectutils</module>
+	</modules>
+
 	<properties>
 		<buildNumber>5</buildNumber>
 		<java.version>17</java.version>
@@ -44,74 +51,6 @@
 	<profiles>
 		<profile>
 			<id>ossrh</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<version>3.2.1</version>
-						<executions>
-							<execution>
-								<id>attach-sources</id>
-								<phase>package</phase>
-								<goals>
-									<goal>jar-no-fork</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.6.0</version>
-						<configuration>
-							<encoding>UTF-8</encoding>
-							<source>17</source>
-						</configuration>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<phase>package</phase>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-								<configuration>
-									<additionalJOption>-Xdoclint:none</additionalJOption>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>3.0.1</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.sonatype.plugins</groupId>
-						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.6.13</version>
-						<extensions>true</extensions>
-						<configuration>
-							<serverId>ossrh</serverId>
-							<nexusUrl>https://s01.oss.sonatype.org/nexus/content/repositories/releases</nexusUrl>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
-						</configuration>
-					</plugin>
-
-				</plugins>
-			</build>
 			<distributionManagement>
 				<snapshotRepository>
 					<id>ossrh</id>
@@ -166,7 +105,7 @@
 		</plugins>
 		<resources>
 			<resource>
-				<directory>src/main/resources</directory>
+				<directory>plugin/src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
 		</resources>
@@ -188,29 +127,26 @@
 		</repository>
 	</repositories>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.30</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.papermc.paper</groupId>
-			<artifactId>paper-api</artifactId>
-			<version>1.18.2-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.papermc.paper</groupId>
-			<artifactId>paper-api</artifactId>
-			<version>1.20.2-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>de.tr7zw</groupId>
-			<artifactId>item-nbt-api</artifactId>
-			<version>2.12.2</version>
-		</dependency>
-	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>1.18.30</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.papermc.paper</groupId>
+				<artifactId>paper-api</artifactId>
+				<version>1.18.2-R0.1-SNAPSHOT</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>de.tr7zw</groupId>
+				<artifactId>item-nbt-api</artifactId>
+				<version>2.12.2</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>
