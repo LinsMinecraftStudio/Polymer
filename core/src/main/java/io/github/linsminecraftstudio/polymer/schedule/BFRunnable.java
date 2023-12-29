@@ -60,7 +60,9 @@ public class BFRunnable {
     }
 
     public @NotNull TaskType getTaskType() {
-        return task.isValueNull() ? TaskType.BUKKIT : TaskType.PAPER;
+        return task.isValueNull() ?
+                runnable.isValueNull() ? TaskType.UNKNOWN : TaskType.BUKKIT
+                : TaskType.PAPER;
     }
 
     public void run() {

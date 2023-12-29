@@ -38,4 +38,16 @@ public class TuplePair<A, B> {
     public B getRight() {
         return getB();
     }
+
+    public A getFirst() {
+        return getA();
+    }
+
+    public B getSecond() {
+        return getB();
+    }
+
+    public Object[] toArray() {
+        return new Object[]{a, b};
+    }
 }

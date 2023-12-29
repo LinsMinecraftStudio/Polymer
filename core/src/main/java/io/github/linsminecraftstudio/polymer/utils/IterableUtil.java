@@ -10,6 +10,9 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 public final class IterableUtil {
+    private IterableUtil() {
+    }
+
     /**
      * Get the object that matches the given filter from the given list
      * @param iterable an iterable list

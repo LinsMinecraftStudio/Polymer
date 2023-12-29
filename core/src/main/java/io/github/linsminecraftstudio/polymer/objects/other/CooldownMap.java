@@ -6,7 +6,14 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 
-public class CooldownMap<K> extends HashMap<K, Instant> {
+/**
+ * The cooldown map.<br>
+ * The value {@link Instant} is the time when the cooldown ends,
+ * and it's not recommend to put the end time directly.
+ *
+ * @param <K> the key
+ */
+public final class CooldownMap<K> extends HashMap<K, Instant> {
 
     public void set(K key, Duration duration) {
         this.put(key, duration);
@@ -19,7 +26,18 @@ public class CooldownMap<K> extends HashMap<K, Instant> {
     @Override
     public boolean containsKey(Object key) {
         Instant cooldown = get(key);
-        return cooldown != null && Instant.now().isBefore(cooldown);
+        Instant now = Instant.now();
+        boolean before = cooldown != null && now.isBefore(cooldown);
+
+        if (!before) {
+            clean(key);
+        }
+
+        return before;
+    }
+
+    private void clean(Object key) {
+        super.remove(key);
     }
 
     public Duration remaining(K key) {
@@ -28,6 +46,7 @@ public class CooldownMap<K> extends HashMap<K, Instant> {
         if (cooldown != null && now.isBefore(cooldown)) {
             return Duration.between(now, cooldown);
         } else {
+            super.remove(key);
             return Duration.ZERO;
         }
     }

@@ -77,7 +77,7 @@ public class OtherUtils {
 
     public static class Updater {
         /**
-         * Make a updater
+         * Make an updater
          * @param resourceId the resource id on spigotmc
          * @param consumer handle
          */
@@ -95,11 +95,14 @@ public class OtherUtils {
                     return null;
                 }
             }).completeOnTimeout(null, 5, TimeUnit.SECONDS);
+            PolymerPlugin plugin = findCallingPlugin();
             String ver;
             try {
                 ver = future.join();
             } catch (Exception e) {
-                TempPolymer.getInstance().getLogger().log(Level.WARNING, "Failed to check a plugin update, resource id: " + resourceId, e);
+                if (plugin != null) {
+                    plugin.getLogger().log(Level.WARNING, "Failed to check a plugin update, resource id: " + resourceId, e);
+                }
                 ver = null;
             }
             consumer.accept(ver, ver != null);

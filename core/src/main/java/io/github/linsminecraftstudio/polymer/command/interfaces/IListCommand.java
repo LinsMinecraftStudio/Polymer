@@ -1,7 +1,7 @@
 package io.github.linsminecraftstudio.polymer.command.interfaces;
 
 import com.google.common.collect.Lists;
-import io.github.linsminecraftstudio.polymer.Polymer;
+import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -29,18 +29,18 @@ public interface IListCommand<T> extends ICommand {
         }
 
         if (list(sender).isEmpty()) {
-            Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Info.List.Empty");
+            TempPolymer.getInstance().getMessageHandler().sendMessage(sender, "Info.List.Empty");
             return;
         }
 
         if (page > partition.size()) {
-            Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Value.TooHigh", 1);
+            TempPolymer.getInstance().getMessageHandler().sendMessage(sender, "Value.TooHigh", 1);
             return;
         }
 
         int realPage = page - 1;
         List<T> partedList = partition.get(realPage);
-        Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Info.List.Head", page);
+         TempPolymer.getInstance().getMessageHandler().sendMessage(sender, "Info.List.Head", page);
 
         int head = (page == 1) ? 1 : (10 * realPage) + 1;
 
@@ -49,23 +49,23 @@ public interface IListCommand<T> extends ICommand {
             head++;
         }
 
-        Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "Info.List.Tail");
+         TempPolymer.getInstance().getMessageHandler().sendMessage(sender, "Info.List.Tail");
         sender.sendMessage(buildClickEvent(sender, partition, page));
     }
 
     default Component buildClickEvent(CommandSender sender, List<List<T>> partition, int page) {
-        Component prev = Polymer.INSTANCE.getMessageHandler().getColored(sender, "Info.List.Prev");
-        Component next = Polymer.INSTANCE.getMessageHandler().getColored(sender, "Info.List.Next");
+        Component prev = TempPolymer.getInstance().getMessageHandler().getColored(sender, "Info.List.Prev");
+        Component next = TempPolymer.getInstance().getMessageHandler().getColored(sender, "Info.List.Next");
 
         ClickEvent prevClick = ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getName() + " " + (page-1));
         ClickEvent nextClick = ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/" + getName() + " " + (page+1));
 
         if (page == 1) {
-            prev = Polymer.INSTANCE.getMessageHandler().getColored(sender, "Info.List.PrevUnavailable");
+            prev = TempPolymer.getInstance().getMessageHandler().getColored(sender, "Info.List.PrevUnavailable");
             prevClick = null;
         }
         if (page >= partition.size()) {
-            next = Polymer.INSTANCE.getMessageHandler().getColored(sender, "Info.List.NextUnavailable");
+            next = TempPolymer.getInstance().getMessageHandler().getColored(sender, "Info.List.NextUnavailable");
             nextClick = null;
         }
 

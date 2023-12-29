@@ -61,7 +61,7 @@ public interface ICommand {
     }
 
     interface IOptionCommand extends ICommand {
-        String tokenHead = "-O:";
+        String tokenHead = "-Opt:";
 
         boolean containsOption(String token);
 

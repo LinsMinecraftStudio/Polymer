@@ -1,6 +1,6 @@
 package io.github.linsminecraftstudio.polymer.gui;
 
-import io.github.linsminecraftstudio.polymer.Polymer;
+import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.itemstack.ItemStackBuilder;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 
 import static io.github.linsminecraftstudio.polymer.objects.PolymerConstants.CLOSE_BUTTON_SLOT;
 
+@Setter
 public abstract class SimpleInventoryHandler {
     public static int[] BOARDER_SLOTS = new int[]{0,1,2,3,4,5,6,7,8,9,17,18,26,27,35,36,44,45,46,47,48,50,51,52,53};
 
@@ -23,11 +24,10 @@ public abstract class SimpleInventoryHandler {
     public abstract Component title(Player p);
     public abstract void doListen(InventoryActionType type, Player p, int slot, Inventory inventory);
 
-    @Setter
     private boolean boarder = false;
 
     public SimpleInventoryHandler() {
-        Bukkit.getPluginManager().registerEvents(new Listener(), Polymer.INSTANCE);
+        Bukkit.getPluginManager().registerEvents(new Listener(), TempPolymer.getInstance());
     }
 
     public final void open(Player p) {
@@ -84,7 +84,7 @@ public abstract class SimpleInventoryHandler {
         }
 
         ItemStackBuilder close = new ItemStackBuilder(Material.BARRIER, 1)
-                .name(Polymer.INSTANCE.getMessageHandler().getColored(p, "GUI.Close"));
+                .name(TempPolymer.getInstance().getMessageHandler().getColored(p, "GUI.Close"));
         ItemStack closeButton = close.build();
 
         inventory.setItem(CLOSE_BUTTON_SLOT, closeButton);

@@ -1,7 +1,7 @@
 package io.github.linsminecraftstudio.polymer.command.presets.sub;
 
 import io.github.linsminecraftstudio.polyer.objectutils.MapBuilder;
-import io.github.linsminecraftstudio.polymer.Polymer;
+import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.command.SubCommand;
 import io.github.linsminecraftstudio.polymer.command.interfaces.IListCommand;
 import org.bukkit.command.CommandSender;
@@ -33,7 +33,7 @@ public abstract class SubListCommand<T> extends SubCommand implements IListComma
             } else if (argSize() == 1){
                 sendMessages(getArgAsDoubleOrInt(0, true, false).getB().intValue());
             } else {
-                Polymer.INSTANCE.getMessageHandler().sendMessage(sender,"Command.ArgError");
+                TempPolymer.getInstance().getMessageHandler().sendMessage(sender, "Command.ArgError");
             }
         }
     }

@@ -1,17 +1,22 @@
 package io.github.linsminecraftstudio.polyer.objectutils;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class StringTranslator {
     private final String def;
     private final Map<String, String> replacements = new HashMap<>();
-    private String context = "";
-    private Map<TranslationFunction, TranslationFunction.Priority> functions = new HashMap<>();
-    private boolean replaceWordsFirst = true;
+    private final Map<TranslationFunction, TranslationFunction.Priority> functions;
+
+    @Setter
+    @Getter
+    private boolean replaceWordsFirst;
 
     public StringTranslator() {
-        def = "";
+        this("");
     }
 
     public StringTranslator(String def) {
@@ -66,25 +71,25 @@ public class StringTranslator {
 
     public String translate() {
         boolean state = replaceWordsFirst;
-        context = def;
+        AtomicReference<String> context = new AtomicReference<>(def);
 
         if (state) {
-            context = replace(context);
+            context.set(replace(context.get()));
         }
 
         Arrays.stream(TranslationFunction.Priority.values()).forEach((p) -> {
             for (TranslationFunction fun : getAll(p)) {
-                context = fun.apply(context);
+                context.set(fun.apply(context.get()));
             }
         });
 
         state = !state;
 
         if (state) {
-            context = replace(context);
+            context.set(replace(context.get()));
         }
 
-        return context;
+        return context.get();
     }
 
     private String replace(String context) {

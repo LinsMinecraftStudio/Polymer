@@ -111,6 +111,17 @@ public class ItemStackBuilder {
         nbtItem.setLong(key, value);
         return this;
     }
+
+    public ItemStackBuilder nbt(String key, ItemStack value) {
+        nbtItem.setItemStack(key, value);
+        return this;
+    }
+
+    public ItemStackBuilder nbt(String key, int[] ints) {
+        nbtItem.setIntArray(key, ints);
+        return this;
+    }
+
     public ItemStackBuilder removeNbt(String key){
         nbtItem.removeKey(key);
         return this;

@@ -21,7 +21,8 @@ public final class ItemStackConverter {
      * @return an item stack
      */
     public static ItemStack toItemStack(ConfigurationSection section){
-        String mat = section.getString("material","STONE");
+        String mat = section.getString("material", "STONE");
+
         Material material = Material.getMaterial(mat);
         if (material == null){
             material = Material.STONE;

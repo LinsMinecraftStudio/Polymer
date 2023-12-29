@@ -1,6 +1,6 @@
 package io.github.linsminecraftstudio.polymer.command;
 
-import io.github.linsminecraftstudio.polymer.Polymer;
+import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.command.presets.ListCommand;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import org.bukkit.command.CommandSender;
@@ -29,6 +29,6 @@ public class HelpMessager extends ListCommand<PolymerCommand> {
     public void sendLineMessage(CommandSender sender, int number, PolymerCommand object) {
         String usage = object.getHelpUsage().replaceAll("<command>", object.getName());
         String description = object.getHelpDescription().replaceAll("<command>", object.getName());
-        Polymer.INSTANCE.getMessageHandler().sendMessage(sender, "HelpCmdMsg", number, usage, description);
+        TempPolymer.getInstance().getMessageHandler().sendMessage(sender, "HelpCmdMsg", number, usage, description);
     }
 }
