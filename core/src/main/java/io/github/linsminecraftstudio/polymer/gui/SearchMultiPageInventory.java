@@ -1,8 +1,8 @@
 package io.github.linsminecraftstudio.polymer.gui;
 
 import com.google.common.collect.Lists;
-import io.github.linsminecraftstudio.polyer.objectutils.LockableValue;
 import io.github.linsminecraftstudio.polymer.TempPolymer;
+import io.github.linsminecraftstudio.polymer.objectutils.LockableValue;
 import io.github.linsminecraftstudio.polymer.utils.IterableUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;

@@ -2,7 +2,7 @@ package io.github.linsminecraftstudio.polymer.objects.plugin.file;
 
 import com.google.common.io.Files;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import io.github.linsminecraftstudio.polyer.objectutils.TuplePair;
+import io.github.linsminecraftstudio.polymer.objectutils.TuplePair;
 import io.github.linsminecraftstudio.polymer.utils.IterableUtil;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.Validate;
@@ -15,10 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class MultiFileStorage<K> {
+public abstract class MultiFileStorage {
     private final File folder;
 
-    private final Map<K, TuplePair<File, YamlConfiguration>> cacheMap = new HashMap<>();
+    private final Map<String, TuplePair<File, YamlConfiguration>> cacheMap = new HashMap<>();
 
     @SneakyThrows
     public MultiFileStorage(File folder) {
@@ -27,18 +27,14 @@ public abstract class MultiFileStorage<K> {
         this.folder = folder;
     }
 
-    protected abstract String keyToName(@NotNull K key);
-
-    protected abstract @NotNull K nameToKey(@NotNull String name);
-
     @SneakyThrows
     @CanIgnoreReturnValue
-    public YamlConfiguration getOrMakeNew(@NotNull K key) {
+    public YamlConfiguration getOrMakeNew(@NotNull String key) {
         if (cacheMap.containsKey(key)) {
             return cacheMap.get(key).getSecond();
         }
 
-        File file = new File(folder, keyToName(key) + ".yml");
+        File file = new File(folder, key + ".yml");
         if (!file.exists()) {
             file.createNewFile();
         }
@@ -48,7 +44,7 @@ public abstract class MultiFileStorage<K> {
     }
 
     @SneakyThrows
-    public void saveConfiguration(@NotNull K key) {
+    public void saveConfiguration(@NotNull String key) {
         if (!cacheMap.containsKey(key)) {
             getOrMakeNew(key);
             return;
@@ -72,6 +68,11 @@ public abstract class MultiFileStorage<K> {
         });
     }
 
+    public void addConfigForce(@NotNull File file) {
+        Validate.notNull(file, "File cannot be null");
+        cacheMap.put(file.getName(), TuplePair.of(file, YamlConfiguration.loadConfiguration(file)));
+    }
+
     @SneakyThrows
     private void checkNew() {
         File[] files = folder.listFiles();
@@ -80,8 +81,7 @@ public abstract class MultiFileStorage<K> {
                 for (File file : files) {
                     boolean exists = IterableUtil.getIf(cacheMap.values(), p -> p.getA().equals(file)).isPresent();
                     if (!file.isDirectory() && !exists) {
-                        K key = nameToKey(file.getName());
-                        getOrMakeNew(key);
+                        addConfigForce(file);
                     }
                 }
             }).get();

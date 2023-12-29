@@ -1,8 +1,8 @@
 package io.github.linsminecraftstudio.polymer.utils;
 
-import io.github.linsminecraftstudio.polyer.objectutils.StoreableConsumer;
 import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
+import io.github.linsminecraftstudio.polymer.objectutils.StoreableConsumer;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,7 +1,7 @@
 package io.github.linsminecraftstudio.polymer;
 
-import io.github.linsminecraftstudio.polyer.objectutils.LockableValue;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
+import io.github.linsminecraftstudio.polymer.objectutils.LockableValue;
 import org.apache.commons.lang3.Validate;
 
 /**

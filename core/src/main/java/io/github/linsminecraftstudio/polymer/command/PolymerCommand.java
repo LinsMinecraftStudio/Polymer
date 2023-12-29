@@ -1,9 +1,9 @@
 package io.github.linsminecraftstudio.polymer.command;
 
-import io.github.linsminecraftstudio.polyer.objectutils.TuplePair;
 import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
 import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
+import io.github.linsminecraftstudio.polymer.objectutils.TuplePair;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;

@@ -1,4 +1,4 @@
-package io.github.linsminecraftstudio.polyer.objectutils;
+package io.github.linsminecraftstudio.polymer.objectutils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

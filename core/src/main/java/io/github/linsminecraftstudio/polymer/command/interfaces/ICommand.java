@@ -1,8 +1,8 @@
 package io.github.linsminecraftstudio.polymer.command.interfaces;
 
-import io.github.linsminecraftstudio.polyer.objectutils.TuplePair;
 import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.objects.other.CooldownMap;
+import io.github.linsminecraftstudio.polymer.objectutils.TuplePair;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

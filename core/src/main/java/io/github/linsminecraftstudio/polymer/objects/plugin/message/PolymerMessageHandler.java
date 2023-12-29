@@ -1,9 +1,9 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin.message;
 
-import io.github.linsminecraftstudio.polyer.objectutils.TuplePair;
 import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.objects.array.ObjectArray;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
+import io.github.linsminecraftstudio.polymer.objectutils.TuplePair;
 import io.github.linsminecraftstudio.polymer.utils.FileUtil;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
