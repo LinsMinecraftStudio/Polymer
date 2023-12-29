@@ -32,7 +32,7 @@ public interface ICommand {
         if (original == null) {
             return new ArrayList<>();
         }
-        return StringUtil.copyPartialMatches(token,original,new ArrayList<>());
+        return StringUtil.copyPartialMatches(token, original, new ArrayList<>());
     }
 
     default List<String> getPlayerNames(){
@@ -61,7 +61,7 @@ public interface ICommand {
     }
 
     interface IOptionCommand extends ICommand {
-        String tokenHead = "-Opt:";
+        String tokenHead = "--";
 
         boolean containsOption(String token);
 

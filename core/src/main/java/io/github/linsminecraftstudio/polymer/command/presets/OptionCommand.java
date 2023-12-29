@@ -11,7 +11,7 @@ import java.util.Optional;
 
 /**
  * The command preset for add custom options
- * The format is '-O:THE_TOKEN=THE_VALUE'
+ * The format is '{@link #tokenHead}:THE_TOKEN=THE_VALUE'
  */
 public abstract class OptionCommand extends PolymerCommand implements ICommand.IOptionCommand {
     public OptionCommand(@NotNull String name) {
@@ -35,7 +35,14 @@ public abstract class OptionCommand extends PolymerCommand implements ICommand.I
             if (value.isPresent()) {
                 String original = value.get();
                 original = original.replaceFirst(finalToken, "");
-                return original.replaceFirst("=", "");
+                if (original.startsWith("=")) {
+                    return original.replaceFirst("=", "");
+                } else {
+                    /*
+                     * Invalid options that don't use the right format is here, how can we solve this?
+                     */
+                    return null;
+                }
             }
             return null;
         }
