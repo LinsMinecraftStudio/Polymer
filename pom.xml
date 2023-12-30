@@ -17,6 +17,7 @@
 		<module>core</module>
 		<module>plugin</module>
 		<module>objectutils</module>
+		<module>scheduler</module>
 	</modules>
 
 	<properties>

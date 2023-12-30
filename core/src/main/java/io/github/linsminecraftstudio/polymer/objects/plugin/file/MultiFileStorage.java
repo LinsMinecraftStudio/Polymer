@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class MultiFileStorage {
+public class MultiFileStorage {
     private final File folder;
 
     private final Map<String, TuplePair<File, YamlConfiguration>> cacheMap = new HashMap<>();
@@ -30,17 +31,30 @@ public abstract class MultiFileStorage {
     @SneakyThrows
     @CanIgnoreReturnValue
     public YamlConfiguration getOrMakeNew(@NotNull String key) {
-        if (cacheMap.containsKey(key)) {
-            return cacheMap.get(key).getSecond();
+        if (get(key) != null) {
+            return get(key);
         }
 
         File file = new File(folder, key + ".yml");
         if (!file.exists()) {
             file.createNewFile();
         }
+
         var config = YamlConfiguration.loadConfiguration(file);
         cacheMap.put(key, TuplePair.of(file, config));
         return config;
+    }
+
+    @Nullable
+    public YamlConfiguration get(@NotNull String key) {
+        return cacheMap.get(key) != null ? cacheMap.get(key).getSecond() : null;
+    }
+
+    @SneakyThrows
+    public void setDirectly(@NotNull String key, @NotNull String yamlKey, Object value) {
+        var yaml = getOrMakeNew(key);
+        yaml.set(yamlKey, value);
+        yaml.save(new File(folder, key + ".yml"));
     }
 
     @SneakyThrows
@@ -54,6 +68,25 @@ public abstract class MultiFileStorage {
         pair.getSecond().save(pair.getFirst());
     }
 
+    /**
+     * Check the file is in cache map(NOT the file in the file system)
+     *
+     * @param key file name
+     * @return the result
+     */
+    public boolean contains(@NotNull String key) {
+        return cacheMap.containsKey(key);
+    }
+
+    /**
+     * Check the file is in cache map and the file is in the folder(the file in the file system)
+     *
+     * @param key file name
+     * @return the result
+     */
+    public boolean ca_contains(@NotNull String key) {
+        return cacheMap.containsKey(key) && new File(folder, key + ".yml").exists();
+    }
 
     public void saveAll() {
         checkNew();

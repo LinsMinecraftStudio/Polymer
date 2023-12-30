@@ -2,6 +2,14 @@
 Polymer is a library for plugins from Lins Minecraft Studio, and you can also use it
 (of course, this is more suitable for lazy developers, like me).  
 Discord: https://discord.gg/W36MJhBtGy
+
+## Modules Description
+
+scheduler: For scheduling tasks(make bukkit and folia compatibility)
+plugin: Just the plugin
+core: The core of the library
+objectutils: Some small utilities that don't need paper-api
+
 ## Installation
 ### Maven
 ```
@@ -16,7 +24,7 @@ Discord: https://discord.gg/W36MJhBtGy
 <dependencies>
     <dependency>
         <groupId>io.github.linsminecraftstudio</groupId>
-        <artifactId>polymer</artifactId>
+        <artifactId>Polymer-Core</artifactId>
         <version>VERSION</version>
         <scope>provided</scope>
     </dependency>

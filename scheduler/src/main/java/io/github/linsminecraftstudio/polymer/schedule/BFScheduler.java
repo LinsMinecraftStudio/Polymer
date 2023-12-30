@@ -1,20 +1,30 @@
 package io.github.linsminecraftstudio.polymer.schedule;
 
-import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
  * A scheduler for compatible with Folia (A fork of paper).
- * Feel free to copy to your project(s) or edit it.
+ * Feel free to copy to your project(s) and edit it.
+ *
+ * @author lijinhong11(mmmjjkx)
+ * @version 2.0
  */
 public class BFScheduler {
     private final JavaPlugin plugin;
     private boolean modern;
+    private ScheduledThreadPoolExecutor pool = new ScheduledThreadPoolExecutor(5000);
+    private Map<SpecialDayTask, ScheduledFuture<?>> specialDayTaskMap = new ConcurrentHashMap<>(200);
 
     public BFScheduler(JavaPlugin plugin) {
         testClasses();
@@ -80,11 +90,11 @@ public class BFScheduler {
     }
 
     public void schedule(BFRunnable runnable) {
-        runnable.run();
+        runnable.run(plugin);
     }
 
     public void scheduleAsync(BFRunnable runnable) {
-        runnable.run(true);
+        runnable.run(plugin, true);
     }
 
     public void scheduleDelay(BFRunnable runnable, long delayTicks) {
@@ -99,7 +109,7 @@ public class BFScheduler {
         if (modern) {
             Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, Objects.requireNonNull(runnable.getPaper()), delayTicks, repeatTicks);
         } else {
-            Objects.requireNonNull(runnable.getBukkit()).runTaskTimer(TempPolymer.getInstance(), delayTicks, repeatTicks);
+            Objects.requireNonNull(runnable.getBukkit()).runTaskTimer(plugin, delayTicks, repeatTicks);
         }
     }
 
@@ -107,7 +117,7 @@ public class BFScheduler {
         if (modern) {
             Bukkit.getAsyncScheduler().runDelayed(plugin, Objects.requireNonNull(runnable.getPaper()), delayMilis, TimeUnit.MILLISECONDS);
         } else {
-            Objects.requireNonNull(runnable.getBukkit()).runTaskLaterAsynchronously(TempPolymer.getInstance(), delayTicks);
+            Objects.requireNonNull(runnable.getBukkit()).runTaskLaterAsynchronously(plugin, delayTicks);
         }
     }
 
@@ -115,8 +125,58 @@ public class BFScheduler {
         if (modern) {
             Bukkit.getAsyncScheduler().runAtFixedRate(plugin, Objects.requireNonNull(runnable.getPaper()), delayMilis, repeatMilis, TimeUnit.MILLISECONDS);
         } else {
-            Objects.requireNonNull(runnable.getBukkit()).runTaskTimerAsynchronously(TempPolymer.getInstance(), delayTicks, repeatTicks);
+            Objects.requireNonNull(runnable.getBukkit()).runTaskTimerAsynchronously(plugin, delayTicks, repeatTicks);
         }
+    }
+
+    public void stopAllTask() {
+        if (modern) {
+            Bukkit.getGlobalRegionScheduler().cancelTasks(plugin);
+            Bukkit.getAsyncScheduler().cancelTasks(plugin);
+        } else {
+            Bukkit.getScheduler().cancelTasks(plugin);
+        }
+
+        cancelAllSpecialDayTasks();
+    }
+
+    public void restart() {
+        stopAllTask();
+        pool = new ScheduledThreadPoolExecutor(5000);
+    }
+
+    public void scheduleOnSpecificDate(SpecialDayTask task, boolean async) {
+        Date date = task.getDate();
+
+        if (date == null) {
+            throw new NullPointerException("Date cannot be null!");
+        }
+
+        Calendar scheduledDate = Calendar.getInstance();
+        scheduledDate.setTime(date);
+        Calendar now = Calendar.getInstance();
+
+        if (scheduledDate.before(now)) {
+            scheduledDate.add(Calendar.YEAR, 1);
+        }
+
+        long initialDelay = scheduledDate.getTimeInMillis() - now.getTimeInMillis();
+
+        Runnable container = () -> task.run(plugin, async);
+
+        ScheduledFuture<?> future = pool.scheduleAtFixedRate(container, initialDelay, TimeUnit.DAYS.toMillis(365), TimeUnit.MILLISECONDS);
+        specialDayTaskMap.put(task, future);
+    }
+
+    public void cancelSpecialDayTask(SpecialDayTask task) {
+        if (specialDayTaskMap.containsKey(task)) {
+            specialDayTaskMap.get(task).cancel(false);
+            specialDayTaskMap.remove(task);
+        }
+    }
+
+    public void cancelAllSpecialDayTasks() {
+        pool.shutdown();
     }
 
     public boolean isRunning(BFRunnable runnable) {

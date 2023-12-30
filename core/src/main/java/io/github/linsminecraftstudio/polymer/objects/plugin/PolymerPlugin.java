@@ -64,7 +64,7 @@ public abstract class PolymerPlugin extends JavaPlugin {
                 if (Bukkit.getPluginManager().isPluginEnabled(command.requirePlugin())){
                     Bukkit.getCommandMap().register(getPluginName(), command);
                 }
-            }else {
+            } else {
                 if (Bukkit.getCommandMap().getCommand(command.getLabel()) != null) {
                     Bukkit.getCommandMap().getKnownCommands().remove(command.getLabel());
                 }
@@ -78,6 +78,7 @@ public abstract class PolymerPlugin extends JavaPlugin {
         if (metrics != null) {
             metrics.shutdown();
         }
+        scheduler.stopAllTask();
         onPlDisable();
     }
 

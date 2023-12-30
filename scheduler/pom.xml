@@ -9,7 +9,7 @@
 		<version>1.4.2-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>Polymer-Core</artifactId>
+	<artifactId>Polymer-Scheduler</artifactId>
 
 	<properties>
 		<maven.compiler.source>17</maven.compiler.source>
@@ -19,28 +19,20 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>de.tr7zw</groupId>
-			<artifactId>item-nbt-api</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>io.papermc.paper</groupId>
 			<artifactId>paper-api</artifactId>
+			<version>1.20.2-R0.1-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-		</dependency>
-
-		<!-- other submodules -->
 		<dependency>
 			<groupId>io.github.linsminecraftstudio</groupId>
 			<artifactId>Polymer-ObjectUtils</artifactId>
 			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.github.linsminecraftstudio</groupId>
-			<artifactId>Polymer-Scheduler</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 		</dependency>
 	</dependencies>
 </project>

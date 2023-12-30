@@ -1,11 +1,10 @@
 package io.github.linsminecraftstudio.polymer.schedule;
 
-import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.objectutils.LockableValue;
 import io.github.linsminecraftstudio.polymer.objectutils.StoreableConsumer;
-import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +32,12 @@ public class BFRunnable {
     }
 
     public BFRunnable(@NotNull Consumer<ScheduledTask> paper) {
-        this(OtherUtils.toStoreableConsumer(paper));
+        this(new StoreableConsumer<>() {
+            @Override
+            public void handleAccept(ScheduledTask value) {
+                paper.accept(value);
+            }
+        });
     }
 
     public BFRunnable(@NotNull StoreableConsumer<ScheduledTask> paper) {
@@ -65,28 +69,28 @@ public class BFRunnable {
                 : TaskType.PAPER;
     }
 
-    public void run() {
-        run(false);
+    public void run(JavaPlugin plugin) {
+        run(plugin, false);
     }
 
-    public void run(boolean async) {
+    public void run(JavaPlugin plugin, boolean async) {
         TaskType type = getTaskType();
         if (type == TaskType.BUKKIT) {
             if (runnable.getValue() != null) {
                 BukkitRunnable bukkit = runnable.getValue();
                 if (async) {
-                    bukkit.runTaskAsynchronously(TempPolymer.getInstance());
+                    bukkit.runTaskAsynchronously(plugin);
                 } else {
-                    bukkit.runTask(TempPolymer.getInstance());
+                    bukkit.runTask(plugin);
                 }
             }
         } else {
             if (task.getValue() != null) {
                 Consumer<ScheduledTask> consumer = task.getValue();
                 if (async) {
-                    Bukkit.getAsyncScheduler().runNow(TempPolymer.getInstance(), consumer);
+                    Bukkit.getAsyncScheduler().runNow(plugin, consumer);
                 } else {
-                    Bukkit.getGlobalRegionScheduler().run(TempPolymer.getInstance(), consumer);
+                    Bukkit.getGlobalRegionScheduler().run(plugin, consumer);
                 }
             }
         }
