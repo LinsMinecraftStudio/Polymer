@@ -1,4 +1,4 @@
-package io.github.linsminecraftstudio.polymer.objectutils;
+package io.github.linsminecraftstudio.polymer.objectutils.translation;
 
 import java.util.function.Function;
 
@@ -6,7 +6,7 @@ import java.util.function.Function;
  * For translate string.
  */
 @FunctionalInterface
-public interface TranslationFunction extends Function<String, String> {
+public interface TranslationFunction<T> extends Function<T, T> {
 
     enum Priority {
         HIGHEST(2),

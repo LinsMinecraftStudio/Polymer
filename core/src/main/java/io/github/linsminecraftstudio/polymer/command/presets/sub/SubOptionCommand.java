@@ -2,7 +2,7 @@ package io.github.linsminecraftstudio.polymer.command.presets.sub;
 
 import io.github.linsminecraftstudio.polymer.command.SubCommand;
 import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
-import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
+import io.github.linsminecraftstudio.polymer.objectutils.array.SimpleTypeArray;
 import io.github.linsminecraftstudio.polymer.utils.IterableUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +39,7 @@ public abstract class SubOptionCommand extends SubCommand implements ICommand.IO
     }
 
     @Override
-    public void beforeExecute() {
+    public final void beforeExecute() {
         this.pre = this.args;
 
         this.args = new SimpleTypeArray<>(

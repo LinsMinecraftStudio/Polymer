@@ -1,9 +1,9 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin.message;
 
 import io.github.linsminecraftstudio.polymer.TempPolymer;
-import io.github.linsminecraftstudio.polymer.objects.array.ObjectArray;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.objectutils.TuplePair;
+import io.github.linsminecraftstudio.polymer.objectutils.array.ObjectArray;
 import io.github.linsminecraftstudio.polymer.utils.FileUtil;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
@@ -30,7 +30,7 @@ import java.util.logging.Level;
  * A message handler that handles messages from language files.
  * Ensure that this is a Paper server or the MiniMessage library is loaded before use, otherwise it will throw a {@link ClassNotFoundException}.
  */
-public final class PolymerMessageHandler {
+public final class PolymerMessageHandler extends ComponentTranslator {
     private final PolymerPlugin plugin;
     private final Map<String, YamlConfiguration> configurations = new HashMap<>();
 

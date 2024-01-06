@@ -1,4 +1,4 @@
-package io.github.linsminecraftstudio.polymer.objects.array;
+package io.github.linsminecraftstudio.polymer.objectutils.array;
 
 import java.util.stream.Stream;
 

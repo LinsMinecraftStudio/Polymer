@@ -23,20 +23,21 @@ import java.util.concurrent.TimeUnit;
 public class BFScheduler {
     private final JavaPlugin plugin;
     private boolean modern;
-    private ScheduledThreadPoolExecutor pool = new ScheduledThreadPoolExecutor(5000);
-    private Map<SpecialDayTask, ScheduledFuture<?>> specialDayTaskMap = new ConcurrentHashMap<>(200);
+    private final Map<SpecialDayTask, ScheduledFuture<?>> specialDayTaskMap = new ConcurrentHashMap<>(250);
+    private ScheduledThreadPoolExecutor pool = new ScheduledThreadPoolExecutor(250);
 
     public BFScheduler(JavaPlugin plugin) {
-        testClasses();
+        check();
         this.plugin = plugin;
     }
 
-    private void testClasses() {
+    private void check() {
         try {
             //for checking legacy paper builds or its forks
             Class.forName("io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler");
+            Bukkit.class.getMethod("getGlobalRegionScheduler");
             modern = true;
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
             modern = false;
         }
     }
@@ -142,7 +143,7 @@ public class BFScheduler {
 
     public void restart() {
         stopAllTask();
-        pool = new ScheduledThreadPoolExecutor(5000);
+        pool = new ScheduledThreadPoolExecutor(250);
     }
 
     public void scheduleOnSpecificDate(SpecialDayTask task, boolean async) {
@@ -177,6 +178,7 @@ public class BFScheduler {
 
     public void cancelAllSpecialDayTasks() {
         pool.shutdown();
+        pool = new ScheduledThreadPoolExecutor(250);
     }
 
     public boolean isRunning(BFRunnable runnable) {

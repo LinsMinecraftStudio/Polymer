@@ -1,6 +1,6 @@
 package io.github.linsminecraftstudio.polymer.objects.other;
 
-import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.commons.lang.time.DurationFormatUtils;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -59,8 +59,9 @@ public final class CooldownMap<K> extends HashMap<K, Instant> {
      * @return formatted remaining duration.
      */
     public String getFormattedRemaining(K key, String pattern) {
+        //TODO: remove this shit thing
         try {
-            Class<?> c = Class.forName("org.apache.commons.lang.time.DurationFormatUtils");
+            Class<?> c = Class.forName("org.apache.commons.lang3.time.DurationFormatUtils");
             return (String) c.getMethod("formatDuration", long.class, String.class).invoke(null, remaining(key).toMillis(), pattern);
         } catch (Exception e) {
             return DurationFormatUtils.formatDuration(remaining(key).toMillis(), pattern);

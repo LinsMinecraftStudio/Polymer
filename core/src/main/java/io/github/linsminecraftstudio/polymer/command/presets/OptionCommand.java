@@ -2,7 +2,7 @@ package io.github.linsminecraftstudio.polymer.command.presets;
 
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
 import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
-import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
+import io.github.linsminecraftstudio.polymer.objectutils.array.SimpleTypeArray;
 import io.github.linsminecraftstudio.polymer.utils.IterableUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +51,7 @@ public abstract class OptionCommand extends PolymerCommand implements ICommand.I
 
     @Override
     public final void beforeAllExecute() {
-        pre = this.arguments;
+        this.pre = this.arguments;
 
         this.arguments = new SimpleTypeArray<>(
                 this.arguments.getStream().filter(str -> !str.startsWith(tokenHead)).toArray(String[]::new)

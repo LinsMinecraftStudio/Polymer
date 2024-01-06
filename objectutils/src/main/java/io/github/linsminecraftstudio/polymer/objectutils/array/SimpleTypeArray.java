@@ -1,4 +1,4 @@
-package io.github.linsminecraftstudio.polymer.objects.array;
+package io.github.linsminecraftstudio.polymer.objectutils.array;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -6,19 +6,20 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
-
-public record ObjectArray(@NotNull Object... args) implements IArray<Object>, Iterable<Object>{
+public record SimpleTypeArray<T> (@NotNull T... args) implements IArray<T>, Iterable<T> {
+    @SafeVarargs
+    public SimpleTypeArray {}
 
     public boolean isEmpty() {
         return args.length == 0;
     }
 
-    public Stream<Object> getStream(){
+    public Stream<T> getStream(){
         return Arrays.stream(args);
     }
 
     @Override
-    public Object get(int index) {
+    public T get(int index) {
         return args[index];
     }
 
@@ -29,7 +30,7 @@ public record ObjectArray(@NotNull Object... args) implements IArray<Object>, It
 
     @NotNull
     @Override
-    public Iterator<Object> iterator() {
+    public Iterator<T> iterator() {
         return getStream().iterator();
     }
 }

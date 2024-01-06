@@ -1,9 +1,9 @@
 package io.github.linsminecraftstudio.polymer.command;
 
 import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
-import io.github.linsminecraftstudio.polymer.objects.array.SimpleTypeArray;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.objectutils.TuplePair;
+import io.github.linsminecraftstudio.polymer.objectutils.array.SimpleTypeArray;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
