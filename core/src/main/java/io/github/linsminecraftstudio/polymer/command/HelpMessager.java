@@ -27,8 +27,25 @@ public class HelpMessager extends ListCommand<PolymerCommand> {
 
     @Override
     public void sendLineMessage(CommandSender sender, int number, PolymerCommand object) {
-        String usage = object.getHelpUsage().replaceAll("<command>", object.getName());
-        String description = object.getHelpDescription().replaceAll("<command>", object.getName());
-        TempPolymer.getInstance().getMessageHandler().sendMessage(sender, "HelpCmdMsg", number, usage, description);
+        if (object.hasPermission(sender)) {
+            String usage = object.getUsage().replaceAll("<command>", object.getName());
+            String cmdUsage, option;
+
+            if (object.hasArgumentWithTypes()) {
+                if (hasArgumentOption()) {
+                    cmdUsage = usage.substring(0, usage.indexOf(" {"));
+                    option = usage.replaceAll(cmdUsage, "");
+                } else {
+                    cmdUsage = usage;
+                    option = "";
+                }
+            } else {
+                cmdUsage = usage;
+                option = "";
+            }
+
+            String description = object.getHelpDescription().replaceAll("<command>", object.getName());
+            TempPolymer.getInstance().getMessageHandler().sendMessage(sender, "HelpCmdMsg", number, cmdUsage, option, description);
+        }
     }
 }

@@ -1,12 +1,12 @@
 package io.github.linsminecraftstudio.polymer.objectutils.translation;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 /**
  * For translate string.
  */
 @FunctionalInterface
-public interface TranslationFunction<T> extends Function<T, T> {
+public interface TranslationFunction<S, T> extends BiFunction<S, T, T> {
 
     enum Priority {
         HIGHEST(2),

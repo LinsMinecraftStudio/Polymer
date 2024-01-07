@@ -43,4 +43,8 @@ public class ObjectConverter {
                 String.valueOf(location.getZ()), String.valueOf(location.getYaw()),
                 String.valueOf(location.getPitch()));
     }
+
+    public static String componentAsString(Component component) {
+        return serializer.serialize(component);
+    }
 }

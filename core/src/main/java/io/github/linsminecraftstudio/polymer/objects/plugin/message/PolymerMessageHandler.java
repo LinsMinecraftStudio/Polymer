@@ -4,6 +4,7 @@ import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.objectutils.TuplePair;
 import io.github.linsminecraftstudio.polymer.objectutils.array.ObjectArray;
+import io.github.linsminecraftstudio.polymer.objectutils.translation.TranslationFunction;
 import io.github.linsminecraftstudio.polymer.utils.FileUtil;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
@@ -15,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -25,6 +27,8 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A message handler that handles messages from language files.
@@ -79,6 +83,16 @@ public final class PolymerMessageHandler extends ComponentTranslator {
                 configurations.put(language, YamlConfiguration.loadConfiguration(languageFile));
             }
         }
+
+        addFunction((cs, s) -> {
+            Pattern pattern = Pattern.compile("M:\\{\\w.*}");
+            for (Matcher matcher = pattern.matcher(s); matcher.find(); matcher = pattern.matcher(s)) {
+                String result = s.substring(matcher.start(), matcher.end());
+                String key = result.substring(3, result.length() - 1);
+                s = s.replaceAll(result, get(cs, key));
+            }
+            return s;
+        }, TranslationFunction.Priority.HIGHEST);
     }
 
     /**
@@ -91,7 +105,8 @@ public final class PolymerMessageHandler extends ComponentTranslator {
     }
 
     public Component getColored(@Nullable CommandSender cs, String node, Object... args){
-        try {return ObjectConverter.toComponent(String.format(get(cs, node),args));
+        try {
+            return reTranslate(cs, ObjectConverter.toComponent(String.format(get(cs, node), args)));
         } catch (Exception e) {return ObjectConverter.toComponent(get(cs, node));}
     }
 
@@ -100,7 +115,7 @@ public final class PolymerMessageHandler extends ComponentTranslator {
         for (Map.Entry<String, Object> entry : argMap.entrySet()) {
             original = original.replaceAll(replacementChar+entry.getKey()+replacementChar, entry.getValue().toString());
         }
-        return ObjectConverter.toComponent(original);
+        return reTranslate(cs, ObjectConverter.toComponent(original));
     }
 
     /**
@@ -109,13 +124,17 @@ public final class PolymerMessageHandler extends ComponentTranslator {
      * @param node the node
      * @param keys message nodes
      * @return the message
+     *
+     * @deprecated Because we use {@link TranslationFunction}
      */
     @SafeVarargs
+    @Deprecated(forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "1.5")
     public final Component getColoredFormatToOtherMessages(@Nullable CommandSender cs, String node, TuplePair<String, ObjectArray>... keys){
         try {return ObjectConverter.toComponent(String.format(get(cs, node), getMessageObjects(cs, keys)));
         } catch (Exception e) {
             TempPolymer.getInstance().getLogger().log(Level.WARNING, "Failed to format messages from" + plugin.getPluginName(), e);
-            return ObjectConverter.toComponent(get(cs, node));
+            return reTranslate(cs, ObjectConverter.toComponent(get(cs, node)));
         }
     }
 
@@ -123,8 +142,12 @@ public final class PolymerMessageHandler extends ComponentTranslator {
      * Get messages and convert them to {@link Object} array.
      * @param keys message nodes
      * @return the message objects
+     *
+     * @deprecated Because we use {@link TranslationFunction}
      */
     @SafeVarargs
+    @Deprecated(forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "1.5")
     public final Object[] getMessageObjects(@Nullable CommandSender cs, TuplePair<String, ObjectArray>... keys){
         Object[] s = new Object[keys.length];
         for (int i = 0; i < keys.length; i++) {
@@ -152,7 +175,7 @@ public final class PolymerMessageHandler extends ComponentTranslator {
             ObjectArray arg = replacements[j];
             if (!arg.isEmpty()) st = String.format(st, arg.args());
             Component st2 = ObjectConverter.toComponent(st);
-            new_s.add(st2);
+            new_s.add(reTranslate(cs, st2));
         }
         return new_s;
     }
@@ -173,7 +196,7 @@ public final class PolymerMessageHandler extends ComponentTranslator {
                 main = main.append(Component.newline());
             }
         }
-        return main;
+        return reTranslate(cs, main);
     }
 
     /**

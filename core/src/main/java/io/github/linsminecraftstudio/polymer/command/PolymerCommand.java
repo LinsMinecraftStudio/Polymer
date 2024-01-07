@@ -19,6 +19,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
     protected SimpleTypeArray<String> arguments;
     private CommandSender sender;
     private final Map<String, SubCommand> subCommands = new HashMap<>();
+    private final Map<String, ArgumentType> argumentWithTypes = new HashMap<>();
 
     public PolymerCommand(@NotNull String name){
         this(name, new ArrayList<>());
@@ -29,10 +30,6 @@ public abstract class PolymerCommand extends Command implements ICommand {
             autoSetCMDInfo(aliases);
         }catch (Exception ignored) {
         }
-    }
-
-    public String getHelpUsage(){
-        return "usage unavailable";
     }
 
     public String getHelpDescription(){
@@ -148,7 +145,17 @@ public abstract class PolymerCommand extends Command implements ICommand {
         return hasSubPermission(sender);
     }
 
-    protected boolean hasSubPermission(CommandSender cs,String... subs){
+    /**
+     * FOR OUTSIDE USE ONLY
+     *
+     * @param sender the sender
+     * @return the result
+     */
+    public final boolean hasPermission(CommandSender sender) {
+        return hasSubPermission(sender);
+    }
+
+    protected final boolean hasSubPermission(CommandSender cs, String... subs) {
         List<String> subList = new ArrayList<>(List.of(subs));
         subList.add(0, pluginInstance.getPluginName().toLowerCase());
         subList.add(1, "command");
@@ -165,11 +172,11 @@ public abstract class PolymerCommand extends Command implements ICommand {
         return true;
     }
 
-    protected Player toPlayer(){
+    protected final Player toPlayer(){
         return toPlayer(false);
     }
 
-    protected Player toPlayer(boolean noMsg){
+    protected final Player toPlayer(boolean noMsg){
         if (sender instanceof Player p){
             return p;
         }else {
@@ -180,7 +187,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
         }
     }
 
-    protected Player findPlayer(String name){
+    protected final Player findPlayer(String name){
         Player p = Bukkit.getPlayer(name);
         if (p == null){
             sendPolymerMessage(sender, "Command.PlayerNotFound");
@@ -189,7 +196,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
     }
 
     @Nullable
-    public String getArg(int index) {
+    public final String getArg(int index) {
         try {
             return arguments.get(index);
         } catch (Exception e) {
@@ -197,15 +204,75 @@ public abstract class PolymerCommand extends Command implements ICommand {
         }
     }
 
-    protected boolean isArgEmpty() {
+    protected final boolean isArgEmpty() {
         return arguments.isEmpty();
     }
 
-    public int argSize() {
+    public final int argSize() {
         return arguments.size();
     }
 
-    protected TuplePair<Boolean, Double> getArgAsDoubleOrInt(int index, boolean isInt, boolean allowNegative) {
+    protected final TuplePair<Boolean, Double> getArgAsDoubleOrInt(int index, boolean isInt, boolean allowNegative) {
         return getArgAsDoubleOrInt(sender, index, isInt, allowNegative);
+    }
+
+    protected final void addArgument(String argName, ArgumentType type) {
+        this.argumentWithTypes.put(argName, type);
+    }
+
+    @Override
+    public final @NotNull String getUsage() {
+        Map<String, ArgumentType> options = new HashMap<>();
+        List<Map.Entry<String, ArgumentType>> arguments = argumentWithTypes.entrySet().stream().filter(e -> {
+            if (e.getValue() == ArgumentType.USABLE_OPTION) {
+                options.put(e.getKey(), e.getValue());
+                return false;
+            }
+            return true;
+        }).toList();
+        StringBuilder sb = new StringBuilder();
+        sb.append("/").append(getLabel()).append(" ");
+        if (!arguments.isEmpty()) {
+            for (Map.Entry<String, ArgumentType> argument : arguments) {
+                if (argument.getValue() == ArgumentType.OPTIONAL) {
+                    sb.append("[");
+                    sb.append(argument.getKey());
+                    sb.append("]");
+                } else if (argument.getValue() == ArgumentType.REQUIRED) {
+                    sb.append("<");
+                    sb.append(argument.getKey());
+                    sb.append(">");
+                }
+                sb.append(" ");
+            }
+        }
+
+        if (!options.isEmpty()) {
+            sb.append(" ");
+            sb.append("{");
+
+            for (Map.Entry<String, ArgumentType> option : options.entrySet()) {
+                sb.append(option.getKey());
+                sb.append(" ");
+            }
+
+            sb.append("}");
+        }
+
+        return sb.toString();
+    }
+
+    public final boolean hasArgumentOption() {
+        return !argumentWithTypes.isEmpty() && argumentWithTypes.containsValue(ArgumentType.USABLE_OPTION);
+    }
+
+    public final boolean hasArgumentWithTypes() {
+        return !argumentWithTypes.isEmpty();
+    }
+
+    public enum ArgumentType {
+        OPTIONAL,
+        REQUIRED,
+        USABLE_OPTION
     }
 }
