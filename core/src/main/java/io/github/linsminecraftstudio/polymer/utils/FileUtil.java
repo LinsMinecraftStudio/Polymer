@@ -23,7 +23,13 @@ public final class FileUtil {
      * @param plugin plugin instance
      * @param resourceFile the resource file you want to complete
      */
-    public static void completeFile(Plugin plugin, String resourceFile, String... notNeedSyncKeys) {
+    public static void completeFile(String resourceFile, String... notNeedSyncKeys) {
+        Plugin plugin = OtherUtils.findCallingPlugin();
+
+        if (plugin == null) {
+            return;
+        }
+
         InputStream stream = plugin.getResource(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);
         if (!file.exists()) {

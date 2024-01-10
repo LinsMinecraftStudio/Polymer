@@ -1,8 +1,6 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin.message;
 
-import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
-import io.github.linsminecraftstudio.polymer.objectutils.TuplePair;
 import io.github.linsminecraftstudio.polymer.objectutils.array.ObjectArray;
 import io.github.linsminecraftstudio.polymer.objectutils.translation.TranslationFunction;
 import io.github.linsminecraftstudio.polymer.utils.FileUtil;
@@ -11,12 +9,13 @@ import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -24,9 +23,9 @@ import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,11 +33,13 @@ import java.util.regex.Pattern;
  * A message handler that handles messages from language files.
  * Ensure that this is a Paper server or the MiniMessage library is loaded before use, otherwise it will throw a {@link ClassNotFoundException}.
  */
-public final class PolymerMessageHandler extends ComponentTranslator {
+public final class PolymerMessageHandler {
     private final PolymerPlugin plugin;
     private final Map<String, YamlConfiguration> configurations = new HashMap<>();
+    private final Map<TranslationFunction<CommandSender, String>, TranslationFunction.Priority> translationFunctionMap = new HashMap<>();
 
     private @Getter @Setter boolean autoDetectClientLanguage = true;
+
 
     /**
      * Creates a new message handler
@@ -84,6 +85,7 @@ public final class PolymerMessageHandler extends ComponentTranslator {
             }
         }
 
+        //Replace the M:{KEY} to message
         addFunction((cs, s) -> {
             Pattern pattern = Pattern.compile("M:\\{\\w.*}");
             for (Matcher matcher = pattern.matcher(s); matcher.find(); matcher = pattern.matcher(s)) {
@@ -93,6 +95,22 @@ public final class PolymerMessageHandler extends ComponentTranslator {
             }
             return s;
         }, TranslationFunction.Priority.HIGHEST);
+
+        //Replace the T:{KEY} to translation(minecraft i18n)
+        addFunction((cs, s) -> {
+            Pattern pattern = Pattern.compile("T:\\{\\w.*}");
+            for (Matcher matcher = pattern.matcher(s); matcher.find(); matcher = pattern.matcher(s)) {
+                String result = s.substring(matcher.start(), matcher.end());
+                String key = result.substring(3, result.length() - 1);
+                TranslatableComponent component = Component.translatable(key);
+                s = s.replaceAll(result, ObjectConverter.componentAsString(component));
+            }
+            return s;
+        }, TranslationFunction.Priority.HIGHEST);
+    }
+
+    public void addFunction(TranslationFunction<CommandSender, String> function, TranslationFunction.Priority priority) {
+        translationFunctionMap.put(function, priority);
     }
 
     /**
@@ -106,8 +124,22 @@ public final class PolymerMessageHandler extends ComponentTranslator {
 
     public Component getColored(@Nullable CommandSender cs, String node, Object... args){
         try {
-            return reTranslate(cs, ObjectConverter.toComponent(String.format(get(cs, node), args)));
+            return parse(cs, ObjectConverter.toComponent(String.format(get(cs, node), args)));
         } catch (Exception e) {return ObjectConverter.toComponent(get(cs, node));}
+    }
+
+    private Component parse(CommandSender source, Component component) {
+        String original = ObjectConverter.componentAsString(component);
+        AtomicReference<String> context = new AtomicReference<>(original);
+
+
+        Arrays.stream(TranslationFunction.Priority.values()).forEach((p) -> {
+            for (TranslationFunction<CommandSender, String> fun : getAll(p)) {
+                context.set(fun.apply(source, context.get()));
+            }
+        });
+
+        return MiniMessage.miniMessage().deserialize(context.get());
     }
 
     public Component getColored(@Nullable CommandSender cs, String node, Map<String, Object> argMap, char replacementChar) {
@@ -115,50 +147,7 @@ public final class PolymerMessageHandler extends ComponentTranslator {
         for (Map.Entry<String, Object> entry : argMap.entrySet()) {
             original = original.replaceAll(replacementChar+entry.getKey()+replacementChar, entry.getValue().toString());
         }
-        return reTranslate(cs, ObjectConverter.toComponent(original));
-    }
-
-    /**
-     * Obtain color messages and format them with messages.
-     * You can see {@link #getMessageObjects(CommandSender, TuplePair[])} for how to get message objects.
-     * @param node the node
-     * @param keys message nodes
-     * @return the message
-     *
-     * @deprecated Because we use {@link TranslationFunction}
-     */
-    @SafeVarargs
-    @Deprecated(forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "1.5")
-    public final Component getColoredFormatToOtherMessages(@Nullable CommandSender cs, String node, TuplePair<String, ObjectArray>... keys){
-        try {return ObjectConverter.toComponent(String.format(get(cs, node), getMessageObjects(cs, keys)));
-        } catch (Exception e) {
-            TempPolymer.getInstance().getLogger().log(Level.WARNING, "Failed to format messages from" + plugin.getPluginName(), e);
-            return reTranslate(cs, ObjectConverter.toComponent(get(cs, node)));
-        }
-    }
-
-    /**
-     * Get messages and convert them to {@link Object} array.
-     * @param keys message nodes
-     * @return the message objects
-     *
-     * @deprecated Because we use {@link TranslationFunction}
-     */
-    @SafeVarargs
-    @Deprecated(forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "1.5")
-    public final Object[] getMessageObjects(@Nullable CommandSender cs, TuplePair<String, ObjectArray>... keys){
-        Object[] s = new Object[keys.length];
-        for (int i = 0; i < keys.length; i++) {
-            TuplePair<String, ObjectArray> pair = keys[i];
-            String raw = get(cs, pair.getKey());
-            if (pair.getRight() != null && !pair.getRight().isEmpty()) {
-                raw = String.format(raw, pair.getValue().args());
-            }
-            s[i] = raw;
-        }
-        return s;
+        return parse(cs, ObjectConverter.toComponent(original));
     }
 
     /**
@@ -175,7 +164,7 @@ public final class PolymerMessageHandler extends ComponentTranslator {
             ObjectArray arg = replacements[j];
             if (!arg.isEmpty()) st = String.format(st, arg.args());
             Component st2 = ObjectConverter.toComponent(st);
-            new_s.add(reTranslate(cs, st2));
+            new_s.add(parse(cs, st2));
         }
         return new_s;
     }
@@ -196,7 +185,7 @@ public final class PolymerMessageHandler extends ComponentTranslator {
                 main = main.append(Component.newline());
             }
         }
-        return reTranslate(cs, main);
+        return parse(cs, main);
     }
 
     /**
@@ -289,5 +278,15 @@ public final class PolymerMessageHandler extends ComponentTranslator {
             tag = OtherUtils.convertToRightLangCode(plugin.getConfig().getString("language", ""));
         }
         return configurations.computeIfAbsent(tag, y -> configurations.get("en-US"));
+    }
+
+    private List<TranslationFunction<CommandSender, String>> getAll(TranslationFunction.Priority priority) {
+        List<TranslationFunction<CommandSender, String>> list = new ArrayList<>();
+        translationFunctionMap.forEach((fun, p) -> {
+            if (p.getAsInt() == priority.getAsInt()) {
+                list.add(fun);
+            }
+        });
+        return list;
     }
 }

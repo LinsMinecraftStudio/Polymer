@@ -1,5 +1,6 @@
 package io.github.linsminecraftstudio.polymer.utils;
 
+import com.google.common.annotations.Beta;
 import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
@@ -18,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+@Beta
 public class UserInputGetter {
     public static @Nullable String getUserInput(Component message, Player p) {
         return getUserInput(message, p, "##QUIT");
@@ -26,7 +28,7 @@ public class UserInputGetter {
     public static @Nullable String getUserInput(Component message, Player p, String quit) {
         CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
             AtomicReference<String> str = new AtomicReference<>(null);
-            InputListener inputListener = new InputListener(message, p, str::set, quit);
+            final InputListener inputListener = new InputListener(message, p, str::set, quit);
             synchronized (inputListener) {
                 while (!inputListener.getResult()) {
                     try {
@@ -62,7 +64,7 @@ public class UserInputGetter {
 
         private InputListener(Component message, Player player, Consumer<String> handler, String quitMsg) {
             this.quitMsg = quitMsg;
-            this.message = message.appendNewline().append(
+            this.message = message.append(Component.newline()).append(
                     TempPolymer.getInstance().getMessageHandler().getColored(player, "Info.InputQuit").replaceText(builder ->
                             builder.match("%s").replacement(this.quitMsg)));
             this.player = player;

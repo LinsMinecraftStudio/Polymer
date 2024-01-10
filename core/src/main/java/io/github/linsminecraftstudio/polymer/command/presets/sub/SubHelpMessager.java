@@ -1,7 +1,7 @@
-package io.github.linsminecraftstudio.polymer.command;
+package io.github.linsminecraftstudio.polymer.command.presets.sub;
 
 import io.github.linsminecraftstudio.polymer.TempPolymer;
-import io.github.linsminecraftstudio.polymer.command.presets.ListCommand;
+import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -10,13 +10,14 @@ import java.util.List;
 
 /**
  * It lets me write help messages again.
+ *
  * @author lijinhong11(mmmjjkx)
  */
-public class HelpMessager extends ListCommand<PolymerCommand> {
+public class SubHelpMessager extends SubListCommand<PolymerCommand> {
     private final PolymerPlugin plugin;
 
-    public HelpMessager(@NotNull PolymerPlugin plugin, @NotNull String name) {
-        super(name);
+    public SubHelpMessager(@NotNull PolymerPlugin plugin) {
+        super("help");
         this.plugin = plugin;
     }
 
@@ -47,5 +48,10 @@ public class HelpMessager extends ListCommand<PolymerCommand> {
             String description = object.getHelpDescription().replaceAll("<command>", object.getName());
             TempPolymer.getInstance().getMessageHandler().sendMessage(sender, "HelpCmdMsg", number, cmdUsage, option, description);
         }
+    }
+
+    @Override
+    public boolean enabled() {
+        return true;
     }
 }

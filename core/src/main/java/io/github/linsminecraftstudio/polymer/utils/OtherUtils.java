@@ -2,16 +2,16 @@ package io.github.linsminecraftstudio.polymer.utils;
 
 import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
-import io.github.linsminecraftstudio.polymer.objectutils.StoreableConsumer;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class OtherUtils {
@@ -35,6 +35,8 @@ public class OtherUtils {
                 (polymerMajor == major && polymerMinor == minor && polymerPatch >= p);
     }
 
+    private static final Map<Class<?>, PolymerPlugin> pluginCache = new HashMap<>();
+
     public static PolymerPlugin findCallingPlugin() {
         try {
             StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
@@ -42,7 +44,12 @@ public class OtherUtils {
                 String className = stackTraceElement.getClassName();
                 Class<?> clazz = Class.forName(className);
                 if (clazz.getSuperclass() != null && clazz.getSuperclass() == PolymerPlugin.class) {
-                    return PolymerPlugin.getPolymerPlugin((Class<? extends PolymerPlugin>) clazz);
+                    if (pluginCache.containsKey(clazz)) {
+                        return pluginCache.get(clazz);
+                    }
+                    PolymerPlugin plugin = PolymerPlugin.getPolymerPlugin((Class<? extends PolymerPlugin>) clazz);
+                    pluginCache.put(clazz, plugin);
+                    return plugin;
                 }
             }
         } catch (Exception e) {
@@ -50,6 +57,7 @@ public class OtherUtils {
         }
         return null;
     }
+
 
     public static String convertToRightLangCode(String lang) {
         if (lang == null || lang.isBlank()) return "en-US";
@@ -60,19 +68,6 @@ public class OtherUtils {
             return lang.replace(split2[1], split2[1].toUpperCase()).replace("_", "-");
         }
         return lang.replace(split[1], split[1].toUpperCase());
-    }
-
-    public static <T> StoreableConsumer<T> toStoreableConsumer(Consumer<T> consumer) {
-        if (consumer instanceof StoreableConsumer<T> s) {
-            return s;
-        }
-
-        return new StoreableConsumer<>() {
-            @Override
-            public void handleAccept(T value) {
-                consumer.accept(value);
-            }
-        };
     }
 
     public static class Updater {

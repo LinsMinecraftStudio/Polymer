@@ -45,6 +45,6 @@ public class ObjectConverter {
     }
 
     public static String componentAsString(Component component) {
-        return serializer.serialize(component);
+        return miniMessage.serialize(component);
     }
 }
