@@ -5,7 +5,6 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import io.github.linsminecraftstudio.polymer.objectutils.TuplePair;
 import io.github.linsminecraftstudio.polymer.utils.IterableUtil;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.Validate;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +22,14 @@ public class MultiFileStorage {
 
     @SneakyThrows
     public MultiFileStorage(File folder) {
-        Validate.notNull(folder, "Folder cannot be null");
+        if (folder == null) {
+            throw new NullPointerException("folder cannot be null");
+        }
+
+        if (folder.isFile()) {
+            throw new IOException("folder cannot be a file");
+        }
+
         Files.createParentDirs(folder);
         this.folder = folder;
     }
@@ -102,7 +108,6 @@ public class MultiFileStorage {
     }
 
     public void addConfigForce(@NotNull File file) {
-        Validate.notNull(file, "File cannot be null");
         cacheMap.put(file.getName(), TuplePair.of(file, YamlConfiguration.loadConfiguration(file)));
     }
 

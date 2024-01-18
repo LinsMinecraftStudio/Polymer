@@ -21,6 +21,14 @@ public class MetadataStore {
         this.plugin = OtherUtils.findCallingPlugin();
     }
 
+    public static MetadataStore of(Metadatable metadatable) {
+        return new MetadataStore(metadatable);
+    }
+
+    public void setMetadata(String key, MetadataValue value) {
+        metadatable.setMetadata(key, value);
+    }
+
     public void setMetadata(String key, Object value) {
         metadatable.setMetadata(key, new FixedMetadataValue(plugin, value));
     }

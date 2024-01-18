@@ -13,6 +13,11 @@ public final class MainCmd extends PolymerCommand {
     }
 
     @Override
+    public String getHelpDescription() {
+        return "?";
+    }
+
+    @Override
     public String requirePlugin() {
         return null;
     }

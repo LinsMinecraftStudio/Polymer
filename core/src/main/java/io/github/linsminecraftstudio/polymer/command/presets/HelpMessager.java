@@ -1,7 +1,7 @@
-package io.github.linsminecraftstudio.polymer.command;
+package io.github.linsminecraftstudio.polymer.command.presets;
 
 import io.github.linsminecraftstudio.polymer.TempPolymer;
-import io.github.linsminecraftstudio.polymer.command.presets.ListCommand;
+import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +26,7 @@ public class HelpMessager extends ListCommand<PolymerCommand> {
     }
 
     @Override
-    public void sendLineMessage(CommandSender sender, int number, PolymerCommand object) {
+    public final void sendLineMessage(CommandSender sender, int number, PolymerCommand object) {
         if (object.hasPermission(sender)) {
             String usage = object.getUsage().replaceAll("<command>", object.getName());
             String cmdUsage, option;

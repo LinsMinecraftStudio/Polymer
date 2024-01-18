@@ -21,11 +21,6 @@ public class SubReloadCommand extends SubCommand {
     }
 
     @Override
-    public boolean enabled() {
-        return true;
-    }
-
-    @Override
     public Map<Integer, List<String>> tabCompletion(CommandSender sender) {
         return MapBuilder.empty();
     }

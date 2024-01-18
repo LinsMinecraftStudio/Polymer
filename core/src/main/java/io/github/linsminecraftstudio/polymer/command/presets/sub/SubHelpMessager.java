@@ -27,7 +27,7 @@ public class SubHelpMessager extends SubListCommand<PolymerCommand> {
     }
 
     @Override
-    public void sendLineMessage(CommandSender sender, int number, PolymerCommand object) {
+    public final void sendLineMessage(CommandSender sender, int number, PolymerCommand object) {
         if (object.hasPermission(sender)) {
             String usage = object.getUsage().replaceAll("<command>", object.getName());
             String cmdUsage, option;
@@ -48,10 +48,5 @@ public class SubHelpMessager extends SubListCommand<PolymerCommand> {
             String description = object.getHelpDescription().replaceAll("<command>", object.getName());
             TempPolymer.getInstance().getMessageHandler().sendMessage(sender, "HelpCmdMsg", number, cmdUsage, option, description);
         }
-    }
-
-    @Override
-    public boolean enabled() {
-        return true;
     }
 }

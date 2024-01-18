@@ -77,6 +77,7 @@ public interface IListCommand<T> extends ICommand {
             next = next.clickEvent(nextClick);
         }
 
-        return component.append(prev).appendSpace().appendSpace().append(next);
+        Component space = Component.space();
+        return component.append(prev).append(space).append(space).append(next);
     }
 }

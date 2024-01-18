@@ -61,7 +61,9 @@ public abstract class SubCommand implements ICommand {
         }
     }
 
-    public abstract boolean enabled();
+    public boolean enabled() {
+        return true;
+    }
 
     public abstract Map<Integer, List<String>> tabCompletion(CommandSender sender);
 

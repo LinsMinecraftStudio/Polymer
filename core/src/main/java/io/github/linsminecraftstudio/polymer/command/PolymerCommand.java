@@ -17,7 +17,7 @@ import java.util.*;
 public abstract class PolymerCommand extends Command implements ICommand {
     protected PolymerPlugin pluginInstance;
     protected SimpleTypeArray<String> arguments;
-    private CommandSender sender;
+    protected CommandSender sender;
     private final Map<String, SubCommand> subCommands = new HashMap<>();
     private final Map<String, ArgumentType> argumentWithTypes = new HashMap<>();
 
@@ -28,9 +28,10 @@ public abstract class PolymerCommand extends Command implements ICommand {
         super(name, "", "", new ArrayList<>());
         try {
             autoSetCMDInfo(aliases);
-        }catch (Exception ignored) {
+        } catch (Exception ignored) {
         }
     }
+
 
     public String getHelpDescription(){
         return "description unavailable";
