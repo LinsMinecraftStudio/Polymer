@@ -5,9 +5,9 @@ Discord: https://discord.gg/W36MJhBtGy
 
 ## Modules Description
 
-scheduler: For scheduling tasks(make bukkit and folia compatibility)
-plugin: Just the plugin
-core: The core of the library
+scheduler: For scheduling tasks(make bukkit and folia compatibility)  
+plugin: Just the plugin  
+core: The core of the library  
 objectutils: Some small utilities that don't need paper-api
 
 ## Installation
