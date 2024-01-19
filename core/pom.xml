@@ -5,8 +5,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.github.linsminecraftstudio</groupId>
-		<artifactId>Polymer</artifactId>
-		<version>1.4.2-SNAPSHOT</version>
+		<artifactId>PolymerContainer</artifactId>
+		<version>${revision}</version>
 	</parent>
 
 	<artifactId>Polymer-Core</artifactId>
@@ -17,10 +17,35 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.5.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<shadedArtifactAttached>true</shadedArtifactAttached>
+							<shadedClassifierName>def</shadedClassifierName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>de.tr7zw</groupId>
 			<artifactId>item-nbt-api</artifactId>
+			<version>${nbtapi.version}</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.papermc.paper</groupId>

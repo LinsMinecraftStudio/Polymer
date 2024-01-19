@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class ItemStackConverter {
+    private ItemStackConverter() {
+    }
+
     /**
      * Serialize an item stack from the given configuration section
      * @param section the configuration section

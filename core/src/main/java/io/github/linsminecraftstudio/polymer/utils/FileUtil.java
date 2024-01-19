@@ -20,7 +20,6 @@ public final class FileUtil {
 
     /**
      * Complete configuration(key and value, comments, etc)
-     * @param plugin plugin instance
      * @param resourceFile the resource file you want to complete
      */
     public static void completeFile(String resourceFile, String... notNeedSyncKeys) {

@@ -5,11 +5,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>io.github.linsminecraftstudio</groupId>
-	<artifactId>Polymer</artifactId>
-	<version>1.4.2-SNAPSHOT</version>
+	<artifactId>PolymerContainer</artifactId>
+	<version>${revision}</version>
 	<packaging>pom</packaging>
 
-	<name>Polymer</name>
+	<name>PolymerContainer</name>
 	<description>An API for LMS</description>
 	<url>https://github.com/LinsMinecraftStudio/Polymer</url>
 
@@ -24,7 +24,10 @@
 		<buildNumber>5</buildNumber>
 		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<revision>1.4.2-SNAPSHOT</revision>
+		<nbtapi.version>2.12.1</nbtapi.version>
 	</properties>
+
 	<scm>
 		<url>https://github.com/LinsMinecraftStudio/Polymer</url>
 		<connection>https://github.com/LinsMinecraftStudio/Polymer</connection>
@@ -52,6 +55,9 @@
 	<profiles>
 		<profile>
 			<id>ossrh</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 			<distributionManagement>
 				<snapshotRepository>
 					<id>ossrh</id>
@@ -64,53 +70,6 @@
 			</distributionManagement>
 		</profile>
 	</profiles>
-
-	<build>
-		<finalName>${project.artifactId}-${project.version}-b${buildNumber}</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>
-				<configuration>
-					<source>${java.version}</source>
-					<encoding>UTF-8</encoding>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.4.1</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<relocations>
-								<relocation>
-									<pattern>de.tr7zw.changeme.nbtapi</pattern>
-									<shadedPattern>
-										io.github.linsminecraftstudio.polymer.libs.nbtapi
-									</shadedPattern>
-								</relocation>
-							</relocations>
-							<minimizeJar>true</minimizeJar>
-							<createDependencyReducedPom>false</createDependencyReducedPom>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-		<resources>
-			<resource>
-				<directory>plugin/src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-	</build>
 
 	<repositories>
 		<repository>
@@ -141,12 +100,6 @@
 				<artifactId>paper-api</artifactId>
 				<version>1.18.2-R0.1-SNAPSHOT</version>
 				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>de.tr7zw</groupId>
-				<artifactId>item-nbt-api</artifactId>
-				<version>2.12.2</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

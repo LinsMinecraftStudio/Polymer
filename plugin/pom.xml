@@ -5,17 +5,18 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.github.linsminecraftstudio</groupId>
-		<artifactId>Polymer</artifactId>
-		<version>1.4.2-SNAPSHOT</version>
+		<artifactId>PolymerContainer</artifactId>
+		<version>${revision}</version>
 	</parent>
 
 	<groupId>org.lins.mmmjjkx</groupId>
-	<artifactId>plugin</artifactId>
+	<artifactId>Polymer</artifactId>
 
 	<properties>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.deploy.skip>true</maven.deploy.skip>
 	</properties>
 
 	<build>
@@ -33,7 +34,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.4.1</version>
+				<version>3.5.1</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -44,18 +45,21 @@
 							<relocations>
 								<relocation>
 									<pattern>de.tr7zw.changeme.nbtapi</pattern>
-									<shadedPattern>
-										io.github.linsminecraftstudio.polymer.libs.nbtapi
-									</shadedPattern>
+									<shadedPattern>io.github.linsminecraftstudio.polymer.nbtapi</shadedPattern>
 								</relocation>
 							</relocations>
-							<minimizeJar>true</minimizeJar>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 	</build>
 
 	<dependencies>
@@ -67,6 +71,8 @@
 			<groupId>io.github.linsminecraftstudio</groupId>
 			<artifactId>Polymer-Core</artifactId>
 			<version>${project.version}</version>
+			<scope>compile</scope>
+			<type>jar</type>
 		</dependency>
 	</dependencies>
 </project>
