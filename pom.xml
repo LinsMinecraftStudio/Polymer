@@ -6,7 +6,7 @@
 
 	<groupId>io.github.linsminecraftstudio</groupId>
 	<artifactId>PolymerContainer</artifactId>
-	<version>${revision}</version>
+    <version>1.4.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>PolymerContainer</name>
@@ -20,12 +20,41 @@
 		<module>scheduler</module>
 	</modules>
 
-	<properties>
-		<buildNumber>5</buildNumber>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <revision>1.4.2-SNAPSHOT</revision>
 		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<revision>1.4.2-SNAPSHOT</revision>
-		<nbtapi.version>2.12.1</nbtapi.version>
+        <nbtapi.version>2.12.2</nbtapi.version>
 	</properties>
 
 	<scm>

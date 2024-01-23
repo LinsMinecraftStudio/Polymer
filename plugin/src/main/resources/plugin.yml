@@ -1,9 +1,6 @@
 name: Polymer
 version: '${project.version}'
-main: io.github.linsminecraftstudio.polymer.Polymer
+main: org.lins.mmmjjkx.polymer.Polymer
 api-version: 1.18
 author: "lijinhong11"
 folia-supported: true
-
-libraries:
-  - "de.tr7zw:item-nbt-api:${nbtapi.version}"
