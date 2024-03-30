@@ -127,12 +127,12 @@ public class SingleFileStorage extends YamlConfiguration {
     }
 
     @Override
-    public Set<String> getKeys(boolean deep) {
+    public @NotNull Set<String> getKeys(boolean deep) {
         return configuration.getKeys(deep);
     }
 
     @Override
-    public Map<String, Object> getValues(boolean deep) {
+    public @NotNull Map<String, Object> getValues(boolean deep) {
         return configuration.getValues(deep);
     }
 }

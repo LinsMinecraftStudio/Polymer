@@ -1,6 +1,5 @@
 package io.github.linsminecraftstudio.polymer.objects.plugin;
 
-import io.github.linsminecraftstudio.polymer.objects.PolymerConstants;
 import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -8,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -21,25 +21,37 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class SimpleSettingsManager {
-    private YamlConfiguration configuration;
+    private FileConfiguration configuration;
     private final File file;
 
     public SimpleSettingsManager(@NotNull File file) {
-        configuration = YamlConfiguration.loadConfiguration(file);
+        this.configuration = YamlConfiguration.loadConfiguration(file);
         this.file = file;
     }
 
     public SimpleSettingsManager(@NotNull Plugin plugin) {
-        configuration = (YamlConfiguration) plugin.getConfig();
-        file = new File(plugin.getDataFolder(), "config.yml");
+        this.configuration = plugin.getConfig();
+        this.file = new File(plugin.getDataFolder(), "config.yml");
+    }
+
+    public void reload() {
+        this.configuration = YamlConfiguration.loadConfiguration(file);
     }
 
     public int getInt(String key){
-        return configuration.getInt(key, PolymerConstants.ERROR_CODE);
+        return configuration.getInt(key);
+    }
+
+    public int getInt(String key, int def) {
+        return configuration.getInt(key, def);
     }
 
     public String getString(String key){
         return configuration.getString(key,"");
+    }
+
+    public String getString(String key, String def) {
+        return configuration.getString(key, def);
     }
 
     public Component getComponent(String key, boolean colorize){
@@ -50,12 +62,20 @@ public class SimpleSettingsManager {
         return configuration.getBoolean(key);
     }
 
+    public boolean getBoolean(String key, boolean def) {
+        return configuration.getBoolean(key, def);
+    }
+
     public long getLong(String key) {
-        return configuration.getLong(key, PolymerConstants.ERROR_CODE);
+        return configuration.getLong(key);
+    }
+
+    public long getLong(String key, long def) {
+        return configuration.getLong(key, def);
     }
 
     public Material getMaterial(String key) {
-        return Material.getMaterial(configuration.getString(key,"STONE"), true);
+        return Material.getMaterial(configuration.getString(key, "STONE"));
     }
 
     public List<Integer> getIntList(String key) {
@@ -74,13 +94,15 @@ public class SimpleSettingsManager {
         return configuration.getStringList(key);
     }
 
-    public void set(String key,@Nullable Object value){
+    public void set(String key, @Nullable Object value) {
         if (value instanceof Location loc){
             setLocation(key, loc);
+            save();
             return;
         }
         if (value instanceof UUID u) {
             configuration.set(key, u.toString());
+            save();
             return;
         }
         configuration.set(key, value);
@@ -99,8 +121,6 @@ public class SimpleSettingsManager {
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
-
-        configuration = YamlConfiguration.loadConfiguration(file);
     }
 
     private void setLocation(String path, Location loc){

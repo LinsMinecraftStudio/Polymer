@@ -154,6 +154,9 @@ public abstract class PolymerPlugin extends JavaPlugin {
     }
 
     protected final void completeDefaultConfig(){
+        saveDefaultConfig();
+        saveConfig();
+
         FileUtil.completeFile("config.yml");
     }
 

@@ -18,6 +18,7 @@
 		<module>plugin</module>
 		<module>objectutils</module>
 		<module>scheduler</module>
+        <module>core-all</module>
 	</modules>
 
     <build>
@@ -51,7 +52,7 @@
     </build>
 
     <properties>
-        <revision>1.4.2-SNAPSHOT</revision>
+        <revision>1.4.3-SNAPSHOT</revision>
 		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <nbtapi.version>2.12.2</nbtapi.version>

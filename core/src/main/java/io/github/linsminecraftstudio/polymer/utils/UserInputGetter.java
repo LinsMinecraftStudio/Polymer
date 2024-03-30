@@ -2,22 +2,19 @@ package io.github.linsminecraftstudio.polymer.utils;
 
 import com.google.common.annotations.Beta;
 import io.github.linsminecraftstudio.polymer.TempPolymer;
-import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.conversations.Conversation;
+import org.bukkit.conversations.ConversationContext;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 @Beta
 public class UserInputGetter {
@@ -26,25 +23,32 @@ public class UserInputGetter {
     }
 
     public static @Nullable String getUserInput(Component message, Player p, String quit) {
-        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
-            AtomicReference<String> str = new AtomicReference<>(null);
-            final InputListener inputListener = new InputListener(message, p, str::set, quit);
-            synchronized (inputListener) {
-                while (!inputListener.getResult()) {
-                    try {
-                        inputListener.wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+        String[] store = new String[1];
+        ConversationFactory factory = new ConversationFactory(TempPolymer.getInstance());
+        factory.withModality(true);
+        factory.withFirstPrompt(new Prompt() {
+            @Override
+            public @NotNull String getPromptText(@NotNull ConversationContext context) {
+                return LegacyComponentSerializer.legacySection().serialize(message);
+            }
+
+            @Override
+            public boolean blocksForInput(@NotNull ConversationContext context) {
+                return true;
+            }
+
+            @Override
+            public @Nullable Prompt acceptInput(@NotNull ConversationContext context, @Nullable String input) {
+                if (input != null) {
+                    store[0] = input;
                 }
-                return str.get();
+                return END_OF_CONVERSATION;
             }
         });
-        try {
-            return future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+        factory.withEscapeSequence(quit);
+        Conversation conversation = factory.buildConversation(p);
+        conversation.begin();
+        return store[0];
     }
 
     public static @NotNull List<String> getUserInputMultiply(Component message, Player p, String quit) {
@@ -57,44 +61,5 @@ public class UserInputGetter {
             }
         } while (userInput.get() == null);
         return list;
-    }
-
-    private record InputListener(Component message, Player player, Consumer<String> handler, String quitMsg) implements Listener {
-        private static boolean result;
-
-        private InputListener(Component message, Player player, Consumer<String> handler, String quitMsg) {
-            this.quitMsg = quitMsg;
-            this.message = message.append(Component.newline()).append(
-                    TempPolymer.getInstance().getMessageHandler().getColored(player, "Info.InputQuit").replaceText(builder ->
-                            builder.match("%s").replacement(this.quitMsg)));
-            this.player = player;
-            this.handler = handler;
-
-            player.sendMessage(this.message);
-            result = false;
-            Bukkit.getPluginManager().registerEvents(this, TempPolymer.getInstance());
-        }
-
-        @EventHandler
-        public void chatEvent(AsyncChatEvent e) {
-            Player p = e.getPlayer();
-            if (player.getUniqueId().equals(p.getUniqueId())) {
-                String input = ObjectConverter.serializer.serialize(e.message());
-                if (!input.equals(quitMsg)) {
-                    handler.accept(input);
-                }
-                result = true;
-                e.setCancelled(true);
-                HandlerList.unregisterAll(this);
-
-                synchronized (this) {
-                    this.notify();
-                }
-            }
-        }
-
-        public boolean getResult() {
-            return result;
-        }
     }
 }

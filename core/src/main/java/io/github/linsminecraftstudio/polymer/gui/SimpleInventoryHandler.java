@@ -1,5 +1,6 @@
 package io.github.linsminecraftstudio.polymer.gui;
 
+import com.google.common.base.Preconditions;
 import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.itemstack.ItemStackBuilder;
 import lombok.Setter;
@@ -25,13 +26,20 @@ public abstract class SimpleInventoryHandler {
     public abstract void doListen(InventoryActionType type, Player p, int slot, Inventory inventory);
 
     private boolean boarder = false;
+    private int rows = 6;
 
     public SimpleInventoryHandler() {
+        setBoarder(true);
         Bukkit.getPluginManager().registerEvents(new Listener(), TempPolymer.getInstance());
     }
 
+    public void setRows(int rows) {
+        Preconditions.checkArgument(rows > 0 && rows <= 6, "Rows must be between 1 and 6");
+        this.rows = rows;
+    }
+
     public final void open(Player p) {
-        Inventory inventory = Bukkit.createInventory(null, 54, title(p));
+        Inventory inventory = Bukkit.createInventory(null, rows, title(p));
 
         if (boarder) {
             placeBasicBoarder(p, inventory);

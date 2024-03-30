@@ -90,7 +90,6 @@ public final class FileUtil {
         } catch (Exception e) {
             e.printStackTrace();
             plugin.getLogger().warning("File completion of '" + resourceFile + "' is failed.");
-
         }
     }
 
