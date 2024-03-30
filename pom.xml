@@ -18,7 +18,6 @@
 		<module>plugin</module>
 		<module>objectutils</module>
 		<module>scheduler</module>
-        <module>core-all</module>
 	</modules>
 
     <build>

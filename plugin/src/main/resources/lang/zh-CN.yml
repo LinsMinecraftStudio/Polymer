@@ -16,7 +16,7 @@ Value:
 Info:
   Plugin: "&a正在运行 Polymer 版本 %1$s 作者：%2$s MC服务器版本：%3$s。"
   ReloadSuccess: "&a重载成功！"
-  InputQuit: "&e(输入 '##QUIT' 来取消)"
+  InputQuit: "&e(输入 '%1$s' 来取消)"
   List:
     Head: "&a-----------------&e第%d页&a-----------------"
     ListEmpty: "&4列表里没有任何元素。"

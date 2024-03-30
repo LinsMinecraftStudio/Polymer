@@ -12,10 +12,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-
 @Beta
 public class UserInputGetter {
     public static @Nullable String getUserInput(Component message, Player p) {
@@ -29,7 +25,10 @@ public class UserInputGetter {
         factory.withFirstPrompt(new Prompt() {
             @Override
             public @NotNull String getPromptText(@NotNull ConversationContext context) {
-                return LegacyComponentSerializer.legacySection().serialize(message);
+                return LegacyComponentSerializer.legacySection().serialize(message) + "\n"
+                        + LegacyComponentSerializer.legacySection().serialize(
+                        TempPolymer.getInstance().getMessageHandler().getColored(p, "Info.InputQuit", quit)
+                );
             }
 
             @Override
@@ -49,17 +48,5 @@ public class UserInputGetter {
         Conversation conversation = factory.buildConversation(p);
         conversation.begin();
         return store[0];
-    }
-
-    public static @NotNull List<String> getUserInputMultiply(Component message, Player p, String quit) {
-        List<String> list = new ArrayList<>();
-        AtomicReference<String> userInput = new AtomicReference<>(null);
-        do {
-            userInput.set(getUserInput(message, p, quit));
-            if (userInput.get() != null) {
-                list.add(userInput.get());
-            }
-        } while (userInput.get() == null);
-        return list;
     }
 }

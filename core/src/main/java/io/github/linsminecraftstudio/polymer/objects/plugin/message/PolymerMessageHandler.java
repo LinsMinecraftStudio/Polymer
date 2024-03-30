@@ -8,6 +8,7 @@ import io.github.linsminecraftstudio.polymer.utils.ObjectConverter;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import lombok.Getter;
 import lombok.Setter;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -85,6 +86,21 @@ public final class PolymerMessageHandler {
             }
         }
 
+        //Replace placeholders
+        addFunction((cs, s) -> {
+            Player p = cs instanceof Player ? (Player) cs : null;
+            if (p != null) {
+                s = s.replaceAll("%player%", p.getName());
+                s = s.replaceAll("%mainhand_material_name%", p.getInventory().getItemInMainHand().getType().toString());
+                s = s.replaceAll("%mainhand_material_translation_key%", p.getInventory().getItemInMainHand().getType().translationKey());
+            }
+
+            if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                s = PlaceholderAPI.setPlaceholders(p, s);
+            }
+            return s;
+        }, TranslationFunction.Priority.HIGHEST);
+
         //Replace the M:{KEY} to message
         addFunction((cs, s) -> {
             Pattern pattern = Pattern.compile("M:\\{\\w.*}");
@@ -94,7 +110,7 @@ public final class PolymerMessageHandler {
                 s = s.replaceAll(result, get(cs, key));
             }
             return s;
-        }, TranslationFunction.Priority.HIGHEST);
+        }, TranslationFunction.Priority.HIGH);
 
         //Replace the T:{KEY} to translation(minecraft i18n)
         addFunction((cs, s) -> {
@@ -106,7 +122,7 @@ public final class PolymerMessageHandler {
                 s = s.replaceAll(result, ObjectConverter.componentAsString(component));
             }
             return s;
-        }, TranslationFunction.Priority.HIGHEST);
+        }, TranslationFunction.Priority.HIGH);
     }
 
     public void addFunction(TranslationFunction<CommandSender, String> function, TranslationFunction.Priority priority) {
