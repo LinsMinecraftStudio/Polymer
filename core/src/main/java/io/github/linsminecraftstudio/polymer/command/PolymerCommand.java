@@ -5,6 +5,7 @@ import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.objectutils.TuplePair;
 import io.github.linsminecraftstudio.polymer.objectutils.array.SimpleTypeArray;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -18,6 +19,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
     protected PolymerPlugin pluginInstance;
     protected SimpleTypeArray<String> arguments;
     protected CommandSender sender;
+    @Getter
     private final Map<String, SubCommand> subCommands = new HashMap<>();
     private final Map<String, ArgumentType> argumentWithTypes = new HashMap<>();
 
@@ -108,6 +110,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
     }
 
     public final void registerSubCommand(SubCommand subCommand) {
+        subCommand.setParent(this);
         subCommands.put(subCommand.getName(), subCommand);
     }
 

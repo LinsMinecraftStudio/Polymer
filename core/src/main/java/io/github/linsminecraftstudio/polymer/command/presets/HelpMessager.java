@@ -2,6 +2,7 @@ package io.github.linsminecraftstudio.polymer.command.presets;
 
 import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
+import io.github.linsminecraftstudio.polymer.command.SubCommand;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -46,6 +47,15 @@ public class HelpMessager extends ListCommand<PolymerCommand> {
 
             String description = object.getHelpDescription().replaceAll("<command>", object.getName());
             TempPolymer.getInstance().getMessageHandler().sendMessage(sender, "HelpCmdMsg", number, cmdUsage, option, description);
+
+            if (!object.getSubCommands().isEmpty()) {
+                for (String subCommand : object.getSubCommands().keySet()) {
+                    SubCommand sub = object.getSubCommands().get(subCommand);
+                    if (sub.hasPermission(sender)) {
+                        TempPolymer.getInstance().getMessageHandler().sendMessage(sender, "HelpSubCmdMsg", number, sub.getUsage(), sub.getHelpDescription());
+                    }
+                }
+            }
         }
     }
 }

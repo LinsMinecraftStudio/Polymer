@@ -7,6 +7,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
@@ -117,10 +119,9 @@ public final class FileUtil {
         }
 
         try {
-            File temp = File.createTempFile(resourceFile + "_temp", "yml");
-            Files.copy(stream, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            YamlConfiguration configuration = new YamlConfiguration();
-            configuration.load(temp);
+            Reader reader = new InputStreamReader(stream);
+            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(reader);
+
             YamlConfiguration configuration2 = new YamlConfiguration();
             configuration2.load(file);
             Set<String> keys = configuration.getKeys(true);

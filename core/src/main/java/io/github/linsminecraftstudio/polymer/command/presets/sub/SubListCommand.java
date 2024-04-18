@@ -28,7 +28,7 @@ public abstract class SubListCommand<T> extends SubCommand implements IListComma
     public final void execute(@NotNull CommandSender sender, @NotNull String alias){
         this.sender = sender;
         if (hasPermission()){
-            if (isArgEmpty()){
+            if (getArgs().isEmpty()) {
                 sendMessages(1);
             } else if (argSize() == 1){
                 sendMessages(getArgAsDoubleOrInt(0, true, false).getB().intValue());
