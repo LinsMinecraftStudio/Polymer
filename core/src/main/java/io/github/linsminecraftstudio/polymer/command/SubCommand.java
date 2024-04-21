@@ -5,6 +5,7 @@ import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.objectutils.TuplePair;
 import io.github.linsminecraftstudio.polymer.objectutils.array.SimpleTypeArray;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -13,10 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class SubCommand implements ICommand {
     private final String name;
@@ -25,21 +23,25 @@ public abstract class SubCommand implements ICommand {
     private PolymerPlugin instance;
 
     private final Map<String, PolymerCommand.ArgumentType> argumentWithTypes = new HashMap<>();
+
     @Setter(AccessLevel.PACKAGE)
     private PolymerCommand parent;
 
-    public SubCommand(@NotNull String name) {
+    @Getter(AccessLevel.PACKAGE)
+    private final List<String> aliases;
+
+    public SubCommand(@NotNull String name, String... aliases) {
         this.name = name;
+        this.aliases = Arrays.asList(aliases);
     }
 
     public final String getName() {
         return name;
     }
 
-    public final void run(CommandSender sender, String[] args, PolymerPlugin instance){
+    public final void run(CommandSender sender, String[] args) {
         this.sender = sender;
         this.args = new SimpleTypeArray<>(args);
-        this.instance = instance;
 
         beforeExecute();
 
@@ -50,6 +52,10 @@ public abstract class SubCommand implements ICommand {
         }
 
         afterExecute();
+    }
+
+    void setup(PolymerPlugin plugin) {
+        this.instance = plugin;
     }
 
     public String getHelpDescription() {
@@ -197,5 +203,13 @@ public abstract class SubCommand implements ICommand {
 
     protected final void addArgument(String argName, PolymerCommand.ArgumentType type) {
         this.argumentWithTypes.put(argName, type);
+    }
+
+    public boolean hasArgumentWithTypes() {
+        return !argumentWithTypes.isEmpty();
+    }
+
+    public boolean hasArgumentOption() {
+        return argumentWithTypes.containsValue(PolymerCommand.ArgumentType.USABLE_OPTION);
     }
 }

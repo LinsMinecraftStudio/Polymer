@@ -2,6 +2,7 @@ package io.github.linsminecraftstudio.polymer.command.presets;
 
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
 import io.github.linsminecraftstudio.polymer.command.interfaces.IListCommand;
+import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,12 +12,12 @@ import java.util.List;
 public abstract class ListCommand<T> extends PolymerCommand implements IListCommand<T> {
     private CommandSender sender;
 
-    public ListCommand(@NotNull String name) {
-        this(name, new ArrayList<>());
+    public ListCommand(@NotNull String name, @NotNull PolymerPlugin plugin) {
+        this(name, plugin, new ArrayList<>());
     }
 
-    public ListCommand(@NotNull String name, List<String> aliases) {
-        super(name, aliases);
+    public ListCommand(@NotNull String name, @NotNull PolymerPlugin plugin, @NotNull List<String> aliases) {
+        super(name, plugin, aliases);
     }
 
     @Override

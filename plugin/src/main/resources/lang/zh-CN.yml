@@ -35,4 +35,4 @@ GUI:
   SearchResultTitle: "&6&l搜索结果 (%page%/%max%)"
   SearchNoResult: "&4&l没有找到任何结果"
   SearchNoResultSub: "&a您将会返回到主界面。"
-HelpCmdMsg: "&e%1$d.&e%2$s &d%3$s &e— &a%4$s"
+HelpCmdMsg: "&e%1$s &d%2$s &e— &a%3$s"

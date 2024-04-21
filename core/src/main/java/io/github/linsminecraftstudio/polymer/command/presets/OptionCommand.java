@@ -2,6 +2,7 @@ package io.github.linsminecraftstudio.polymer.command.presets;
 
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
 import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
+import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.objectutils.array.SimpleTypeArray;
 import io.github.linsminecraftstudio.polymer.utils.IterableUtil;
 import org.jetbrains.annotations.NotNull;
@@ -14,8 +15,8 @@ import java.util.Optional;
  * The format is '{@link #tokenHead}:THE_TOKEN=THE_VALUE'
  */
 public abstract class OptionCommand extends PolymerCommand implements ICommand.IOptionCommand {
-    public OptionCommand(@NotNull String name) {
-        super(name);
+    public OptionCommand(@NotNull String name, @NotNull PolymerPlugin plugin) {
+        super(name, plugin);
     }
 
     private SimpleTypeArray<String> pre;

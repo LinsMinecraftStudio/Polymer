@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 
 public final class MainCmd extends PolymerCommand {
     public MainCmd() {
-        super("polymer");
+        super("polymer", Polymer.INSTANCE);
         this.registerSubCommand(new SubReloadCommand(Polymer.INSTANCE));
     }
 

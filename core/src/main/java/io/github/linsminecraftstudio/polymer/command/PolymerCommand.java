@@ -4,7 +4,6 @@ import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import io.github.linsminecraftstudio.polymer.objectutils.TuplePair;
 import io.github.linsminecraftstudio.polymer.objectutils.array.SimpleTypeArray;
-import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -23,20 +22,18 @@ public abstract class PolymerCommand extends Command implements ICommand {
     private final Map<String, SubCommand> subCommands = new HashMap<>();
     private final Map<String, ArgumentType> argumentWithTypes = new HashMap<>();
 
-    public PolymerCommand(@NotNull String name){
-        this(name, new ArrayList<>());
+    public PolymerCommand(@NotNull String name, @NotNull PolymerPlugin plugin) {
+        this(name, plugin, new ArrayList<>());
     }
-    public PolymerCommand(@NotNull String name, List<String> aliases) {
+
+    public PolymerCommand(@NotNull String name, @NotNull PolymerPlugin plugin, @NotNull List<String> aliases) {
         super(name, "", "", new ArrayList<>());
+        this.pluginInstance = plugin;
+
         try {
             autoSetCMDInfo(aliases);
         } catch (Exception ignored) {
         }
-    }
-
-
-    public String getHelpDescription(){
-        return "description unavailable";
     }
 
     @Override
@@ -74,7 +71,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
             String subName = strings[0];
             if (subCommands.containsKey(subName)) {
                 SubCommand subCommand = subCommands.get(subName);
-                subCommand.run(commandSender, Arrays.copyOfRange(strings, 1, strings.length), pluginInstance);
+                subCommand.run(commandSender, Arrays.copyOfRange(strings, 1, strings.length));
             } else {
                 execute(commandSender, s);
             }
@@ -111,28 +108,26 @@ public abstract class PolymerCommand extends Command implements ICommand {
 
     public final void registerSubCommand(SubCommand subCommand) {
         subCommand.setParent(this);
+        subCommand.setup(pluginInstance);
         subCommands.put(subCommand.getName(), subCommand);
+        for (String alias : subCommand.getAliases()) {
+            subCommands.put(alias, subCommand);
+        }
     }
 
     /**
      * Gets description for this command
      */
     private void autoSetCMDInfo(List<String> defAliases) {
-        PolymerPlugin plugin = OtherUtils.findCallingPlugin();
-        if (plugin != null) {
-            pluginInstance = plugin;
-            Map<String,Object> commandObject = plugin.getDescription().getCommands().get(this.getName());
-            if (commandObject != null) {
-                Object descriptionObject = commandObject.get("description");
-                Object aliasesObject = commandObject.get("aliases");
-                this.description = descriptionObject != null ? descriptionObject.toString() : "No descriptions available";
-                if (aliasesObject.getClass().isArray()) {
-                    List<String> list = Arrays.stream((Object[])aliasesObject).map(String::valueOf).toList();
-                    defAliases.addAll(list);
-                    this.setAliases(defAliases);
-                } else {
-                    this.setAliases(defAliases);
-                }
+        Map<String, Object> commandObject = pluginInstance.getDescription().getCommands().get(this.getName());
+        if (commandObject != null) {
+            Object descriptionObject = commandObject.get("description");
+            Object aliasesObject = commandObject.get("aliases");
+            this.description = descriptionObject != null ? descriptionObject.toString() : "No descriptions available";
+            if (aliasesObject.getClass().isArray()) {
+                List<String> list = Arrays.stream((Object[]) aliasesObject).map(String::valueOf).toList();
+                defAliases.addAll(list);
+                this.setAliases(defAliases);
             } else {
                 this.setAliases(defAliases);
             }
@@ -272,6 +267,10 @@ public abstract class PolymerCommand extends Command implements ICommand {
 
     public final boolean hasArgumentWithTypes() {
         return !argumentWithTypes.isEmpty();
+    }
+
+    public PolymerPlugin getPlugin() {
+        return pluginInstance;
     }
 
     public enum ArgumentType {

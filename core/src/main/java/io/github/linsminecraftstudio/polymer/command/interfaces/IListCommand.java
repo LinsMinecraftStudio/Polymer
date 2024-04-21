@@ -18,7 +18,8 @@ public interface IListCommand<T> extends ICommand {
     default @NotNull List<String> tabCompletes(@NotNull CommandSender commandSender){
         List<List<T>> part = Lists.partition(list(commandSender), 10);
         List<String> intList = IntStream.rangeClosed(0, part.size() - 1).mapToObj(String::valueOf).toList();
-        return copyPartialMatches(getArg(0), intList);
+        String arg0 = getArg(0);
+        return copyPartialMatches(arg0 == null ? "" : arg0, intList);
     }
 
      default void sendMessages(CommandSender sender, int page){
