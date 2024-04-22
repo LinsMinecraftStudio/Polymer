@@ -23,7 +23,7 @@ public class SubHelpMessager extends SubListCommand<SubCommand> {
 
     @Override
     public List<SubCommand> list(CommandSender sender) {
-        return polymerCommand.getSubCommands().values().stream().toList();
+        return polymerCommand.getSubCommands().values().stream().distinct().toList();
     }
 
     @Override

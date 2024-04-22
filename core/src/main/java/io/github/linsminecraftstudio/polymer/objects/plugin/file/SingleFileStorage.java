@@ -2,6 +2,7 @@ package io.github.linsminecraftstudio.polymer.objects.plugin.file;
 
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
 import lombok.Getter;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -14,11 +15,15 @@ public class SingleFileStorage extends YamlConfiguration {
     private final File file;
 
     public SingleFileStorage(PolymerPlugin plugin, File file){
-        super();
         this.plugin = plugin;
         this.file = file;
 
         handleConfig(file);
+        try {
+            load(file);
+        } catch (IOException | InvalidConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void handleConfig(File file) {

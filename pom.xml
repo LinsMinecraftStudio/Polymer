@@ -13,6 +13,13 @@
 	<description>An API for LMS</description>
 	<url>https://github.com/LinsMinecraftStudio/Polymer</url>
 
+	<properties>
+		<revision>1.4.5-SNAPSHOT</revision>
+		<java.version>17</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<nbtapi.version>2.12.2</nbtapi.version>
+	</properties>
+
 	<modules>
 		<module>core</module>
 		<module>plugin</module>
@@ -49,13 +56,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <properties>
-        <revision>1.4.4-SNAPSHOT</revision>
-		<java.version>17</java.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <nbtapi.version>2.12.2</nbtapi.version>
-	</properties>
 
 	<scm>
 		<url>https://github.com/LinsMinecraftStudio/Polymer</url>

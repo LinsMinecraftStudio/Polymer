@@ -22,7 +22,7 @@ public class HelpMessager extends ListCommand<SubCommand> {
 
     @Override
     public List<SubCommand> list(CommandSender sender) {
-        return mainCommand.getSubCommands().values().stream().toList();
+        return mainCommand.getSubCommands().values().stream().distinct().toList();
     }
 
     @Override
