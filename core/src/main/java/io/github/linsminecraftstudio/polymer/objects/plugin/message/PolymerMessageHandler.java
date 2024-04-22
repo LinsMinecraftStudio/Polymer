@@ -148,7 +148,6 @@ public final class PolymerMessageHandler {
         String original = ObjectConverter.componentAsString(component);
         AtomicReference<String> context = new AtomicReference<>(original);
 
-
         Arrays.stream(TranslationFunction.Priority.values()).forEach((p) -> {
             for (TranslationFunction<CommandSender, String> fun : getAll(p)) {
                 context.set(fun.apply(source, context.get()));

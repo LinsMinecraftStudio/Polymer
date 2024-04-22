@@ -1,22 +1,16 @@
 package io.github.linsminecraftstudio.polymer.utils;
 
+import de.themoep.minedown.adventure.MineDown;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 public class ObjectConverter {
-    public static LegacyComponentSerializer serializer = LegacyComponentSerializer.legacyAmpersand();
     public static MiniMessage miniMessage = MiniMessage.miniMessage();
 
-    public static String replaceLegacyColorsToMiniMessageFormat(String text){
-        return miniMessage.serialize(serializer.deserialize(text));
-    }
-
     public static Component toComponent(String text){
-        return miniMessage.deserialize(replaceLegacyColorsToMiniMessageFormat(text)).decoration(TextDecoration.ITALIC, false);
+        return MineDown.parse(text);
     }
 
     public static Location toLocation(String singleString) {
@@ -45,6 +39,6 @@ public class ObjectConverter {
     }
 
     public static String componentAsString(Component component) {
-        return miniMessage.serialize(component);
+        return MineDown.stringify(component);
     }
 }

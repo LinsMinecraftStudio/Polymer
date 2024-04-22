@@ -48,6 +48,10 @@
 									<pattern>de.tr7zw.changeme.nbtapi</pattern>
 									<shadedPattern>io.github.linsminecraftstudio.polymer.nbtapi</shadedPattern>
 								</relocation>
+                                <relocation>
+                                    <pattern>de.themoep.minedown</pattern>
+                                    <shadedPattern>io.github.linsminecraftstudio.polymer.minedown</shadedPattern>
+                                </relocation>
 							</relocations>
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 						</configuration>
