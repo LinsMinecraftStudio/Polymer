@@ -36,19 +36,20 @@ public abstract class PolymerPlugin extends JavaPlugin {
                         This plugin requires Polymer version %1$s or higher.
                         It will disable automatically.
                         """.formatted(requireVersion()));
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
+                this.getServer().getPluginManager().disablePlugin(this);
             }
         }
+
         if (requireApiVersion() > 0) {
-            if (PolymerConstants.API_VERSION != requireApiVersion()) {
+            if (PolymerConstants.API_VERSION < requireApiVersion()) {
                 getLogger().log(Level.SEVERE, """
                         \n
                         This plugin %1$s requires Polymer API version %2$d.
-                        But the api version is %3$d instead.
+                        But the api version is %3$d.
                         It will disable automatically.
-                        Try to use newer Polymer version or older Polymer version.
+                        Try to use newer Polymer version.
                         """.formatted(getPluginName(), requireApiVersion(), PolymerConstants.API_VERSION));
+                this.getServer().getPluginManager().disablePlugin(this);
             }
         }
 
@@ -78,7 +79,9 @@ public abstract class PolymerPlugin extends JavaPlugin {
         if (metrics != null) {
             metrics.shutdown();
         }
-        scheduler.stopAllTask();
+        if (scheduler != null) {
+            scheduler.stopAllTask();
+        }
         onPlDisable();
     }
 

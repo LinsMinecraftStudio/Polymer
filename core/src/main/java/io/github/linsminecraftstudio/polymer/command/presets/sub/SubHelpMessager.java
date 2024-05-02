@@ -3,6 +3,8 @@ package io.github.linsminecraftstudio.polymer.command.presets.sub;
 import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
 import io.github.linsminecraftstudio.polymer.command.SubCommand;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +31,7 @@ public class SubHelpMessager extends SubListCommand<SubCommand> {
     @Override
     public final void sendLineMessage(CommandSender sender, int number, SubCommand sub) {
         if (sub.hasPermission(sender)) {
-            String usage = sub.getUsage().replaceAll("<command>", sub.getName());
+            String usage = sub.getUsage().replaceAll("%_cmd_%", sub.getName());
             String cmdUsage, option;
 
             if (sub.hasArgumentWithTypes()) {
@@ -47,5 +49,34 @@ public class SubHelpMessager extends SubListCommand<SubCommand> {
 
             TempPolymer.getInstance().getMessageHandler().sendMessage(sender, "HelpCmdMsg", cmdUsage, option, sub.getHelpDescription());
         }
+    }
+
+    @Override
+    public Component buildClickEvent(CommandSender sender, List<List<SubCommand>> partition, int page) {
+        Component prev = TempPolymer.getInstance().getMessageHandler().getColored(sender, "Info.List.Prev");
+        Component next = TempPolymer.getInstance().getMessageHandler().getColored(sender, "Info.List.Next");
+
+        ClickEvent prevClick = ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/" + polymerCommand.getName() + " " + getName() + " " + (page - 1));
+        ClickEvent nextClick = ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/" + polymerCommand.getName() + " " + getName() + " " + (page + 1));
+
+        if (page == 1) {
+            prev = TempPolymer.getInstance().getMessageHandler().getColored(sender, "Info.List.PrevUnavailable");
+            prevClick = null;
+        }
+        if (page >= partition.size()) {
+            next = TempPolymer.getInstance().getMessageHandler().getColored(sender, "Info.List.NextUnavailable");
+            nextClick = null;
+        }
+
+        Component component = Component.empty();
+        if (prevClick != null) {
+            prev = prev.clickEvent(prevClick);
+        }
+        if (nextClick != null) {
+            next = next.clickEvent(nextClick);
+        }
+
+        Component space = Component.space();
+        return component.append(prev).append(space).append(space).append(next);
     }
 }

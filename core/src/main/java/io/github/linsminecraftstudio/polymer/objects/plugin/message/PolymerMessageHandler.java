@@ -11,7 +11,6 @@ import lombok.Setter;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -154,7 +153,7 @@ public final class PolymerMessageHandler {
             }
         });
 
-        return MiniMessage.miniMessage().deserialize(context.get());
+        return ObjectConverter.toComponent(context.get());
     }
 
     public Component getColored(@Nullable CommandSender cs, String node, Map<String, Object> argMap, char replacementChar) {
