@@ -20,7 +20,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
     protected CommandSender sender;
     @Getter
     private final Map<String, SubCommand> subCommands = new HashMap<>();
-    private final Map<String, ArgumentType> argumentWithTypes = new HashMap<>();
+    private final Map<String, ArgumentType> argumentWithTypes = new LinkedHashMap<>();
 
     public PolymerCommand(@NotNull String name, @NotNull PolymerPlugin plugin) {
         this(name, plugin, new ArrayList<>());

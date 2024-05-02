@@ -28,7 +28,7 @@ public class HelpMessager extends ListCommand<SubCommand> {
     @Override
     public final void sendLineMessage(CommandSender sender, int number, SubCommand sub) {
         if (sub.hasPermission(sender)) {
-            String usage = sub.getUsage().replaceAll("<command>", sub.getName());
+            String usage = sub.getUsage().replaceAll("%_cmd_%", sub.getName());
             String cmdUsage, option;
 
             if (sub.hasArgumentWithTypes()) {

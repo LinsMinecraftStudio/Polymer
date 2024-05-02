@@ -22,7 +22,7 @@ public abstract class SubCommand implements ICommand {
     protected SimpleTypeArray<String> args;
     private PolymerPlugin instance;
 
-    private final Map<String, PolymerCommand.ArgumentType> argumentWithTypes = new HashMap<>();
+    private final Map<String, PolymerCommand.ArgumentType> argumentWithTypes = new LinkedHashMap<>();
 
     @Setter(AccessLevel.PACKAGE)
     private PolymerCommand parent;
@@ -170,8 +170,16 @@ public abstract class SubCommand implements ICommand {
             return true;
         }).toList();
         StringBuilder sb = new StringBuilder();
-        sb.append("/").append(parent.getName()).append(" ").append(getName()).append(" ");
+        sb.append("/").append(parent.getName()).append(" ").append(getName());
+
+        if (!aliases.isEmpty()) {
+            for (String alias : aliases) {
+                sb.append("/").append(alias);
+            }
+        }
+
         if (!arguments.isEmpty()) {
+            sb.append(" ");
             for (Map.Entry<String, PolymerCommand.ArgumentType> argument : arguments) {
                 if (argument.getValue() == PolymerCommand.ArgumentType.OPTIONAL) {
                     sb.append("[");
@@ -182,7 +190,9 @@ public abstract class SubCommand implements ICommand {
                     sb.append(argument.getKey());
                     sb.append(">");
                 }
-                sb.append(" ");
+                if (arguments.indexOf(argument) != arguments.size() - 1) {
+                    sb.append(" ");
+                }
             }
         }
 
@@ -190,9 +200,13 @@ public abstract class SubCommand implements ICommand {
             sb.append(" ");
             sb.append("{");
 
-            for (Map.Entry<String, PolymerCommand.ArgumentType> option : options.entrySet()) {
-                sb.append(option.getKey());
-                sb.append(" ");
+            List<Map.Entry<String, PolymerCommand.ArgumentType>> optionSet = options.entrySet().stream().toList();
+
+            for (Map.Entry<String, PolymerCommand.ArgumentType> option : optionSet) {
+                sb.append("--").append(option.getKey());
+                if (optionSet.indexOf(option) != optionSet.size() - 1) {
+                    sb.append(" ");
+                }
             }
 
             sb.append("}");
