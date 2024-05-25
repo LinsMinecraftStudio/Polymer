@@ -25,6 +25,7 @@
 		<module>plugin</module>
 		<module>objectutils</module>
 		<module>scheduler</module>
+		<module>bungee</module>
 	</modules>
 
     <build>

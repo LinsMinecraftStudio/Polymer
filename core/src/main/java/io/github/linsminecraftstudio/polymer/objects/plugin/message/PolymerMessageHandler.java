@@ -40,7 +40,6 @@ public final class PolymerMessageHandler {
 
     private @Getter @Setter boolean autoDetectClientLanguage = true;
 
-
     /**
      * Creates a new message handler
      * @param plugin need the plugin to read language files from plugin data folder

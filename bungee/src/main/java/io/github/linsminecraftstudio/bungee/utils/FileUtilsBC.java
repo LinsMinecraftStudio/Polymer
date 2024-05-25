@@ -1,35 +1,28 @@
-package io.github.linsminecraftstudio.polymer.utils;
+package io.github.linsminecraftstudio.bungee.utils;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.file.YamlConfigurationOptions;
-import org.bukkit.plugin.Plugin;
+import io.github.linsminecraftstudio.bungee.PolymerBungeePlugin;
+import net.md_5.bungee.config.Configuration;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.*;
 
-public final class FileUtil {
+import static io.github.linsminecraftstudio.bungee.Constants.CONFIGURATION_PROVIDER;
 
-
+public final class FileUtilsBC {
     /**
      * Complete configuration(key and value, comments, etc)
+     *
      * @param resourceFile the resource file you want to complete
      */
-    public static void completeFile(String resourceFile, String... notNeedSyncKeys) {
-        Plugin plugin = OtherUtils.findCallingPlugin();
-
-        if (plugin == null) {
-            return;
-        }
-
-        InputStream stream = plugin.getResource(resourceFile);
+    public static void completeFile(@Nonnull PolymerBungeePlugin plugin, @Nonnull String resourceFile, String... notNeedSyncKeys) {
+        InputStream stream = plugin.getResourceAsStream(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);
         if (!file.exists()) {
             if (stream != null) {
@@ -43,12 +36,10 @@ public final class FileUtil {
             return;
         }
         try {
-            InputStreamReader reader = new InputStreamReader(stream);
-            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(reader);
-            YamlConfiguration configuration2 = new YamlConfiguration();
-            configuration2.load(file);
+            Configuration configuration = CONFIGURATION_PROVIDER.load(stream);
+            Configuration configuration2 = CONFIGURATION_PROVIDER.load(file);
 
-            for (String key : configuration.getKeys(true)) {
+            for (String key : configuration.getKeys()) {
                 Object value = configuration.get(key);
                 if (value instanceof List<?>) {
                     List<?> list2 = configuration2.getList(key);
@@ -61,20 +52,11 @@ public final class FileUtil {
                 if (!configuration2.contains(key)) {
                     configuration2.set(key, value);
                 }
-                if (!configuration.getComments(key).equals(configuration2.getComments(key))) {
-                    configuration2.setComments(key, configuration.getComments(key));
-                }
-                YamlConfigurationOptions options1 = configuration.options();
-                YamlConfigurationOptions options2 = configuration2.options();
-
-                if (!options2.getHeader().equals(options1.getHeader())) {
-                    options2.setHeader(options1.getHeader());
-                }
             }
 
-            List<String> notSync = Arrays.stream(notNeedSyncKeys).toList();
+            List<String> notSync = Arrays.asList(notNeedSyncKeys);
 
-            for (String key2 : configuration2.getKeys(true)) {
+            for (String key2 : configuration2.getKeys()) {
                 boolean b = notSync.contains(key2);
 
                 if (!configuration.contains(key2)) {
@@ -84,7 +66,7 @@ public final class FileUtil {
                 }
             }
 
-            configuration2.save(file);
+            CONFIGURATION_PROVIDER.save(configuration2, file);
         } catch (Exception e) {
             e.printStackTrace();
             plugin.getLogger().warning("File completion of '" + resourceFile + "' is failed.");
@@ -94,11 +76,12 @@ public final class FileUtil {
     /**
      * Complete language file (keys and values, comments, etc.)
      * FORCE SYNC
-     * @param plugin plugin instance
+     *
+     * @param plugin       plugin instance
      * @param resourceFile the language file you want to complete
      */
-    public static void completeLangFile(Plugin plugin, String resourceFile){
-        InputStream stream = plugin.getResource(resourceFile);
+    public static void completeLangFile(PolymerBungeePlugin plugin, String resourceFile) {
+        InputStream stream = plugin.getResourceAsStream(resourceFile);
         File file = new File(plugin.getDataFolder(), resourceFile);
 
         if (!file.exists()) {
@@ -115,15 +98,14 @@ public final class FileUtil {
         }
 
         try {
-            Reader reader = new InputStreamReader(stream);
-            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(reader);
+            Configuration configuration = CONFIGURATION_PROVIDER.load(stream);
+            Configuration configuration2 = CONFIGURATION_PROVIDER.load(file);
 
-            YamlConfiguration configuration2 = new YamlConfiguration();
-            configuration2.load(file);
-            Set<String> keys = configuration.getKeys(true);
+            Collection<String> keys = configuration.getKeys();
             for (String key : keys) {
                 Object value = configuration.get(key);
-                if (value instanceof List<?> list) {
+                if (value instanceof List<?>) {
+                    List<?> list = (List<?>) value;
                     List<?> list2 = configuration2.getList(key);
                     if (list2 == null || !(list.size() == list2.size())) {
                         configuration2.set(key, value);
@@ -133,16 +115,14 @@ public final class FileUtil {
                 if (!configuration2.contains(key)) {
                     configuration2.set(key, value);
                 }
-                if (!configuration.getComments(key).equals(configuration2.getComments(key))) {
-                    configuration2.setComments(key, configuration.getComments(key));
-                }
             }
-            for (String key : configuration2.getKeys(true)) {
+            for (String key : configuration2.getKeys()) {
                 if (configuration2.contains(key) & !configuration.contains(key)) {
                     configuration2.set(key, null);
                 }
             }
-            configuration2.save(file);
+
+            CONFIGURATION_PROVIDER.save(configuration2, file);
         } catch (Exception e) {
             e.printStackTrace();
             plugin.getLogger().warning("File completion of '" + resourceFile + "' is failed.");
@@ -151,11 +131,12 @@ public final class FileUtil {
 
     /**
      * Delete a directory
+     *
      * @param dirFile the directory
      * @return result
      */
     @CanIgnoreReturnValue
-    public static boolean deleteDir(File dirFile){
+    public static boolean deleteDir(File dirFile) {
         Callable<Boolean> callable = () -> {
             if (!dirFile.exists() || !dirFile.isDirectory() || dirFile.listFiles() == null) {
                 return false;
@@ -191,11 +172,12 @@ public final class FileUtil {
 
     /**
      * Delete a file
+     *
      * @param file the file
      * @return result
      */
     @CanIgnoreReturnValue
-    public static boolean deleteFile(File file){
+    public static boolean deleteFile(File file) {
         boolean flag = false;
 
         if (file.isFile() && file.exists()) {
