@@ -2,6 +2,7 @@ package io.github.linsminecraftstudio.polymer.command;
 
 import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
+import io.github.linsminecraftstudio.polymer.objectutils.CommandArgumentType;
 import io.github.linsminecraftstudio.polymer.objectutils.TuplePair;
 import io.github.linsminecraftstudio.polymer.objectutils.array.SimpleTypeArray;
 import lombok.Getter;
@@ -20,7 +21,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
     protected CommandSender sender;
     @Getter
     private final Map<String, SubCommand> subCommands = new HashMap<>();
-    private final Map<String, ArgumentType> argumentWithTypes = new LinkedHashMap<>();
+    private final Map<String, CommandArgumentType> argumentWithTypes = new LinkedHashMap<>();
 
     public PolymerCommand(@NotNull String name, @NotNull PolymerPlugin plugin) {
         this(name, plugin, new ArrayList<>());
@@ -215,15 +216,15 @@ public abstract class PolymerCommand extends Command implements ICommand {
         return getArgAsDoubleOrInt(sender, index, isInt, allowNegative);
     }
 
-    protected final void addArgument(String argName, ArgumentType type) {
+    protected final void addArgument(String argName, CommandArgumentType type) {
         this.argumentWithTypes.put(argName, type);
     }
 
     @Override
     public final @NotNull String getUsage() {
-        Map<String, ArgumentType> options = new HashMap<>();
-        List<Map.Entry<String, ArgumentType>> arguments = argumentWithTypes.entrySet().stream().filter(e -> {
-            if (e.getValue() == ArgumentType.USABLE_OPTION) {
+        Map<String, CommandArgumentType> options = new HashMap<>();
+        List<Map.Entry<String, CommandArgumentType>> arguments = argumentWithTypes.entrySet().stream().filter(e -> {
+            if (e.getValue() == CommandArgumentType.USABLE_OPTION) {
                 options.put(e.getKey(), e.getValue());
                 return false;
             }
@@ -232,12 +233,12 @@ public abstract class PolymerCommand extends Command implements ICommand {
         StringBuilder sb = new StringBuilder();
         sb.append("/").append(getLabel()).append(" ");
         if (!arguments.isEmpty()) {
-            for (Map.Entry<String, ArgumentType> argument : arguments) {
-                if (argument.getValue() == ArgumentType.OPTIONAL) {
+            for (Map.Entry<String, CommandArgumentType> argument : arguments) {
+                if (argument.getValue() == CommandArgumentType.OPTIONAL) {
                     sb.append("[");
                     sb.append(argument.getKey());
                     sb.append("]");
-                } else if (argument.getValue() == ArgumentType.REQUIRED) {
+                } else if (argument.getValue() == CommandArgumentType.REQUIRED) {
                     sb.append("<");
                     sb.append(argument.getKey());
                     sb.append(">");
@@ -250,7 +251,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
             sb.append(" ");
             sb.append("{");
 
-            for (Map.Entry<String, ArgumentType> option : options.entrySet()) {
+            for (Map.Entry<String, CommandArgumentType> option : options.entrySet()) {
                 sb.append(option.getKey());
                 sb.append(" ");
             }
@@ -262,7 +263,7 @@ public abstract class PolymerCommand extends Command implements ICommand {
     }
 
     public final boolean hasArgumentOption() {
-        return !argumentWithTypes.isEmpty() && argumentWithTypes.containsValue(ArgumentType.USABLE_OPTION);
+        return !argumentWithTypes.isEmpty() && argumentWithTypes.containsValue(CommandArgumentType.USABLE_OPTION);
     }
 
     public final boolean hasArgumentWithTypes() {
@@ -271,11 +272,5 @@ public abstract class PolymerCommand extends Command implements ICommand {
 
     public PolymerPlugin getPlugin() {
         return pluginInstance;
-    }
-
-    public enum ArgumentType {
-        OPTIONAL,
-        REQUIRED,
-        USABLE_OPTION
     }
 }

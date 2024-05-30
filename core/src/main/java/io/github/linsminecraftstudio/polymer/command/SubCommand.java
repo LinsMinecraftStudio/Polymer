@@ -2,6 +2,7 @@ package io.github.linsminecraftstudio.polymer.command;
 
 import io.github.linsminecraftstudio.polymer.command.interfaces.ICommand;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
+import io.github.linsminecraftstudio.polymer.objectutils.CommandArgumentType;
 import io.github.linsminecraftstudio.polymer.objectutils.TuplePair;
 import io.github.linsminecraftstudio.polymer.objectutils.array.SimpleTypeArray;
 import lombok.AccessLevel;
@@ -22,7 +23,7 @@ public abstract class SubCommand implements ICommand {
     protected SimpleTypeArray<String> args;
     private PolymerPlugin instance;
 
-    private final Map<String, PolymerCommand.ArgumentType> argumentWithTypes = new LinkedHashMap<>();
+    private final Map<String, CommandArgumentType> argumentWithTypes = new LinkedHashMap<>();
 
     @Setter(AccessLevel.PACKAGE)
     private PolymerCommand parent;
@@ -161,9 +162,9 @@ public abstract class SubCommand implements ICommand {
     }
 
     public final @NotNull String getUsage() {
-        Map<String, PolymerCommand.ArgumentType> options = new HashMap<>();
-        List<Map.Entry<String, PolymerCommand.ArgumentType>> arguments = argumentWithTypes.entrySet().stream().filter(e -> {
-            if (e.getValue() == PolymerCommand.ArgumentType.USABLE_OPTION) {
+        Map<String, CommandArgumentType> options = new HashMap<>();
+        List<Map.Entry<String, CommandArgumentType>> arguments = argumentWithTypes.entrySet().stream().filter(e -> {
+            if (e.getValue() == CommandArgumentType.USABLE_OPTION) {
                 options.put(e.getKey(), e.getValue());
                 return false;
             }
@@ -180,12 +181,12 @@ public abstract class SubCommand implements ICommand {
 
         if (!arguments.isEmpty()) {
             sb.append(" ");
-            for (Map.Entry<String, PolymerCommand.ArgumentType> argument : arguments) {
-                if (argument.getValue() == PolymerCommand.ArgumentType.OPTIONAL) {
+            for (Map.Entry<String, CommandArgumentType> argument : arguments) {
+                if (argument.getValue() == CommandArgumentType.OPTIONAL) {
                     sb.append("[");
                     sb.append(argument.getKey());
                     sb.append("]");
-                } else if (argument.getValue() == PolymerCommand.ArgumentType.REQUIRED) {
+                } else if (argument.getValue() == CommandArgumentType.REQUIRED) {
                     sb.append("<");
                     sb.append(argument.getKey());
                     sb.append(">");
@@ -200,9 +201,9 @@ public abstract class SubCommand implements ICommand {
             sb.append(" ");
             sb.append("{");
 
-            List<Map.Entry<String, PolymerCommand.ArgumentType>> optionSet = options.entrySet().stream().toList();
+            List<Map.Entry<String, CommandArgumentType>> optionSet = options.entrySet().stream().toList();
 
-            for (Map.Entry<String, PolymerCommand.ArgumentType> option : optionSet) {
+            for (Map.Entry<String, CommandArgumentType> option : optionSet) {
                 sb.append("--").append(option.getKey());
                 if (optionSet.indexOf(option) != optionSet.size() - 1) {
                     sb.append(" ");
@@ -215,7 +216,7 @@ public abstract class SubCommand implements ICommand {
         return sb.toString();
     }
 
-    protected final void addArgument(String argName, PolymerCommand.ArgumentType type) {
+    protected final void addArgument(String argName, CommandArgumentType type) {
         this.argumentWithTypes.put(argName, type);
     }
 
@@ -224,6 +225,6 @@ public abstract class SubCommand implements ICommand {
     }
 
     public boolean hasArgumentOption() {
-        return argumentWithTypes.containsValue(PolymerCommand.ArgumentType.USABLE_OPTION);
+        return argumentWithTypes.containsValue(CommandArgumentType.USABLE_OPTION);
     }
 }

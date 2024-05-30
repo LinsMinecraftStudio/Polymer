@@ -74,6 +74,12 @@ public abstract class PolymerPlugin extends JavaPlugin {
         }
     }
 
+    protected final void registerMessageChannel(BungeeMessageChannel channel) {
+        var msg = getServer().getMessenger();
+        msg.registerIncomingPluginChannel(channel.getPlugin(), channel.getChannelName(), channel);
+        msg.registerOutgoingPluginChannel(channel.getPlugin(), channel.getChannelName());
+    }
+
     @Override
     public final void onDisable() {
         if (metrics != null) {
