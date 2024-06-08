@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +44,7 @@ public final class FileUtil {
             return;
         }
         try {
-            InputStreamReader reader = new InputStreamReader(stream);
+            InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
             YamlConfiguration configuration = YamlConfiguration.loadConfiguration(reader);
             YamlConfiguration configuration2 = new YamlConfiguration();
             configuration2.load(file);
@@ -115,7 +116,7 @@ public final class FileUtil {
         }
 
         try {
-            Reader reader = new InputStreamReader(stream);
+            Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
             YamlConfiguration configuration = YamlConfiguration.loadConfiguration(reader);
 
             YamlConfiguration configuration2 = new YamlConfiguration();

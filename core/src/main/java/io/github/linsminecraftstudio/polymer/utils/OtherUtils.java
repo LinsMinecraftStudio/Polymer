@@ -16,7 +16,10 @@ import java.util.logging.Level;
 
 public class OtherUtils {
     public static boolean isPolymerVersionAtLeast(String version) {
-        String[] split = version.replaceAll("-SNAPSHOT", "").split("\\.");
+        String[] split = version
+                .replaceAll("-SNAPSHOT", "")
+                .replaceAll("/-\\d*", "")
+                .split("\\.");
         if (split.length == 2) {
             return isPolymerVersionAtLeast(Integer.parseInt(split[0]), Integer.parseInt(split[1]), 0);
         } else {
@@ -25,7 +28,10 @@ public class OtherUtils {
     }
 
     public static boolean isPolymerVersionAtLeast(int major, int minor, int p) {
-        String[] version = TempPolymer.getInstance().getPluginVersion().replaceAll("-SNAPSHOT", "").split("\\.");
+        String[] version = TempPolymer.getInstance().getPluginVersion()
+                .replaceAll("-SNAPSHOT", "")
+                .replaceAll("/-\\d*", "")
+                .split("\\.");
         int polymerMajor = Integer.parseInt(version[0]);
         int polymerMinor = Integer.parseInt(version[1]);
         int polymerPatch = (version.length > 2) ? Integer.parseInt(version[2]) : 0;
