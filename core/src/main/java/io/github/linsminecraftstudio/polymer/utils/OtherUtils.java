@@ -18,7 +18,7 @@ public class OtherUtils {
     public static boolean isPolymerVersionAtLeast(String version) {
         String[] split = version
                 .replaceAll("-SNAPSHOT", "")
-                .replaceAll("/-\\d*", "")
+                .replaceAll("-\\d*", "")
                 .split("\\.");
         if (split.length == 2) {
             return isPolymerVersionAtLeast(Integer.parseInt(split[0]), Integer.parseInt(split[1]), 0);
@@ -30,7 +30,7 @@ public class OtherUtils {
     public static boolean isPolymerVersionAtLeast(int major, int minor, int p) {
         String[] version = TempPolymer.getInstance().getPluginVersion()
                 .replaceAll("-SNAPSHOT", "")
-                .replaceAll("/-\\d*", "")
+                .replaceAll("-\\d*", "")
                 .split("\\.");
         int polymerMajor = Integer.parseInt(version[0]);
         int polymerMinor = Integer.parseInt(version[1]);
@@ -49,10 +49,12 @@ public class OtherUtils {
             for (StackTraceElement stackTraceElement : stackTraceElements){
                 String className = stackTraceElement.getClassName();
                 Class<?> clazz = Class.forName(className);
+
+                if (pluginCache.containsKey(clazz)) {
+                    return pluginCache.get(clazz);
+                }
+
                 if (clazz.getSuperclass() != null && clazz.getSuperclass() == PolymerPlugin.class) {
-                    if (pluginCache.containsKey(clazz)) {
-                        return pluginCache.get(clazz);
-                    }
                     PolymerPlugin plugin = PolymerPlugin.getPolymerPlugin((Class<? extends PolymerPlugin>) clazz);
                     pluginCache.put(clazz, plugin);
                     return plugin;
