@@ -2,43 +2,51 @@ package io.github.linsminecraftstudio.polymer.utils;
 
 import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.objects.plugin.PolymerPlugin;
+import org.bukkit.plugin.Plugin;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
-import java.util.logging.Level;
 
 public class OtherUtils {
     public static boolean isPolymerVersionAtLeast(String version) {
+        return isPluginVersionAtLeast(TempPolymer.getInstance(), version);
+    }
+
+    public static boolean isPluginVersionAtLeast(Plugin plugin, String version) {
         String[] split = version
                 .replaceAll("-SNAPSHOT", "")
-                .replaceAll("-\\d*", "")
                 .split("\\.");
+
         if (split.length == 2) {
-            return isPolymerVersionAtLeast(Integer.parseInt(split[0]), Integer.parseInt(split[1]), 0);
+            return isPluginVersionAtLeast(plugin, Integer.parseInt(split[0]), Integer.parseInt(split[1]), 0, 0);
+        } else if (split.length == 3) {
+            return isPluginVersionAtLeast(plugin, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), 0);
         } else {
-            return isPolymerVersionAtLeast(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+            return isPluginVersionAtLeast(plugin, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3].split("-")[1]));
         }
     }
 
-    public static boolean isPolymerVersionAtLeast(int major, int minor, int p) {
-        String[] version = TempPolymer.getInstance().getPluginVersion()
+    public static boolean isPluginVersionAtLeast(Plugin plugin, int major, int minor, int p, int sp) {
+        String[] version = plugin.getDescription().getVersion()
                 .replaceAll("-SNAPSHOT", "")
-                .replaceAll("-\\d*", "")
                 .split("\\.");
-        int polymerMajor = Integer.parseInt(version[0]);
-        int polymerMinor = Integer.parseInt(version[1]);
-        int polymerPatch = (version.length > 2) ? Integer.parseInt(version[2]) : 0;
+        int pluginVerMajor = Integer.parseInt(version[0]);
+        int pluginVerMinor = Integer.parseInt(version[1]);
+        int pluginVerPatch, pluginVerSmallPatch;
 
-        return polymerMajor > major ||
-                (polymerMajor == major && polymerMinor > minor) ||
-                (polymerMajor == major && polymerMinor == minor && polymerPatch >= p);
+        if (version.length == 3) {
+            String[] split = version[2].split("-");
+            pluginVerPatch = Integer.parseInt(split[0]);
+            pluginVerSmallPatch = (split.length > 1) ? Integer.parseInt(split[1]) : 0;
+        } else {
+            pluginVerPatch = 0;
+            pluginVerSmallPatch = 0;
+        }
+
+        return pluginVerMajor > major ||
+                (pluginVerMajor == major && pluginVerMinor > minor) ||
+                (pluginVerMajor == major && pluginVerMinor == minor && pluginVerPatch > p) ||
+                (pluginVerMajor == major && pluginVerMinor == minor && pluginVerPatch == p && pluginVerSmallPatch >= sp);
     }
 
     private static final Map<Class<?>, PolymerPlugin> pluginCache = new HashMap<>();
@@ -76,39 +84,5 @@ public class OtherUtils {
             return lang.replace(split2[1], split2[1].toUpperCase()).replace("_", "-");
         }
         return lang.replace(split[1], split[1].toUpperCase());
-    }
-
-    public static class Updater {
-        /**
-         * Make an updater
-         * @param resourceId the resource id on spigotmc
-         * @param consumer handle
-         */
-        public Updater(int resourceId, BiConsumer<String, Boolean> consumer) {
-            CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
-                try (InputStream stream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId).openStream();
-                     Scanner scanner = new Scanner(stream)) {
-                    StringBuilder builder = new StringBuilder();
-                    while (scanner.hasNextLine()) {
-                        builder.append(scanner.nextLine());
-                    }
-                    return builder.toString();
-                } catch (IOException e) {
-                    if (TempPolymer.getInstance().isDebug()) e.printStackTrace();
-                    return null;
-                }
-            }).completeOnTimeout(null, 5, TimeUnit.SECONDS);
-            PolymerPlugin plugin = findCallingPlugin();
-            String ver;
-            try {
-                ver = future.join();
-            } catch (Exception e) {
-                if (plugin != null) {
-                    plugin.getLogger().log(Level.WARNING, "Failed to check a plugin update, resource id: " + resourceId, e);
-                }
-                ver = null;
-            }
-            consumer.accept(ver, ver != null);
-        }
     }
 }

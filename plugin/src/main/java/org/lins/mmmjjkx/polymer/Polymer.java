@@ -2,6 +2,7 @@ package org.lins.mmmjjkx.polymer;
 
 import io.github.linsminecraftstudio.polymer.TempPolymer;
 import io.github.linsminecraftstudio.polymer.command.PolymerCommand;
+import io.github.linsminecraftstudio.polymer.objects.other.SimpleUpdateChecker;
 import io.github.linsminecraftstudio.polymer.utils.OtherUtils;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public final class Polymer extends TempPolymer {
         getLogger().info("Polymer enabled!");
         getMessageHandler().setAutoDetectClientLanguage(getConfig().getBoolean("auto-detect-client-language", true));
         if (getConfig().getBoolean("checkUpdate")) {
-            new OtherUtils.Updater(110542, (ver, success) -> {
+            SimpleUpdateChecker updateChecker = new SimpleUpdateChecker(110542, (ver, success) -> {
                 if (success) {
                     boolean b = OtherUtils.isPolymerVersionAtLeast(ver.replaceAll("b.*", ""));
                     if (!b) {
@@ -33,6 +34,8 @@ public final class Polymer extends TempPolymer {
                     getLogger().warning("Failed to check update.");
                 }
             });
+
+            updateChecker.check();
         }
     }
 
